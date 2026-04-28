@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate, useSearchParams, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   LayoutDashboard, 
   Settings, 
