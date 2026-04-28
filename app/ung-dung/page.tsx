@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Database, Plus, Search, Loader2, Edit2, Trash2, X } from 'lucide-react';
+import { Database, Plus, Search, Loader2, Edit2, Trash2 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 
 export default function UngDungPage() {
@@ -10,33 +10,74 @@ export default function UngDungPage() {
   const [loading, setLoading] = useState(true);
   const [apps, setApps] = useState<any[]>([]);
   const [showModal, setShowModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   
-  // Form add new app
   const [formData, setFormData] = useState({
+    ma_id: '',
     ten_ung_dung: '',
     app_id: '',
     khoa_api: '',
     trang_thai: 'Hoạt động'
   });
 
-  useEffect(() => {
-    // Trong thực tế sẽ fetch từ API route gọi Google Sheets
-    setLoading(false);
-    // Mock dữ liệu theo schema mới
-    setApps([
-      { ma_id: 'APP01', ten_ung_dung: 'Quản lý Nhân sự', app_id: 'b291...1120', trang_thai: 'Hoạt động' }
-    ]);
-  }, []);
+  const fetchApps = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch('/api/config?table=ung_dung');
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        setApps(data.filter(app => !app.ma_id?.startsWith('DELETED_')));
+      }
+    } catch (err) {
+      console.error('Lỗi tải ứng dụng:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (session) fetchApps();
+  }, [session]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newApp = {
-      ma_id: 'APP' + Math.floor(Math.random() * 1000),
-      ...formData
-    };
-    setApps([...apps, newApp]);
-    setShowModal(false);
-    setFormData({ ten_ung_dung: '', app_id: '', khoa_api: '', trang_thai: 'Hoạt động' });
+    try {
+      const payload = isEditing ? 
+        { table: 'ung_dung', id: formData.ma_id, data: formData } : 
+        { table: 'ung_dung', data: { ...formData, ma_id: 'APP' + Date.now() } };
+
+      const method = isEditing ? 'PUT' : 'POST';
+      const res = await fetch('/api/config', {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        setShowModal(false);
+        setIsEditing(false);
+        setFormData({ ma_id: '', ten_ung_dung: '', app_id: '', khoa_api: '', trang_thai: 'Hoạt động' });
+        fetchApps();
+      }
+    } catch (err) {
+      alert('Lỗi lưu dữ liệu');
+    }
+  };
+
+  const deleteApp = async (id: string) => {
+    if (!confirm('Bạn có chắc muốn xóa ứng dụng này?')) return;
+    try {
+      const res = await fetch(`/api/config?table=ung_dung&id=${id}`, { method: 'DELETE' });
+      if (res.ok) fetchApps();
+    } catch (err) {
+      alert('Lỗi xóa dữ liệu');
+    }
+  };
+
+  const openEdit = (app: any) => {
+    setFormData(app);
+    setIsEditing(true);
+    setShowModal(true);
   };
 
   return (
@@ -46,7 +87,7 @@ export default function UngDungPage() {
           <h1 className="h3 mb-0 font-weight-bold text-primary">Ứng dụng AppSheet</h1>
           <p className="text-muted mb-0 small">Quản lý các tài khoản kết nối AppSheet API</p>
         </div>
-        <button onClick={() => setShowModal(true)} className="btn btn-primary d-flex align-items-center px-4">
+        <button onClick={() => { setIsEditing(false); setFormData({ ma_id: '', ten_ung_dung: '', app_id: '', khoa_api: '', trang_thai: 'Hoạt động' }); setShowModal(true); }} className="btn btn-primary d-flex align-items-center px-4 shadow-sm">
           <Plus size={18} className="me-2" /> Thêm ứng dụng
         </button>
       </div>
@@ -76,7 +117,8 @@ export default function UngDungPage() {
                 {loading ? (
                   <tr>
                     <td colSpan={4} className="text-center py-5">
-                      <Loader2 size={24} className="animate-spin text-primary" />
+                      <Loader2 size={24} className="animate-spin text-primary d-inline-block" />
+                      <p className="mt-2 text-muted">Đang tải dữ liệu từ Google Sheets...</p>
                     </td>
                   </tr>
                 ) : apps.length === 0 ? (
@@ -104,10 +146,10 @@ export default function UngDungPage() {
                         </span>
                       </td>
                       <td className="text-end px-4">
-                        <button className="btn btn-sm btn-outline-primary border-0 me-2">
+                        <button onClick={() => openEdit(app)} className="btn btn-sm btn-outline-primary border-0 me-2 shadow-none">
                           <Edit2 size={16} />
                         </button>
-                        <button className="btn btn-sm btn-outline-danger border-0">
+                        <button onClick={() => deleteApp(app.ma_id)} className="btn btn-sm btn-outline-danger border-0 shadow-none">
                           <Trash2 size={16} />
                         </button>
                       </td>
@@ -120,19 +162,19 @@ export default function UngDungPage() {
         </div>
       </div>
       
-      {/* Modal Thêm Mới */}
+      {/* Modal Thêm/Sửa */}
       {showModal && (
-        <div className="modal show d-block" tabIndex={-1} style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+        <div className="modal show d-block shadow" tabIndex={-1} style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
           <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content border-0 shadow">
-              <div className="modal-header">
-                <h5 className="modal-title font-weight-bold">Thêm ứng dụng mới</h5>
-                <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
+            <div className="modal-content border-0 shadow-lg">
+              <div className="modal-header bg-white border-0">
+                <h5 className="modal-title font-weight-bold">{isEditing ? 'Cập nhật ứng dụng' : 'Thêm ứng dụng mới'}</h5>
+                <button type="button" className="btn-close shadow-none" onClick={() => setShowModal(false)}></button>
               </div>
               <form onSubmit={handleSubmit}>
-                <div className="modal-body">
+                <div className="modal-body p-4">
                   <div className="mb-3">
-                    <label className="form-label font-weight-bold small">Tên ứng dụng nội bộ</label>
+                    <label className="form-label font-weight-bold small text-muted">Tên ứng dụng nội bộ</label>
                     <input 
                       type="text" 
                       className="form-control" 
@@ -143,7 +185,7 @@ export default function UngDungPage() {
                     />
                   </div>
                   <div className="mb-3">
-                    <label className="form-label font-weight-bold small">App ID (từ AppSheet Editor)</label>
+                    <label className="form-label font-weight-bold small text-muted">App ID (từ AppSheet Editor)</label>
                     <input 
                       type="text" 
                       className="form-control" 
@@ -154,7 +196,7 @@ export default function UngDungPage() {
                     />
                   </div>
                   <div className="mb-3">
-                    <label className="form-label font-weight-bold small">Access Key (API Key)</label>
+                    <label className="form-label font-weight-bold small text-muted">Access Key (API Key)</label>
                     <input 
                       type="password" 
                       className="form-control" 
@@ -164,16 +206,30 @@ export default function UngDungPage() {
                       required 
                     />
                   </div>
+                  <div className="mb-3">
+                    <label className="form-label font-weight-bold small text-muted">Trạng thái</label>
+                    <select className="form-select" value={formData.trang_thai} onChange={e => setFormData({...formData, trang_thai: e.target.value})}>
+                      <option value="Hoạt động">Hoạt động</option>
+                      <option value="Tạm dừng">Tạm dừng</option>
+                    </select>
+                  </div>
                 </div>
-                <div className="modal-footer">
-                  <button type="button" className="btn btn-light" onClick={() => setShowModal(false)}>Hủy</button>
-                  <button type="submit" className="btn btn-primary px-4">Lưu lại</button>
+                <div className="modal-footer border-0 p-4 pt-0">
+                  <button type="button" className="btn btn-light px-4" onClick={() => setShowModal(false)}>Hủy</button>
+                  <button type="submit" className="btn btn-primary px-4 shadow-sm">{isEditing ? 'Cập nhật' : 'Lưu lại'}</button>
                 </div>
               </form>
             </div>
           </div>
         </div>
       )}
+
+      <div className="mt-4">
+        <Link href="/" className="btn btn-link p-0 text-decoration-none text-muted small">← Quay lại Tổng quan</Link>
+      </div>
+    </main>
+  );
+}
 
       <div className="mt-4">
         <Link href="/" className="btn btn-link p-0 text-decoration-none">← Quay lại Tổng quan</Link>

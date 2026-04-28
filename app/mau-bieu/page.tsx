@@ -2,32 +2,77 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { FileText, Plus, Upload, FileType, Edit2, Trash2, FolderOpen, ExternalLink } from 'lucide-react';
+import { FileText, Plus, Upload, FileType, Edit2, Trash2, FolderOpen, ExternalLink, Loader2 } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 
 export default function MauBieuPage() {
-  const [loading, setLoading] = useState(false);
+  const { data: session } = useSession();
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [templates, setTemplates] = useState<any[]>([
-    { ma_id: 'MB01', ten_mau: 'Hợp đồng lao động', ma_ung_dung: 'APP01', file_id_drive: '1A2B...', thu_muc_luu: '3C4D...' },
-    { ma_id: 'MB02', ten_mau: 'Phiếu xuất kho', ma_ung_dung: 'APP01', file_id_drive: 'X1Y2...', thu_muc_luu: 'Z3W4...' },
-  ]);
+  const [templates, setTemplates] = useState<any[]>([]);
+  const [apps, setApps] = useState<any[]>([]);
 
   const [formData, setFormData] = useState({
+    ma_id: '',
     ten_mau: '',
     ma_ung_dung: '',
     file_id_drive: '',
     thu_muc_luu: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const [tplRes, appsRes] = await Promise.all([
+        fetch('/api/config?table=mau_bieu'),
+        fetch('/api/config?table=ung_dung')
+      ]);
+      const tpls = await tplRes.json();
+      const apls = await appsRes.json();
+      
+      if (Array.isArray(tpls)) setTemplates(tpls.filter(t => !t.ma_id?.startsWith('DELETED_')));
+      if (Array.isArray(apls)) setApps(apls.filter(a => !a.ma_id?.startsWith('DELETED_')));
+    } catch (err) {
+      console.error('Lỗi tải dữ liệu:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (session) fetchData();
+  }, [session]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newTpl = {
-      ma_id: 'MB' + Math.floor(Math.random() * 1000),
-      ...formData
-    };
-    setTemplates([...templates, newTpl]);
-    setShowModal(false);
-    setFormData({ ten_mau: '', ma_ung_dung: '', file_id_drive: '', thu_muc_luu: '' });
+    try {
+      const res = await fetch('/api/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          table: 'mau_bieu', 
+          data: { ...formData, ma_id: 'MB' + Date.now() } 
+        })
+      });
+
+      if (res.ok) {
+        setShowModal(false);
+        setFormData({ ma_id: '', ten_mau: '', ma_ung_dung: '', file_id_drive: '', thu_muc_luu: '' });
+        fetchData();
+      }
+    } catch (err) {
+      alert('Lỗi lưu mẫu biểu');
+    }
+  };
+
+  const deleteTemplate = async (id: string) => {
+    if (!confirm('Xóa mẫu biểu này?')) return;
+    try {
+      await fetch(`/api/config?table=mau_bieu&id=${id}`, { method: 'DELETE' });
+      fetchData();
+    } catch (err) {
+      alert('Lỗi xóa');
+    }
   };
 
   return (
@@ -37,83 +82,96 @@ export default function MauBieuPage() {
           <h1 className="h3 mb-0 font-weight-bold text-primary">Mẫu biểu (Templates)</h1>
           <p className="text-muted mb-0 small">Quản lý các file Word/Excel mẫu trên Google Drive</p>
         </div>
-        <button onClick={() => setShowModal(true)} className="btn btn-primary d-flex align-items-center px-4">
+        <button onClick={() => setShowModal(true)} className="btn btn-primary d-flex align-items-center px-4 shadow-sm">
           <Plus size={18} className="me-2" /> Thêm mẫu mới
         </button>
       </div>
 
       <div className="row g-4">
-        {templates.map((tpl) => (
-          <div key={tpl.ma_id} className="col-12 col-md-6 col-lg-4">
-            <div className="card h-100 border-0 shadow-sm transition hover-shadow-md">
-              <div className="card-body">
-                <div className="d-flex align-items-center border-bottom pb-3 mb-3">
-                  <div className="p-3 bg-white border rounded me-3 text-primary shadow-sm">
-                    <FileText size={24} />
+        {loading ? (
+          <div className="col-12 text-center py-5">
+            <Loader2 size={32} className="animate-spin text-primary d-inline-block" />
+            <p className="mt-3 text-muted">Đang tải danh sách mẫu biểu...</p>
+          </div>
+        ) : templates.length === 0 ? (
+          <div className="col-12 text-center py-5 text-muted">Chưa có mẫu biểu nào.</div>
+        ) : (
+          templates.map((tpl) => (
+            <div key={tpl.ma_id} className="col-12 col-md-6 col-lg-4">
+              <div className="card h-100 border-0 shadow-sm transition hover-shadow-md">
+                <div className="card-body">
+                  <div className="d-flex align-items-center border-bottom pb-3 mb-3">
+                    <div className="p-3 bg-white border rounded me-3 text-primary shadow-sm">
+                      <FileText size={24} />
+                    </div>
+                    <div className="overflow-hidden">
+                      <h6 className="mb-0 font-weight-bold text-truncate" title={tpl.ten_mau}>{tpl.ten_mau}</h6>
+                      <small className="text-muted d-block font-monospace small">ID: {tpl.ma_id}</small>
+                    </div>
                   </div>
-                  <div className="overflow-hidden">
-                    <h6 className="mb-0 font-weight-bold text-truncate" title={tpl.ten_mau}>{tpl.ten_mau}</h6>
-                    <small className="text-muted d-block font-monospace">ID: {tpl.ma_id}</small>
+                  
+                  <div className="small mb-3">
+                    <div className="d-flex justify-content-between mb-2">
+                      <span className="text-muted">Ứng dụng:</span>
+                      <span className="badge bg-light text-dark">{tpl.ma_ung_dung}</span>
+                    </div>
+                    <div className="d-flex justify-content-between mb-2">
+                      <span className="text-muted">File ID:</span>
+                      <span className="text-primary cursor-pointer text-truncate" style={{maxWidth: '150px'}} title={tpl.file_id_drive}>
+                        {tpl.file_id_drive}
+                      </span>
+                    </div>
+                    <div className="d-flex justify-content-between">
+                      <span className="text-muted">Thư mục lưu:</span>
+                      <span className="text-success text-truncate" style={{maxWidth: '150px'}} title={tpl.thu_muc_luu}>
+                        <FolderOpen size={14} className="me-1" /> {tpl.thu_muc_luu}
+                      </span>
+                    </div>
                   </div>
-                </div>
-                
-                <div className="small mb-3">
-                  <div className="d-flex justify-content-between mb-2">
-                    <span className="text-muted">Ứng dụng:</span>
-                    <span className="badge bg-light text-dark">{tpl.ma_ung_dung}</span>
-                  </div>
-                  <div className="d-flex justify-content-between mb-2">
-                    <span className="text-muted">File ID:</span>
-                    <span className="text-primary cursor-pointer text-truncate" style={{maxWidth: '150px'}} title={tpl.file_id_drive}>
-                      {tpl.file_id_drive}
-                    </span>
-                  </div>
-                  <div className="d-flex justify-content-between">
-                    <span className="text-muted">Thư mục lưu:</span>
-                    <span className="text-success text-truncate" style={{maxWidth: '150px'}} title={tpl.thu_muc_luu}>
-                      <FolderOpen size={14} className="me-1" /> {tpl.thu_muc_luu}
-                    </span>
-                  </div>
-                </div>
 
-                <div className="d-flex gap-2 justify-content-end pt-2">
-                  <Link href={`https://drive.google.com/open?id=${tpl.file_id_drive}`} target="_blank" className="btn btn-sm btn-outline-secondary">
-                    <ExternalLink size={14} />
-                  </Link>
-                  <button className="btn btn-sm btn-outline-primary">Mapping</button>
-                  <button className="btn btn-sm btn-outline-danger">Xóa</button>
+                  <div className="d-flex gap-2 justify-content-end pt-2 border-top">
+                    <Link href={`https://drive.google.com/open?id=${tpl.file_id_drive}`} target="_blank" className="btn btn-sm btn-outline-secondary border-0">
+                      <ExternalLink size={14} />
+                    </Link>
+                    <Link href={`/anh-xa?template=${tpl.ma_id}`} className="btn btn-sm btn-outline-primary border-0">Mapping</Link>
+                    <button onClick={() => deleteTemplate(tpl.ma_id)} className="btn btn-sm btn-outline-danger border-0">
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
 
       {/* Modal Thêm Mẫu */}
       {showModal && (
         <div className="modal show d-block" tabIndex={-1} style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
           <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content border-0 shadow">
-              <div className="modal-header">
+            <div className="modal-content border-0 shadow-lg">
+              <div className="modal-header border-0">
                 <h5 className="modal-title font-weight-bold">Cấu hình mẫu biểu mới</h5>
-                <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
+                <button type="button" className="btn-close shadow-none" onClick={() => setShowModal(false)}></button>
               </div>
               <form onSubmit={handleSubmit}>
-                <div className="modal-body">
+                <div className="modal-body p-4">
                   <div className="mb-3">
-                    <label className="form-label font-weight-bold small">Chọn ứng dụng</label>
+                    <label className="form-label font-weight-bold small text-muted">Chọn ứng dụng</label>
                     <select 
                       className="form-select" 
                       value={formData.ma_ung_dung} 
                       onChange={e => setFormData({...formData, ma_ung_dung: e.target.value})}
                       required
                     >
-                      <option value="">-- Chọn ứng dụng AppSheet --</option>
-                      <option value="APP01">Quản lý Nhân sự</option>
+                      <option value="">-- Chọn ứng dụng liên kết --</option>
+                      {apps.map(app => (
+                        <option key={app.ma_id} value={app.ma_id}>{app.ten_ung_dung}</option>
+                      ))}
                     </select>
                   </div>
                   <div className="mb-3">
-                    <label className="form-label font-weight-bold small">Tên mẫu báo cáo</label>
+                    <label className="form-label font-weight-bold small text-muted">Tên mẫu báo cáo</label>
                     <input 
                       type="text" 
                       className="form-control" 
@@ -124,7 +182,7 @@ export default function MauBieuPage() {
                     />
                   </div>
                   <div className="mb-3">
-                    <label className="form-label font-weight-bold small">Google Drive File ID (Template)</label>
+                    <label className="form-label font-weight-bold small text-muted">Google Docs/File ID (Template)</label>
                     <input 
                       type="text" 
                       className="form-control" 
@@ -135,20 +193,20 @@ export default function MauBieuPage() {
                     />
                   </div>
                   <div className="mb-3">
-                    <label className="form-label font-weight-bold small">Google Drive Folder ID (Output)</label>
+                    <label className="form-label font-weight-bold small text-muted">Output Folder ID (Drive)</label>
                     <input 
                       type="text" 
                       className="form-control" 
                       value={formData.thu_muc_luu}
                       onChange={e => setFormData({...formData, thu_muc_luu: e.target.value})}
-                      placeholder="ID thư mục để lưu file sau khi trộn" 
+                      placeholder="ID thư mục để lưu file PDF/Word" 
                       required 
                     />
                   </div>
                 </div>
-                <div className="modal-footer">
-                  <button type="button" className="btn btn-light" onClick={() => setShowModal(false)}>Hủy</button>
-                  <button type="submit" className="btn btn-primary px-4">Lưu cấu hình</button>
+                <div className="modal-footer border-0 p-4 pt-0">
+                  <button type="button" className="btn btn-light px-4" onClick={() => setShowModal(false)}>Hủy</button>
+                  <button type="submit" className="btn btn-primary px-4 shadow-sm">Lưu cấu hình</button>
                 </div>
               </form>
             </div>
