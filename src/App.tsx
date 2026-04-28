@@ -74,24 +74,24 @@ const Dashboard = () => {
   }, []);
 
   if (loading) return (
-    <div className="flex flex-col items-center justify-center p-20 gap-4">
-      <div className="animate-spin rounded-2xl h-10 w-10 border-4 border-indigo-600 border-t-transparent shadow-lg"></div>
-      <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Đang đồng bộ dữ liệu...</p>
+    <div className="flex flex-col items-center justify-center p-20 gap-4 min-h-[60vh]">
+      <div className="animate-spin rounded-2xl h-12 w-12 border-4 border-ocean-600 border-t-transparent shadow-xl"></div>
+      <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Đang tối ưu dữ liệu...</p>
     </div>
   );
 
   if (!data.apps.length && !data.templates.length && !data.logs.length) {
     return (
-      <div className="flex flex-col items-center justify-center p-20 gap-6 text-center">
-        <div className="w-20 h-20 bg-slate-100 rounded-3xl flex items-center justify-center text-slate-300">
-          <Database size={40} />
+      <div className="flex flex-col items-center justify-center p-20 gap-6 text-center min-h-[60vh]">
+        <div className="w-24 h-24 bg-ocean-50 rounded-[2.5rem] flex items-center justify-center text-ocean-300 shadow-inner">
+          <Database size={48} />
         </div>
         <div className="max-w-md">
-          <h3 className="text-xl font-black text-slate-900 mb-2">Hệ thống chưa có dữ liệu</h3>
-          <p className="text-sm text-slate-500 font-medium mb-6">Bạn cần cấu hình ứng dụng và mẫu báo cáo đầu tiên. Nếu đây là lần đầu chạy, hãy vào phần Cấu hình hệ thống.</p>
-          <div className="flex justify-center gap-3">
-             <Link to="/apps" className="btn-primary">Kết nối AppSheet</Link>
-             <Link to="/settings" className="btn-secondary">Cài đặt Hub</Link>
+          <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">Trung tâm bản in đang trống</h3>
+          <p className="text-sm text-slate-500 font-medium mb-8 leading-relaxed">Khởi tạo ứng dụng AppSheet đầu tiên và thiết lập mẫu báo cáo để bắt đầu hành trình tự động hóa của bạn.</p>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+             <Link to="/apps" className="btn-primary-modern px-8">Kết nối AppSheet</Link>
+             <Link to="/settings" className="btn-secondary-modern px-8 text-ocean-600">Cài đặt hệ thống</Link>
           </div>
         </div>
       </div>
@@ -99,129 +99,148 @@ const Dashboard = () => {
   }
 
   const stats = [
-    { label: 'Tổng ứng dụng', value: data.apps.length, icon: Grid, color: 'bg-indigo-500', trend: 'Hoạt động' },
-    { label: 'Mẫu báo cáo', value: data.templates.length, icon: FileText, color: 'bg-emerald-500', trend: 'Sẵn sàng' },
-    { label: 'Lượt in tháng', value: data.logs.length, icon: Printer, color: 'bg-amber-500', trend: '+12% so với tháng trước' },
+    { label: 'Hệ thống AppSheet', value: data.apps.length, icon: Grid, color: 'bg-ocean-600', trend: 'Hoạt động Ổn định' },
+    { label: 'Thư viện Mẫu biểu', value: data.templates.length, icon: FileText, color: 'bg-indigo-600', trend: 'Đã tối ưu hóa' },
+    { label: 'Lượt in hệ thống', value: data.logs.length, icon: Printer, color: 'bg-slate-900', trend: 'Tất cả thời gian' },
   ];
 
   return (
-    <div className="space-y-8 max-w-6xl mx-auto">
+    <div className="space-y-12 max-w-7xl mx-auto pb-20">
       {/* Welcome Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-3xl font-black text-slate-900 tracking-tight">Chào buổi sáng! 👋</h2>
-          <p className="text-slate-500 font-medium">Đây là những gì đang diễn ra với hệ thống in ấn của bạn.</p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="space-y-1">
+          <h2 className="text-4xl font-black text-slate-900 tracking-tighter">Bảng điều khiển</h2>
+          <p className="text-slate-500 font-medium text-lg">Hệ thống đồng bộ hóa dữ liệu AppSheet Hub.</p>
         </div>
-        <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-2xl border border-slate-200 shadow-sm">
-           <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-           <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Hệ thống: Online</span>
+        <div className="flex items-center gap-4 px-6 py-3 bg-white rounded-2xl border border-slate-200 shadow-sm self-start">
+           <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse shadow-lg shadow-emerald-500/20" />
+           <span className="text-xs font-bold text-slate-600 uppercase tracking-widest">Database: Online</span>
         </div>
       </div>
 
       {/* Stats Bento Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {stats.map((stat, i) => {
           const Icon = stat.icon;
           return (
             <motion.div 
               key={i}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className="card-premium p-6 group cursor-default"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: i * 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="card-modern p-8 group relative overflow-hidden"
             >
-              <div className="flex justify-between items-start mb-4">
-                <div className={`w-12 h-12 ${stat.color} rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-500`}>
-                  <Icon size={24} />
-                </div>
-                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{stat.trend}</div>
+              <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                <Icon size={80} />
               </div>
-              <div className="text-4xl font-black text-slate-900 mb-1">{stat.value}</div>
-              <div className="text-sm font-bold text-slate-500 tracking-tight">{stat.label}</div>
+              <div className="flex justify-between items-start mb-6">
+                <div className={`w-14 h-14 ${stat.color} rounded-2xl flex items-center justify-center text-white shadow-xl shadow-opacity-30 group-hover:rotate-6 transition-transform duration-500`}>
+                  <Icon size={28} />
+                </div>
+                <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-3 py-1 rounded-full border border-slate-100">{stat.trend}</div>
+              </div>
+              <div className="text-5xl font-black text-slate-900 mb-2 tracking-tighter">{stat.value}</div>
+              <div className="text-blue-500 font-bold text-sm uppercase tracking-widest">{stat.label}</div>
             </motion.div>
           );
         })}
       </div>
 
-      <div className="grid grid-cols-12 gap-6 pb-20">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
         {/* Recent Activity */}
-        <div className="col-span-12 lg:col-span-7 space-y-6">
-          <div className="card-premium overflow-hidden">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center group">
-              <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] group-hover:text-indigo-600 transition-colors">Nhật ký in gần đây</h3>
-              <Link to="/logs" className="p-2 hover:bg-slate-50 rounded-xl transition-colors"><ChevronRight size={18} className="text-slate-400" /></Link>
+        <div className="col-span-12 lg:col-span-8 space-y-8">
+          <div className="card-modern overflow-hidden bg-white/50">
+            <div className="p-8 border-b border-slate-100 flex justify-between items-center">
+              <div className="flex items-center gap-3">
+                <History className="text-ocean-600" size={24} />
+                <h3 className="text-lg font-black text-slate-900 tracking-tight">Hoạt động gần đây</h3>
+              </div>
+              <Link to="/logs" className="text-sm font-bold text-ocean-600 hover:underline">Tất cả lịch sử</Link>
             </div>
-            <div className="p-2">
-              <div className="space-y-1">
-                {data.logs.length > 0 ? data.logs.slice(0, 5).map((log: any, i) => (
-                  <div key={i} className="flex items-center gap-4 p-4 hover:bg-slate-50 rounded-2xl transition-all group">
-                    <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-white group-hover:text-indigo-600 transition-colors shadow-sm">
-                      <FileText size={18} />
+            <div className="p-4">
+              <div className="space-y-2">
+                {data.logs.length > 0 ? data.logs.slice(0, 6).map((log: any, i) => (
+                  <motion.div 
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                    key={i} 
+                    className="flex items-center gap-5 p-5 hover:bg-white rounded-2xl transition-all border border-transparent hover:border-slate-100 shadow-sm shadow-transparent hover:shadow-slate-100"
+                  >
+                    <div className="w-12 h-12 bg-slate-50 text-slate-400 rounded-2xl flex items-center justify-center transition-colors group-hover:bg-ocean-50 group-hover:text-ocean-600">
+                      <Printer size={22} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-bold text-slate-800 truncate">{log.ten_mau}</p>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">ID: {log.ma_id}</p>
+                      <p className="text-base font-bold text-slate-800 truncate leading-snug">{log.ten_mau}</p>
+                      <p className="text-xs font-medium text-slate-400">ID hàng: {log.ma_id?.substring(0, 15)}...</p>
                     </div>
-                    <div className="text-right shrink-0">
-                      <p className="text-sm font-black text-indigo-600">{new Date(log.ngay_tao).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                    <div className="text-right">
+                      <p className="text-sm font-black text-ocean-600">{new Date(log.ngay_tao).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{new Date(log.ngay_tao).toLocaleDateString('vi-VN')}</p>
                     </div>
-                  </div>
+                  </motion.div>
                 )) : (
-                  <div className="py-20 text-center text-slate-300 italic border-2 border-dashed border-slate-100 rounded-2xl mx-4 my-2">Lịch sử trống</div>
+                  <div className="py-24 text-center">
+                    <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-200">
+                      <History size={32} />
+                    </div>
+                    <p className="text-slate-400 font-medium italic">Chưa có nhật ký in nào được ghi lại</p>
+                  </div>
                 )}
               </div>
             </div>
-            {data.logs.length > 5 && (
-              <div className="p-4 bg-slate-50 text-center">
-                 <Link to="/logs" className="text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-[0.2em]">Xem tất cả hoạt động</Link>
-              </div>
-            )}
           </div>
         </div>
 
-        {/* Quick Links / Guide */}
-        <div className="col-span-12 lg:col-span-5 space-y-6">
-           <div className="card-premium bg-slate-900 border-0 p-8 text-white relative overflow-hidden group">
-              <div className="absolute top-0 right-0 p-10 opacity-10 group-hover:scale-110 transition-transform duration-700">
-                <Zap size={140} className="fill-white" />
+        {/* Technical Guide */}
+        <div className="col-span-12 lg:col-span-4 space-y-8">
+           <div className="card-modern bg-ocean-950 border-0 p-8 text-white relative overflow-hidden group">
+              <div className="absolute -top-4 -right-4 p-8 opacity-20 group-hover:scale-125 transition-transform duration-1000 rotate-12">
+                <Zap size={180} className="fill-ocean-400 text-ocean-400" />
               </div>
-              <h3 className="text-xl font-black mb-6 relative z-10 tracking-tight">Thiết lập Action 🚀</h3>
-              <div className="space-y-6 relative z-10">
-                <div className="p-5 bg-white/5 rounded-2xl border border-white/5 hover:border-indigo-500/30 transition-colors">
-                  <p className="text-[10px] text-indigo-400 font-black uppercase tracking-widest mb-3">Formula AppSheet:</p>
-                  <code className="text-[11px] font-mono leading-relaxed break-all select-all block text-slate-300">
-                    {`CONCATENATE("${window.location.origin}/report?template=ID_MAU&id=", ENCODEURL([MA_ID]))`}
-                  </code>
+              <div className="relative z-10 space-y-8">
+                <div>
+                  <h3 className="text-2xl font-black tracking-tight mb-2">Endpoint Action ⚡️</h3>
+                  <p className="text-ocean-300 text-sm font-medium">Dùng công thức này trong AppSheet để gọi lệnh in.</p>
                 </div>
-                <div className="flex gap-4 items-center">
-                  <div className="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-indigo-500/20">
-                    <HelpCircle size={20} />
+                
+                <div className="space-y-4">
+                  <div className="p-5 bg-white/10 rounded-2xl border border-white/10 backdrop-blur-sm group/code cursor-pointer active:scale-95 transition-all">
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="text-[10px] text-ocean-400 font-black uppercase tracking-widest">Full Action URL:</span>
+                      <Copy size={14} className="text-white/40 group-hover/code:text-white transition-colors" />
+                    </div>
+                    <code className="text-xs font-mono leading-relaxed break-all block text-white/90">
+                      {`CONCATENATE("${window.location.origin}/report?template=ID_MAU&id=", ENCODEURL([MA_ID]))`}
+                    </code>
                   </div>
-                  <p className="text-xs text-slate-400 leading-relaxed font-bold">
-                    Dán URL này vào phần <span className="text-white">Behavior {'>'} Actions</span> trong AppSheet Editor của bạn.
-                  </p>
+                  
+                  <div className="flex gap-4 items-start p-4 bg-white/5 rounded-2xl">
+                    <Info size={18} className="text-ocean-400 shrink-0 mt-0.5" />
+                    <p className="text-[11px] text-white/60 font-medium leading-relaxed">
+                      Hướng dẫn: Thay <span className="text-white">ID_MAU</span> bằng mã mẫu báo cáo và <span className="text-white">[MA_ID]</span> bằng cột Key của bảng chính.
+                    </p>
+                  </div>
                 </div>
               </div>
            </div>
 
-           <div className="card-premium p-6">
-              <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-6">Trạng thái kết nối</h3>
+           <div className="card-modern p-8 bg-slate-50/50 border-dashed border-2 border-slate-200">
+              <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-6">Trạng thái hạ tầng</h3>
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl hover:bg-slate-100 transition-colors cursor-default">
-                  <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 bg-green-500 rounded-full" />
-                    <span className="text-sm font-bold text-slate-700">Google Sheets DB</span>
+                {[
+                  { name: 'AppSheet Integration', status: 'Online', color: 'bg-emerald-500' },
+                  { name: 'Google Cloud Storage', status: 'Active', color: 'bg-ocean-500' },
+                  { name: 'Print Engine V2', status: 'Ready', color: 'bg-slate-900' }
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center justify-between p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-2 h-2 ${item.color} rounded-full`} />
+                      <span className="text-xs font-black text-slate-700 uppercase tracking-tighter">{item.name}</span>
+                    </div>
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{item.status}</span>
                   </div>
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Đã kết nối</span>
-                </div>
-                <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl hover:bg-slate-100 transition-colors cursor-default">
-                  <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 bg-indigo-500 rounded-full" />
-                    <span className="text-sm font-bold text-slate-700">Google Drive API</span>
-                  </div>
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Sẵn sàng</span>
-                </div>
+                ))}
               </div>
            </div>
         </div>
@@ -279,6 +298,7 @@ const AppManagement = () => {
       setTestingConnection(false);
     }
   };
+
   const [searchTerm, setSearchTerm] = React.useState('');
   const [currentPage, setCurrentPage] = React.useState(1);
   const [pageSize] = React.useState(10);
@@ -370,7 +390,8 @@ const AppManagement = () => {
             app_id: '', 
             khoa_api: '',
             folder_mau_id: '',
-            folder_xuat_id: ''
+            folder_xuat_id: '',
+            bang_chinh: 'KhachHang'
           });
           fetchApps();
         }
@@ -388,7 +409,8 @@ const AppManagement = () => {
             app_id: '', 
             khoa_api: '',
             folder_mau_id: '',
-            folder_xuat_id: ''
+            folder_xuat_id: '',
+            bang_chinh: 'KhachHang'
           });
           fetchApps();
         }
@@ -405,47 +427,48 @@ const AppManagement = () => {
       app_id: app.app_id || '',
       khoa_api: app.khoa_api || app.api_key || '',
       folder_mau_id: app.folder_mau_id || '',
-      folder_xuat_id: app.folder_xuat_id || ''
+      folder_xuat_id: app.folder_xuat_id || '',
+      bang_chinh: app.bang_chinh || 'KhachHang'
     });
     setShowForm(true);
   };
 
   if (loading) return (
-    <div className="flex flex-col items-center justify-center py-32 text-slate-400 gap-4">
-      <div className="w-12 h-12 border-4 border-indigo-600/20 border-t-indigo-600 rounded-full animate-spin shadow-lg shadow-indigo-100"></div>
-      <p className="text-[10px] font-black uppercase tracking-[0.2em] animate-pulse">Phân tích hệ thống ứng dụng...</p>
+    <div className="flex flex-col items-center justify-center py-24 text-slate-400 gap-4">
+      <div className="w-16 h-16 border-4 border-ocean-600/20 border-t-ocean-600 rounded-full animate-spin"></div>
+      <p className="text-xs font-black uppercase tracking-[0.2em] animate-pulse">Đang nạp danh sách ứng dụng...</p>
     </div>
   );
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div className="space-y-6 max-w-7xl mx-auto">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h2 className="text-3xl font-black text-slate-900 tracking-tight">Cấu hình Ứng dụng</h2>
-          <p className="text-slate-500 font-medium">Kết nối và quản lý các cổng API AppSheet của bạn.</p>
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-1.5 h-6 bg-ocean-600 rounded-full" />
+            <span className="text-[10px] font-black text-ocean-600 uppercase tracking-widest">Resource Management</span>
+          </div>
+          <h2 className="text-3xl font-black text-slate-900 tracking-tight">Quản lý Ứng dụng</h2>
+          <p className="text-slate-500 font-medium text-sm">Cấu hình kết nối API cho các dự án AppSheet của bạn.</p>
         </div>
         <div className="flex items-center gap-3">
           <div className="relative group hidden sm:block">
             <input 
               type="text" 
-              placeholder="Lọc ứng dụng..." 
-              className="pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all w-72 font-medium"
+              placeholder="Tìm tên ứng dụng..." 
+              className="pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-[1.25rem] text-sm focus:ring-4 focus:ring-ocean-500/10 focus:border-ocean-500 transition-all w-64 outline-none font-medium"
               value={searchTerm}
               onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
             />
-            <Search size={18} className="absolute left-4 top-3.5 text-slate-400 group-focus-within:text-indigo-600 transition-colors" />
+            <Search size={18} className="absolute left-4 top-3.5 text-slate-400" />
           </div>
           <button 
             onClick={() => {
-              if (showForm) {
-                setShowForm(false);
-                setEditingApp(null);
-                setNewApp({ ten_ung_dung: '', app_id: '', khoa_api: '', folder_mau_id: '', folder_xuat_id: '' });
-              } else {
-                setShowForm(true);
-              }
+              setShowForm(!showForm);
+              if (!showForm) setEditingApp(null);
             }} 
-            className="btn-primary"
+            className="btn-primary-modern !py-3 !rounded-[1.25rem]"
           >
             {showForm ? <X size={20} /> : <Plus size={20} />} 
             <span>{showForm ? 'Hủy bỏ' : 'Kết nối mới'}</span>
@@ -456,81 +479,91 @@ const AppManagement = () => {
       <AnimatePresence>
         {showForm && (
           <motion.div 
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="overflow-hidden"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="card-modern p-1 sm:p-2 border-ocean-100 bg-ocean-50/30"
           >
-            <div className="card-premium p-8 bg-white border-indigo-100 shadow-premium">
-              <form onSubmit={handleSubmit} className="space-y-10">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                  <div className="space-y-8">
-                     <div className="flex items-center gap-3 mb-2">
-                       <div className="w-1.5 h-6 bg-indigo-600 rounded-full" />
-                       <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest">Định danh kết nối</h4>
-                     </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Tên ứng dụng</label>
-                      <input required value={newApp.ten_ung_dung} onChange={e => setNewApp({...newApp, ten_ung_dung: e.target.value})} className="input-field" placeholder="Ví dụ: CRM Bất Động Sản" />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Tên bảng chính</label>
-                      <input required value={newApp.bang_chinh} onChange={e => setNewApp({...newApp, bang_chinh: e.target.value})} className="input-field" placeholder="Tên bảng trên AppSheet (VD: KhachHang)" />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">AppSheet Application ID</label>
-                      <input required value={newApp.app_id} onChange={e => setNewApp({...newApp, app_id: e.target.value})} className="input-field font-mono text-indigo-600" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
-                      <div className="flex items-center gap-2 px-1">
-                        <Info size={12} className="text-amber-500" />
-                        <p className="text-[10px] text-slate-400 font-bold italic">Copy từ URL của AppSheet Editor (phần sau ?appId=)</p>
+            <div className="bg-white rounded-[1.25rem] p-6 lg:p-10 shadow-sm">
+              <form onSubmit={handleSubmit} className="space-y-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                  {/* Left Column: API Info */}
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-3 mb-2 px-1">
+                      <div className="w-8 h-8 rounded-lg bg-ocean-100 flex items-center justify-center text-ocean-600">
+                        <Zap size={18} className="fill-ocean-600" />
                       </div>
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Application Access Key</label>
-                      <input required type="password" value={newApp.khoa_api} onChange={e => setNewApp({...newApp, khoa_api: e.target.value})} className="input-field font-mono" placeholder="Nhập khóa API bảo mật..." />
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-8">
-                    <div className="flex items-center gap-3 mb-2">
-                       <div className="w-1.5 h-6 bg-emerald-600 rounded-full" />
-                       <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest">Lưu trữ Google Drive</h4>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Thư mục nguồn (Mẫu)</label>
-                        <input required value={newApp.folder_mau_id} onChange={e => setNewApp({...newApp, folder_mau_id: e.target.value})} className="input-field font-mono" placeholder="Folder ID..." />
-                        <p className="text-[9px] text-slate-400 font-medium px-1">Nơi chứa các tệp .docx / .xlsx mẫu</p>
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Thư mục đích (Xuất)</label>
-                        <input required value={newApp.folder_xuat_id} onChange={e => setNewApp({...newApp, folder_xuat_id: e.target.value})} className="input-field font-mono" placeholder="Folder ID..." />
-                        <p className="text-[9px] text-slate-400 font-medium px-1">Nơi lưu các bản in đã được sinh ra</p>
-                      </div>
+                      <h4 className="text-xs font-black text-slate-800 uppercase tracking-widest">Xác thực AppSheet API</h4>
                     </div>
                     
-                    <div className="bg-amber-50 p-6 rounded-2xl border border-amber-100 flex gap-4">
-                      <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center shrink-0 text-amber-600">
-                        <HelpCircle size={20} />
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Tên ứng dụng nội bộ</label>
+                        <input required value={newApp.ten_ung_dung} onChange={e => setNewApp({...newApp, ten_ung_dung: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:ring-4 focus:ring-ocean-500/10 focus:border-ocean-500 transition-all outline-none" placeholder="VD: Quản lý Kho Hà Nội" />
                       </div>
-                      <div className="text-xs text-amber-700 leading-relaxed font-medium">
-                        <span className="font-black">Lưu ý bảo mật:</span> API Key được sử dụng để Hub có thể đọc dữ liệu từ AppSheet của bạn. Đảm bảo bạn đã bật "Enable API" trong phần <span className="underline decoration-amber-300">Manage {'>'} Integrations</span> của AppSheet.
+                      
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Bảng chính AppSheet</label>
+                          <input required value={newApp.bang_chinh} onChange={e => setNewApp({...newApp, bang_chinh: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:ring-4 focus:ring-ocean-500/10 focus:border-ocean-500 transition-all outline-none" placeholder="VD: Orders" />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Application ID</label>
+                          <input required value={newApp.app_id} onChange={e => setNewApp({...newApp, app_id: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-mono focus:bg-white focus:ring-4 focus:ring-ocean-500/10 focus:border-ocean-500 transition-all outline-none" placeholder="xxxxxxxx-xxxx-..." />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">API Key (Access Key)</label>
+                        <div className="relative">
+                          <input type="password" required value={newApp.khoa_api} onChange={e => setNewApp({...newApp, khoa_api: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 pl-12 text-sm font-mono focus:bg-white focus:ring-4 focus:ring-ocean-500/10 focus:border-ocean-500 transition-all outline-none" placeholder="Nhập khóa bí mật..." />
+                          <Key size={18} className="absolute left-4 top-3.5 text-slate-400" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Column: Google Drive Info */}
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-3 mb-2 px-1">
+                      <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600">
+                        <Cloud size={18} className="fill-emerald-600" />
+                      </div>
+                      <h4 className="text-xs font-black text-slate-800 uppercase tracking-widest">Hệ thống lưu trữ Drive</h4>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Folder ID: Thư mục Mẫu (DOCX/XLSX)</label>
+                        <input required value={newApp.folder_mau_id} onChange={e => setNewApp({...newApp, folder_mau_id: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-mono focus:bg-white focus:ring-4 focus:ring-ocean-500/10 focus:border-ocean-500 transition-all outline-none" placeholder="ID thư mục chứa template..." />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Folder ID: Thư mục Xuất (PDF/WORD)</label>
+                        <input required value={newApp.folder_xuat_id} onChange={e => setNewApp({...newApp, folder_xuat_id: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-mono focus:bg-white focus:ring-4 focus:ring-ocean-500/10 focus:border-ocean-500 transition-all outline-none" placeholder="ID thư mục chứa file kết quả..." />
+                      </div>
+
+                      <div className="bg-amber-50 rounded-2xl p-4 border border-amber-100 flex gap-4">
+                        <Info size={20} className="text-amber-600 shrink-0 mt-0.5" />
+                        <p className="text-[11px] text-amber-800 font-medium leading-relaxed">
+                          Đảm bảo bạn đã cấp quyền cho tài khoản Google kết nối được phép đọc/ghi vào các thư mục này. <b>Application ID</b> có thể tìm thấy trong URL của AppSheet Editor.
+                        </p>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className="flex justify-end pt-4 gap-4">
+
+                <div className="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t border-slate-100">
                   <button 
                     type="button" 
                     onClick={testConnection} 
                     disabled={testingConnection}
-                    className="px-8 py-4 bg-slate-100 text-slate-700 font-bold rounded-2xl hover:bg-slate-200 transition-all flex items-center gap-2"
+                    className="btn-secondary-modern !rounded-xl order-2 sm:order-1"
                   >
-                    {testingConnection ? <div className="animate-spin rounded-full h-4 w-4 border-2 border-indigo-600 border-t-transparent" /> : <Zap size={20} className="text-indigo-600" />}
-                    <span>Kiểm tra kết nối</span>
+                    {testingConnection ? <Loader2 size={18} className="animate-spin" /> : <Zap size={18} />}
+                    <span>Kiểm tra kết nối API</span>
                   </button>
-                  <button type="submit" className="btn-primary px-12 py-4 text-base">
-                    {editingApp ? 'Cập nhật cấu hình ngay' : 'Thiết lập kết nối Hub'}
+                  <button type="submit" className="btn-primary-modern !py-3.5 !rounded-xl order-1 sm:order-2 px-12">
+                    {editingApp ? 'Cập nhật cấu hình' : 'Thiết lập kết nối Hub'}
                   </button>
                 </div>
               </form>
@@ -539,190 +572,179 @@ const AppManagement = () => {
         )}
       </AnimatePresence>
 
-      {/* Viewing App Details Modal */}
-      <AnimatePresence>
-        {viewingApp && (
-          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-lg overflow-hidden border border-white/20"
-            >
-              <div className="bg-slate-950 p-10 text-white relative">
-                <div className="absolute top-0 right-0 p-8 opacity-5">
-                   <Zap size={120} className="fill-white" />
-                </div>
-                <div className="flex justify-between items-start relative z-10">
-                  <div>
-                    <h3 className="text-2xl font-black tracking-tighter">{viewingApp.ten_ung_dung || viewingApp.ten_app}</h3>
-                    <div className="flex items-center gap-2 mt-2">
-                       <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                       <span className="text-[10px] text-slate-400 font-black uppercase tracking-widest">AppSheet API V2</span>
-                    </div>
+      {/* Main Table Container */}
+      <div className="card-modern overflow-hidden bg-white">
+        <div className="overflow-x-auto no-scrollbar">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="bg-slate-50/50 border-b border-slate-100">
+                <th className="px-8 py-5 cursor-pointer group" onClick={() => handleSort('ten_ung_dung')}>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-ocean-600 transition-colors">Tên ứng dụng</span>
+                    {sortConfig.key === 'ten_ung_dung' && (sortConfig.direction === 'asc' ? <ChevronUp size={12} className="text-ocean-600" /> : <ChevronDown size={12} className="text-ocean-600" />)}
                   </div>
-                  <button onClick={() => setViewingApp(null)} className="p-2 hover:bg-white/10 rounded-full transition-colors"><X size={24} /></button>
-                </div>
+                </th>
+                <th className="px-8 py-5 hidden md:table-cell">
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Dữ liệu nguồn</span>
+                </th>
+                <th className="px-8 py-5 hidden lg:table-cell">
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Application ID</span>
+                </th>
+                <th className="px-8 py-5">
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-right block">Hành động</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-50">
+              {paginatedApps.length > 0 ? paginatedApps.map((app: any) => (
+                <tr key={app.ma_id} className="hover:bg-ocean-50/30 transition-colors group">
+                  <td className="px-8 py-6">
+                    <div className="font-bold text-slate-800 text-lg group-hover:text-ocean-700 transition-colors">{app.ten_ung_dung || app.ten_app}</div>
+                    <div className="flex items-center gap-2 mt-1">
+                      <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Active System</span>
+                    </div>
+                  </td>
+                  <td className="px-8 py-6 hidden md:table-cell">
+                    <div className="flex flex-col gap-1">
+                       <span className="text-xs font-bold text-slate-700">{app.bang_chinh || 'Main Table'}</span>
+                       <span className="text-[10px] font-medium text-slate-400 italic">Database Entry Point</span>
+                    </div>
+                  </td>
+                  <td className="px-8 py-6 hidden lg:table-cell">
+                    <code className="text-[11px] font-mono bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg border border-slate-200">
+                      {app.app_id?.substring(0, 16)}...
+                    </code>
+                  </td>
+                  <td className="px-8 py-6">
+                    <div className="flex justify-end items-center gap-2">
+                       <button onClick={() => setManagingFilesForApp(app)} className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-ocean-600 hover:border-ocean-300 hover:shadow-xl transition-all" title="Lịch sử xuất file"><History size={18} /></button>
+                       <button onClick={() => setViewingApp(app)} className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-ocean-600 hover:border-ocean-300 hover:shadow-xl transition-all" title="Chi tiết kết nối"><Eye size={18} /></button>
+                       <button onClick={() => startEdit(app)} className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-ocean-600 hover:border-ocean-300 hover:shadow-xl transition-all" title="Chỉnh sửa"><Edit size={18} /></button>
+                       <button onClick={() => handleDelete(app.ma_id, app.ten_ung_dung || app.ten_app)} className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-red-500 hover:border-red-300 hover:shadow-xl transition-all" title="Xóa bỏ"><Trash2 size={18} /></button>
+                    </div>
+                  </td>
+                </tr>
+              )) : (
+                <tr>
+                  <td colSpan={4} className="px-8 py-24 text-center">
+                    <div className="flex flex-col items-center gap-4 opacity-30 grayscale saturate-0">
+                       <Layout size={64} className="text-slate-300" />
+                       <p className="text-sm font-black uppercase tracking-[0.3em] text-slate-400">Chưa có ứng dụng được kết nối</p>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="px-8 py-5 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50/30">
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Hiển thị {paginatedApps.length} / {filteredApps.length} bản ghi</p>
+            <div className="flex items-center gap-1.5">
+              <button 
+                onClick={() => setCurrentPage(1)} 
+                disabled={currentPage === 1}
+                className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-ocean-600 disabled:opacity-30 disabled:pointer-events-none transition-all shadow-sm"
+              >
+                <ChevronsLeft size={16} />
+              </button>
+              <button 
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))} 
+                disabled={currentPage === 1}
+                className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-ocean-600 disabled:opacity-30 disabled:pointer-events-none transition-all shadow-sm"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <div className="flex items-center px-4 h-10 rounded-xl bg-ocean-600 text-white font-black text-xs shadow-lg shadow-ocean-600/20">
+                 {currentPage} / {totalPages}
               </div>
-              <div className="p-10 space-y-8 bg-slate-50/50">
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="p-5 bg-white rounded-3xl border border-slate-200 shadow-sm transition-transform hover:-translate-y-1">
-                    <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Thư mục nguồn</div>
-                    <div className="text-xs font-mono text-slate-600 truncate bg-slate-50 p-2 rounded-lg">{viewingApp.folder_mau_id || '—'}</div>
-                  </div>
-                  <div className="p-5 bg-white rounded-3xl border border-slate-200 shadow-sm transition-transform hover:-translate-y-1">
-                    <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Thư mục xuất</div>
-                    <div className="text-xs font-mono text-slate-600 truncate bg-slate-50 p-2 rounded-lg">{viewingApp.folder_xuat_id || '—'}</div>
-                  </div>
-                </div>
-                <div className="space-y-6">
-                  <div className="p-6 bg-white rounded-3xl border border-slate-200 shadow-sm">
-                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">App ID (Project ID)</div>
-                    <div className="text-sm font-mono text-indigo-600 break-all select-all p-3 bg-indigo-50 rounded-xl border border-indigo-100/50 font-bold">{viewingApp.app_id}</div>
-                  </div>
-                  <div className="p-6 bg-emerald-50 rounded-3xl border border-emerald-100 flex items-center justify-between group">
-                    <div>
-                      <div className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-1">API Authentication</div>
-                      <div className="text-sm font-black text-emerald-800">Cấu hình bảo mật cao</div>
-                    </div>
-                    <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600">
-                      <Check size={20} />
-                    </div>
-                  </div>
-                </div>
-                <button 
-                  onClick={() => setViewingApp(null)} 
-                  className="w-full py-4.5 btn-secondary text-slate-900 border-2 border-slate-900"
-                >
-                  Đóng cửa sổ
-                </button>
-              </div>
-            </motion.div>
+              <button 
+                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))} 
+                disabled={currentPage === totalPages}
+                className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-ocean-600 disabled:opacity-30 disabled:pointer-events-none transition-all shadow-sm"
+              >
+                <ChevronRight size={16} />
+              </button>
+              <button 
+                onClick={() => setCurrentPage(totalPages)} 
+                disabled={currentPage === totalPages}
+                className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-ocean-600 disabled:opacity-30 disabled:pointer-events-none transition-all shadow-sm"
+              >
+                <ChevronsRight size={16} />
+              </button>
+            </div>
           </div>
         )}
-      </AnimatePresence>
+      </div>
 
-      {/* File Manager Modal */}
+      {/* Modals */}
+      {viewingApp && (
+         <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+            <motion.div 
+               initial={{ opacity: 0, scale: 0.95 }}
+               animate={{ opacity: 1, scale: 1 }}
+               className="bg-white rounded-[2.5rem] w-full max-w-lg overflow-hidden shadow-2xl border border-white"
+            >
+               <div className="bg-ocean-950 p-8 text-white relative">
+                  <Zap size={100} className="absolute -right-5 -top-5 text-white/5 rotate-12" />
+                  <div className="flex justify-between items-start relative z-10">
+                    <div>
+                      <h3 className="text-2xl font-black tracking-tight">{viewingApp.ten_ung_dung || viewingApp.ten_app}</h3>
+                      <div className="flex items-center gap-2 mt-2">
+                        <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+                        <span className="text-[10px] font-black text-ocean-400 uppercase tracking-widest">Protocol: JSON REST API</span>
+                      </div>
+                    </div>
+                    <button onClick={() => setViewingApp(null)} className="p-2 hover:bg-white/10 rounded-full transition-colors"><X size={24} /></button>
+                  </div>
+               </div>
+               <div className="p-8 space-y-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Dữ liệu nguồn</p>
+                      <p className="text-sm font-bold text-slate-800">{viewingApp.bang_chinh}</p>
+                    </div>
+                    <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Trạng thái Hub</p>
+                      <p className="text-sm font-bold text-emerald-600">Connected</p>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                     <div>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Application ID</p>
+                        <div className="bg-ocean-50 text-ocean-700 font-mono text-xs px-4 py-3 rounded-xl border border-ocean-100 break-all">
+                           {viewingApp.app_id}
+                        </div>
+                     </div>
+                     <div>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Google Drive Storage</p>
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between text-xs p-3 bg-white border border-slate-200 rounded-xl">
+                            <span className="text-slate-500">Mẫu:</span>
+                            <span className="font-mono text-[11px] text-slate-800">{viewingApp.folder_mau_id}</span>
+                          </div>
+                          <div className="flex items-center justify-between text-xs p-3 bg-white border border-slate-200 rounded-xl">
+                            <span className="text-slate-500">Xuất:</span>
+                            <span className="font-mono text-[11px] text-slate-800">{viewingApp.folder_xuat_id}</span>
+                          </div>
+                        </div>
+                     </div>
+                  </div>
+                  <button onClick={() => setViewingApp(null)} className="btn-primary-modern w-full !py-4 !rounded-2xl">Đóng thông tin</button>
+               </div>
+            </motion.div>
+         </div>
+      )}
+
       {managingFilesForApp && (
         <FileManagerModal 
           app={managingFilesForApp} 
           onClose={() => setManagingFilesForApp(null)} 
         />
       )}
-
-      <div className="table-container animate-fade-in-scale">
-        <div className="overflow-x-auto no-scrollbar">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="bg-slate-50 text-slate-400 border-b border-slate-100">
-                <th className="px-8 py-5 text-left cursor-pointer group" onClick={() => handleSort('ten_ung_dung')}>
-                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] group-hover:text-indigo-600 transition-colors">Tên ứng dụng</span>
-                    {sortConfig.key === 'ten_ung_dung' && (sortConfig.direction === 'asc' ? <ChevronUp size={12} className="text-indigo-600" /> : <ChevronDown size={12} className="text-indigo-600" />)}
-                  </div>
-                </th>
-                <th className="px-8 py-5 text-left hidden lg:table-cell">
-                   <span className="text-[10px] font-black uppercase tracking-[0.2em]">Application ID</span>
-                </th>
-                <th className="px-8 py-5 text-left">
-                   <span className="text-[10px] font-black uppercase tracking-[0.2em]">Trạng thái</span>
-                </th>
-                <th className="px-8 py-5 text-right">
-                   <span className="text-[10px] font-black uppercase tracking-[0.2em]">Thao tác</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-50">
-              {paginatedApps.length > 0 ? paginatedApps.map((app: any, i) => (
-                <tr key={i} className="hover:bg-indigo-50/20 transition-all group">
-                  <td className="px-8 py-6">
-                    <div className="font-black text-slate-800 text-lg group-hover:text-indigo-700 transition-colors">{app.ten_ung_dung || app.ten_app}</div>
-                    <div className="flex items-center gap-2 mt-1">
-                       <span className="px-2 py-0.5 bg-slate-100 text-slate-500 rounded text-[9px] font-black uppercase tracking-wider">{app.bang_chinh || 'Main'}</span>
-                       <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{app.trang_thai || 'Cloud Edition'}</span>
-                    </div>
-                  </td>
-                  <td className="px-8 py-6 hidden lg:table-cell">
-                    <code className="text-[11px] font-mono px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-xl border border-emerald-100/50 block w-fit shadow-xs">
-                      {app.app_id ? `${app.app_id.substring(0, 8)}...${app.app_id.substring(app.app_id.length - 8)}` : '—'}
-                    </code>
-                  </td>
-                  <td className="px-8 py-6">
-                    {!(app.khoa_api || app.api_key) ? (
-                      <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[10px] font-black bg-rose-50 text-rose-600 uppercase tracking-widest border border-rose-100">
-                        <div className="w-1.5 h-1.5 bg-rose-500 rounded-full" /> Thiếu API Key
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[10px] font-black bg-emerald-50 text-emerald-600 uppercase tracking-widest border border-emerald-100 shadow-sm">
-                        <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" /> Đang hoạt động
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-8 py-6 text-right">
-                    <div className="flex justify-end gap-3 opacity-80 group-hover:opacity-100 transition-opacity">
-                       <button onClick={() => setManagingFilesForApp(app)} className="w-10 h-10 bg-white border border-slate-200 text-slate-400 hover:text-amber-600 hover:border-amber-100 hover:bg-amber-50 rounded-xl transition-all shadow-sm flex items-center justify-center" title="Quản lý file xuất"><History size={18} /></button>
-                       <button onClick={() => startEdit(app)} className="w-10 h-10 bg-white border border-slate-200 text-slate-400 hover:text-indigo-600 hover:border-indigo-100 hover:bg-indigo-50 rounded-xl transition-all shadow-sm flex items-center justify-center" title="Chỉnh sửa"><Edit size={18} /></button>
-                       <button onClick={() => setViewingApp(app)} className="w-10 h-10 bg-white border border-slate-200 text-slate-400 hover:text-indigo-600 hover:border-indigo-100 hover:bg-indigo-50 rounded-xl transition-all shadow-sm flex items-center justify-center" title="Xem chi tiết"><Eye size={18} /></button>
-                       <button onClick={() => handleDelete(app.ma_id, app.ten_ung_dung || app.ten_app)} className="w-10 h-10 bg-white border border-slate-200 text-slate-400 hover:text-rose-600 hover:border-rose-100 hover:bg-rose-50 rounded-xl transition-all shadow-sm flex items-center justify-center" title="Xóa bỏ"><Trash2 size={18} /></button>
-                    </div>
-                  </td>
-                </tr>
-              )) : (
-                <tr><td colSpan={4} className="text-center py-32">
-                  <div className="flex flex-col items-center gap-4 grayscale opacity-20">
-                     <Grid size={80} />
-                     <p className="text-sm font-black uppercase tracking-[0.3em]">Hệ thống chưa có ứng dụng</p>
-                  </div>
-                </td></tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Improved Pagination */}
-        {totalPages > 1 && (
-          <div className="px-8 py-6 bg-slate-50/50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-3">
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-white px-3 py-1.5 rounded-lg border border-slate-200">Hiển thị {paginatedApps.length} / {filteredApps.length} mục</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <button 
-                onClick={() => setCurrentPage(1)} 
-                disabled={currentPage === 1}
-                className="w-10 h-10 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-indigo-600 disabled:opacity-40 transition-all flex items-center justify-center shadow-sm"
-              >
-                <ChevronsLeft size={18} />
-              </button>
-              <button 
-                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))} 
-                disabled={currentPage === 1}
-                className="w-10 h-10 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-indigo-600 disabled:opacity-40 transition-all flex items-center justify-center shadow-sm"
-              >
-                <ChevronLeft size={18} />
-              </button>
-              
-              <div className="flex items-center px-4 h-10 bg-indigo-600 rounded-xl text-white shadow-lg shadow-indigo-600/20">
-                <span className="text-xs font-black tracking-widest">{currentPage} / {totalPages}</span>
-              </div>
-
-              <button 
-                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))} 
-                disabled={currentPage === totalPages}
-                className="w-10 h-10 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-indigo-600 disabled:opacity-40 transition-all flex items-center justify-center shadow-sm"
-              >
-                <ChevronRight size={18} />
-              </button>
-              <button 
-                onClick={() => setCurrentPage(totalPages)} 
-                disabled={currentPage === totalPages}
-                className="w-10 h-10 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-indigo-600 disabled:opacity-40 transition-all flex items-center justify-center shadow-sm"
-              >
-                <ChevronsRight size={18} />
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
     </div>
   );
 };
@@ -730,7 +752,6 @@ const AppManagement = () => {
 const TemplateManagement = () => {
   const [templates, setTemplates] = React.useState([]);
   const [apps, setApps] = React.useState([]);
-  // ... rest of state
   const [loading, setLoading] = React.useState(true);
   const [showForm, setShowForm] = React.useState(false);
   const [editingTemplate, setEditingTemplate] = React.useState<any>(null);
@@ -761,12 +782,12 @@ const TemplateManagement = () => {
       .toString()
       .replace(/đ/g, 'd')
       .replace(/Đ/g, 'D')
-      .normalize('NFD') // Tách dấu
-      .replace(/[\u0300-\u036f]/g, '') // Xóa dấu
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
       .toLowerCase()
       .trim()
-      .replace(/[^\w\s-]/g, '') // Xóa ký tự đặc biệt
-      .replace(/[\s_-]+/g, '_') // Thay khoảng trắng bằng _
+      .replace(/[^\w\s-]/g, '')
+      .replace(/[\s_-]+/g, '_')
       .replace(/^-+|-+$/g, '')
       .toUpperCase();
   };
@@ -837,7 +858,6 @@ const TemplateManagement = () => {
     const baseUrl = window.location.origin;
     const maMau = tpl.ma_id || tpl.ten_mau;
     const keyCol = tpl.key_col || 'ma_id';
-
     return `CONCATENATE("${baseUrl}/report?template=${maMau}&id=", ENCODEURL([${keyCol}]))`;
   };
 
@@ -912,17 +932,9 @@ const TemplateManagement = () => {
           setShowForm(false);
           setEditingTemplate(null);
           setNewTemplate({ 
-            ten_mau: '', 
-            ma_mau: '', 
-            file_id_drive: '', 
-            loai_file: 'DOCX', 
-            thu_muc_luu: '',
-            ma_ung_dung: '',
-            bang_chinh: '',
-            key_col: '',
-            child_table: '',
-            foreign_key: '',
-            child_name: 'items'
+            ten_mau: '', ma_mau: '', file_id_drive: '', loai_file: 'DOCX', 
+            thu_muc_luu: '', ma_ung_dung: '', bang_chinh: '', key_col: '', 
+            child_table: '', foreign_key: '', child_name: 'items'
           });
           fetchData();
         }
@@ -942,17 +954,9 @@ const TemplateManagement = () => {
         if (res.ok) {
           setShowForm(false);
           setNewTemplate({ 
-            ten_mau: '', 
-            ma_mau: '', 
-            file_id_drive: '', 
-            loai_file: 'DOCX', 
-            thu_muc_luu: '',
-            ma_ung_dung: '',
-            bang_chinh: '',
-            key_col: '',
-            child_table: '',
-            foreign_key: '',
-            child_name: 'items'
+            ten_mau: '', ma_mau: '', file_id_drive: '', loai_file: 'DOCX', 
+            thu_muc_luu: '', ma_ung_dung: '', bang_chinh: '', key_col: '', 
+            child_table: '', foreign_key: '', child_name: 'items'
           });
           fetchData();
         }
@@ -980,449 +984,241 @@ const TemplateManagement = () => {
     setShowForm(true);
   };
 
-  if (loading) return <div className="p-10 text-center text-slate-400 animate-pulse font-bold">ĐANG TẢI DỮ LIỆU...</div>;
+  if (loading) return (
+    <div className="flex flex-col items-center justify-center py-24 text-slate-400 gap-4">
+      <div className="w-16 h-16 border-4 border-ocean-600/20 border-t-ocean-600 rounded-full animate-spin"></div>
+      <p className="text-xs font-black uppercase tracking-[0.2em] animate-pulse">Đang nạp danh sách mẫu biểu...</p>
+    </div>
+  );
 
   return (
-    <div className="container-fluid py-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
+    <div className="space-y-10 max-w-7xl mx-auto pb-20">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h2 className="text-lg font-bold text-slate-800 uppercase tracking-tight mb-0">Quản lý Mẫu biểu</h2>
-          <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1">Hỗ trợ in Master-Detail (Bảng cha - Bảng con) chuyên sâu</p>
-        </div>
-        <div className="flex gap-3">
-          <button 
-            onClick={() => window.open('/HUONG_DAN_TEMPLATES.md', '_blank')}
-            className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 text-slate-700 rounded-lg text-xs font-bold hover:bg-slate-200 transition-colors"
-          >
-            <HelpCircle size={14} /> Hướng dẫn
-          </button>
-          <div className="relative hidden md:block">
-            <input 
-              type="text" 
-              placeholder="Tìm mẫu biểu..." 
-              className="pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 transition-all w-48"
-              value={searchTerm}
-              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-            />
-            <Search size={14} className="absolute left-3 top-2.5 text-slate-400" />
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-1.5 h-6 bg-ocean-600 rounded-full" />
+            <span className="text-[10px] font-black text-ocean-600 uppercase tracking-widest">Generator Engine</span>
           </div>
-          <button onClick={() => {
-            if (showForm) {
-              setShowForm(false);
-              setEditingTemplate(null);
-              setNewTemplate({ 
-                ten_mau: '', 
-                ma_mau: '', 
-                file_id_drive: '', 
-                loai_file: 'DOCX', 
-                thu_muc_luu: '',
-                ma_ung_dung: '',
-                bang_chinh: '',
-                key_col: '',
-                child_table: '',
-                foreign_key: '',
-                child_name: 'items'
-              });
-            } else {
-              setShowForm(true);
-            }
-          }} className="btn-primary">
-            {showForm ? <X size={20} /> : <Plus size={20} />} {showForm ? 'HỦY BỎ' : 'THÊM MẪU MỚI'}
-          </button>
+          <h2 className="text-3xl font-black text-slate-900 tracking-tight">Quản lý Mẫu biểu</h2>
+          <p className="text-slate-500 font-medium text-sm">Thiết lập tham số trộn dữ liệu và quan hệ Master-Detail cho báo cáo.</p>
         </div>
+        
+        <button 
+          onClick={() => { setShowForm(true); setEditingTemplate(null); resetForm(); }}
+          className="btn-primary-modern flex items-center gap-3 px-8 py-4"
+        >
+          <div className="w-6 h-6 bg-white/20 rounded-lg flex items-center justify-center"><Plus size={16} /></div>
+          <span>THIẾT LẬP MẪU MỚI</span>
+        </button>
       </div>
 
-      {/* Workflow Guide */}
-      {!showForm && templates.length === 0 && (
-        <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-8 mb-6">
-          <div className="flex gap-4">
-            <div className="p-3 bg-indigo-600 text-white rounded-full h-fit shadow-lg">
-              <Zap size={24} />
-            </div>
-            <div>
-              <h3 className="text-lg font-black text-indigo-900 uppercase tracking-tight mb-2">Quy trình triển khai 3 bước</h3>
-              <div className="grid md:grid-cols-3 gap-6 mt-4">
-                <div className="space-y-2">
-                  <div className="text-xs font-black text-indigo-600 uppercase tracking-widest">BƯỚC 1</div>
-                  <p className="text-sm text-indigo-800 font-bold">Khai báo Ứng dụng AppSheet</p>
-                  <p className="text-xs text-indigo-600/70">Tại menu "Ứng dụng", nhập App ID và API Key để hệ thống có quyền truy xuất dữ liệu từ AppSheet.</p>
+      <AnimatePresence>
+        {showForm && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.98, y: -10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.98, y: -10 }}
+            className="card-modern overflow-hidden border-ocean-100 shadow-2xl mb-10"
+          >
+            <div className="bg-ocean-950 p-6 text-white flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center backdrop-blur-md">
+                   <Settings2 size={24} className="text-ocean-400" />
                 </div>
-                <div className="space-y-2">
-                  <div className="text-xs font-black text-indigo-600 uppercase tracking-widest">BƯỚC 2</div>
-                  <p className="text-sm text-indigo-800 font-bold">Cấu hình Mẫu biểu & Schema</p>
-                  <p className="text-xs text-indigo-600/70">Chọn Ứng dụng → Nhập tên bảng → Hệ thống tự động liệt kê danh sách cột để bạn chọn Cột Khóa chính xác.</p>
-                </div>
-                <div className="space-y-2">
-                  <div className="text-xs font-black text-indigo-600 uppercase tracking-widest">BƯỚC 3</div>
-                  <p className="text-sm text-indigo-800 font-bold">Tạo Action trong AppSheet</p>
-                  <p className="text-xs text-indigo-600/70">Sao chép Link Formula do hệ thống sinh ra và dán vào Action "Go to a website" trong AppSheet Editor.</p>
+                <div>
+                   <h3 className="font-black text-lg tracking-tight">{editingTemplate ? 'Chỉnh sửa Cấu hình' : 'Thiết lập Mẫu biểu mới'}</h3>
+                   <p className="text-ocean-400 text-[10px] font-bold uppercase tracking-widest mt-0.5">Configuration Engine v2.0</p>
                 </div>
               </div>
+              <button type="button" onClick={() => setShowForm(false)} className="p-2 hover:bg-white/10 rounded-full transition-colors"><X size={20} /></button>
             </div>
-          </div>
-        </div>
-      )}
 
-      {showForm && (
-        <div className="card-geometric mb-6 border-indigo-200 bg-indigo-50/20 animate-in fade-in slide-in-from-top-4">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Cấu hình cơ bản */}
-              <div className="space-y-4">
-                <h4 className="text-[11px] font-black text-indigo-600 uppercase border-b border-indigo-100 pb-2 flex items-center gap-2">
-                  <FileText size={14} /> Thông tin mẫu cơ bản
-                </h4>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-500 uppercase">Liên kết Ứng dụng AppSheet</label>
-                  <select 
-                    required 
-                    value={newTemplate.ma_ung_dung} 
-                    onChange={e => {
-                      const appId = e.target.value;
-                      const targetApp: any = apps.find((a: any) => a.ma_id === appId);
-                      setNewTemplate({
-                        ...newTemplate, 
-                        ma_ung_dung: appId,
-                        bang_chinh: targetApp?.bang_chinh || newTemplate.bang_chinh,
-                        key_col: targetApp?.key_col || newTemplate.key_col
-                      });
-                      if (targetApp?.bang_chinh) {
-                        fetchAppSheetCols(targetApp.bang_chinh);
-                      }
-                    }} 
-                    className="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500"
-                  >
-                    <option value="">-- Chọn ứng dụng --</option>
-                    {apps.map((app: any) => (
-                      <option key={app.ma_id} value={app.ma_id}>{app.ten_ung_dung || app.ten_app}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-slate-500 uppercase">Tên hiển thị</label>
-                    <input required value={newTemplate.ten_mau} onChange={handleTenMauChange} className="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500" placeholder="VD: Hóa đơn bán hàng" />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-slate-500 uppercase">Mã mẫu (Action URL)</label>
-                    <input required value={newTemplate.ma_mau} onChange={e => setNewTemplate({...newTemplate, ma_mau: e.target.value.toUpperCase().replace(/\s/g, '')})} className="w-full border border-slate-200 rounded px-3 py-2 text-sm font-bold text-indigo-600 focus:ring-2 focus:ring-indigo-500" placeholder="HOA_DON" />
-                  </div>
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-500 uppercase">Google Drive File ID</label>
-                  <input required value={newTemplate.file_id_drive} onChange={e => setNewTemplate({...newTemplate, file_id_drive: e.target.value})} className="w-full border border-slate-200 rounded px-3 py-2 text-sm font-mono focus:ring-2 focus:ring-indigo-500" placeholder="ID file Word/Excel" />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1">
-                      Bảng chính AppSheet <Info size={10} className="text-slate-400" />
-                    </label>
-                    <input 
-                      required 
-                      value={newTemplate.bang_chinh} 
-                      onChange={e => setNewTemplate({...newTemplate, bang_chinh: e.target.value})} 
-                      onBlur={() => fetchAppSheetCols(newTemplate.bang_chinh)}
-                      className="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500" 
-                      placeholder="VD: DonHang" 
-                    />
-                    <p className="text-[9px] text-slate-400 italic">Bảng chứa record cần in</p>
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1">
-                      Cột Khóa của bảng chính <Info size={10} className="text-slate-400" />
-                    </label>
-                    {mainCols.length > 0 ? (
-                      <select 
-                        required 
-                        value={newTemplate.key_col} 
-                        onChange={e => setNewTemplate({...newTemplate, key_col: e.target.value})} 
-                        className="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500"
-                      >
-                        <option value="">-- Chọn cột khóa --</option>
-                        {mainCols.map(c => <option key={c} value={c}>{c}</option>)}
-                      </select>
-                    ) : (
-                      <input 
-                        required 
-                        value={newTemplate.key_col} 
-                        onChange={e => setNewTemplate({...newTemplate, key_col: e.target.value})} 
-                        className="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 font-mono" 
-                        placeholder="ma_id" 
-                      />
-                    )}
-                    <p className="text-[9px] text-slate-400 italic">ID để định danh record</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Cấu hình nâng cao (Master Detail) */}
-              <div className="space-y-4">
-                <h4 className="text-[11px] font-black text-amber-600 uppercase border-b border-amber-100 pb-2 flex items-center gap-2">
-                  <Zap size={14} /> Cấu hình Master-Detail (In Danh sách dòng con)
-                </h4>
-                <div className="p-4 bg-amber-50/50 rounded-2xl border border-amber-100/50 space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-amber-700 uppercase flex items-center gap-1">
-                        Tên Bảng Con <Info size={10} title="Tên bảng chứa dữ liệu chi tiết trong AppSheet" />
-                      </label>
-                      <input 
-                        value={newTemplate.child_table} 
-                        onChange={e => setNewTemplate({...newTemplate, child_table: e.target.value})} 
-                        onBlur={() => fetchAppSheetCols(newTemplate.child_table, true)}
-                        className="w-full border border-amber-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 bg-white" 
-                        placeholder="VD: ChiTietDaoTao" 
-                      />
+            <form onSubmit={handleSubmit} className="p-8 lg:p-12 bg-white space-y-12">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+                <div className="lg:col-span-4 space-y-8">
+                  <div className="space-y-4">
+                    <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                       <Database size={14} /> Thông tin cơ bản
+                    </h4>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Tên mẫu báo cáo</label>
+                      <input required value={newTemplate.ten_mau} onChange={handleTenMauChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold focus:bg-white focus:ring-4 focus:ring-ocean-500/10 outline-none transition-all" placeholder="VD: Hợp đồng mua bán" />
                     </div>
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-amber-700 uppercase flex items-center gap-1">
-                        Tên biến (Word/Excel) <Info size={10} title="Dùng trong template: {#items}...{/items} hoặc {items.Ten}" />
-                      </label>
-                      <input value={newTemplate.child_name} onChange={e => setNewTemplate({...newTemplate, child_name: e.target.value})} className="w-full border border-amber-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 bg-white font-mono" placeholder="items" />
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Mã định danh (Slug)</label>
+                      <input readOnly value={newTemplate.ma_mau} className="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-mono text-ocean-600 outline-none cursor-not-allowed uppercase" />
                     </div>
-                  </div>
-                  
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-amber-700 uppercase">Cột tham chiếu (Foreign Key)</label>
-                    {childCols.length > 0 ? (
-                      <select 
-                        value={newTemplate.foreign_key} 
-                        onChange={e => setNewTemplate({...newTemplate, foreign_key: e.target.value})} 
-                        className="w-full border border-amber-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 bg-white"
-                      >
-                        <option value="">-- Chọn cột tham chiếu --</option>
-                        {childCols.map(c => <option key={c} value={c}>{c}</option>)}
-                      </select>
-                    ) : (
-                      <input 
-                        value={newTemplate.foreign_key} 
-                        onChange={e => setNewTemplate({...newTemplate, foreign_key: e.target.value})} 
-                        className="w-full border border-amber-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 bg-white" 
-                        placeholder="VD: MaKhoaHoc" 
-                      />
-                    )}
-                  </div>
-                  
-                  <div className="p-3 bg-white/60 rounded-xl border border-amber-100 text-[10px] text-amber-800 space-y-1">
-                    <p className="font-bold">💡 Cách thiết lập Template:</p>
-                    <ul className="list-disc pl-4 space-y-0.5">
-                      <li><b>Word:</b> Bao quanh hàng/khối bằng <code className="bg-amber-100 px-1 rounded">{`{#${newTemplate.child_name || 'items'}}`}</code> và <code className="bg-amber-100 px-1 rounded">{`{/${newTemplate.child_name || 'items'}}`}</code></li>
-                      <li><b>Excel:</b> Chỉ cần nhập token <code className="bg-amber-100 px-1 rounded">{`{${newTemplate.child_name || 'items'}.TenCot}`}</code> vào một hàng, hàng đó sẽ tự động lặp lại.</li>
-                    </ul>
-                    <div className="mt-3 flex gap-2">
-                       <button 
-                        type="button"
-                        onClick={() => generateSampleWord({
-                          ten_mau: newTemplate.ten_mau,
-                          child_name: newTemplate.child_name,
-                          main_cols: mainCols,
-                          child_cols: childCols
-                        })}
-                        className="px-3 py-1.5 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition-colors flex items-center gap-1 shadow-sm"
-                      >
-                         <FileText size={12} /> Tải Word mẫu
-                      </button>
-                       <button 
-                        type="button"
-                        onClick={() => generateSampleExcel({
-                          ten_mau: newTemplate.ten_mau,
-                          child_name: newTemplate.child_name,
-                          main_cols: mainCols,
-                          child_cols: childCols
-                        })}
-                        className="px-3 py-1.5 bg-emerald-600 text-white rounded-lg font-bold hover:bg-emerald-700 transition-colors flex items-center gap-1 shadow-sm"
-                      >
-                        <Grid size={12} /> Tải Excel mẫu
-                      </button>
+                    <div className="grid grid-cols-2 gap-4">
+                       <div className="space-y-2">
+                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Loại file</label>
+                          <select value={newTemplate.loai_file} onChange={e => setNewTemplate({...newTemplate, loai_file: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold focus:bg-white focus:ring-4 focus:ring-ocean-500/10 transition-all">
+                            <option value="DOCX">Word</option>
+                            <option value="XLSX">Excel</option>
+                          </select>
+                       </div>
+                       <div className="space-y-2">
+                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Hub AppSheet</label>
+                          <select required value={newTemplate.ma_ung_dung} onChange={e => {
+                            const val = e.target.value;
+                            setNewTemplate({...newTemplate, ma_ung_dung: val});
+                            const app: any = apps.find((a: any) => a.ma_id === val);
+                            if (app) setNewTemplate(prev => ({...prev, bang_chinh: app.bang_chinh}));
+                          }} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold focus:bg-white focus:ring-4 focus:ring-ocean-500/10 transition-all">
+                            <option value="">-- Chọn App --</option>
+                            {apps.map((app: any) => <option key={app.ma_id} value={app.ma_id}>{app.ten_ung_dung || app.ten_app}</option>)}
+                          </select>
+                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
 
-            {/* Live Preview Section */}
-            <div className="bg-slate-900 rounded-xl p-5 border border-slate-700 shadow-inner">
-               <div className="flex justify-between items-center mb-3">
-                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                   <Zap size={14} className="text-amber-400" /> LIVE PREVIEW: AppSheet Action Formula
-                 </label>
-                 <button 
-                   type="button"
-                   onClick={() => copyToClipboard(previewActionLink(), 'Đã sao chép công thức preview!')}
-                   className="text-[10px] font-bold text-indigo-400 hover:text-indigo-300 uppercase tracking-widest flex items-center gap-1 transition-colors"
-                 >
-                   <Copy size={12} /> Sao chép nhanh
-                 </button>
-               </div>
-               <div className="bg-slate-800/50 p-3 rounded border border-slate-700">
-                 <pre className="text-[10px] font-mono text-slate-300 whitespace-pre-wrap break-all leading-relaxed">
-                   {previewActionLink()}
-                 </pre>
-               </div>
-               <p className="text-[9px] text-slate-500 mt-2 italic">* Công thức này tự động cập nhật khi bạn thay đổi các trường phía trên.</p>
-            </div>
-
-            <button type="submit" className="w-full bg-slate-900 text-white font-bold py-3 rounded-lg uppercase text-xs tracking-widest hover:bg-slate-800 transition-all shadow-xl flex items-center justify-center gap-2">
-              <Printer size={16} /> {editingTemplate ? 'CẬP NHẬT CẤU HÌNH MẪU BIỂU' : 'LƯU CẤU HÌNH VÀ TẠO MẪU'}
-            </button>
-          </form>
-        </div>
-      )}
-
-      {/* Chi tiết mẫu biểu */}
-      {viewingTpl && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden animate-in slide-in-from-bottom-8">
-            <div className="bg-indigo-600 p-6 text-white flex justify-between items-center">
-              <div>
-                <h3 className="text-xl font-black uppercase tracking-tight">{viewingTpl.ten_mau}</h3>
-                <p className="text-[10px] text-indigo-100 uppercase tracking-widest font-bold mt-1">Cấu hình Action AppSheet chi tiết</p>
-              </div>
-              <button onClick={() => setViewingTpl(null)} className="p-2 hover:bg-white/10 rounded-full transition-colors font-bold text-xl">×</button>
-            </div>
-            
-            <div className="p-8 space-y-6">
-              <div className="space-y-3">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                  <Zap size={14} className="text-indigo-600" /> Công thức Action dành cho AppSheet
-                </label>
-                <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 relative group">
-                  <pre className="text-[11px] font-mono whitespace-pre-wrap break-all text-slate-700 leading-relaxed italic">
-                    {generateActionLink(viewingTpl)}
-                  </pre>
-                  <button 
-                    onClick={() => copyToClipboard(generateActionLink(viewingTpl), 'Đã sao chép công thức!')}
-                    className="absolute top-2 right-2 p-2 bg-indigo-600 text-white rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-all hover:bg-indigo-700"
-                    title="Sao chép"
-                  >
-                    <Copy size={16} />
-                  </button>
-                </div>
-                <p className="text-[10px] text-slate-400 italic font-medium">Lưu ý: Mở "Behavior" &gt; "Action" &gt; "Go to a website" và dán công thức trên vào ô URL.</p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-6 pt-4 border-t border-slate-100">
-                <div className="space-y-1">
-                   <div className="text-[9px] font-bold text-slate-400 uppercase">File Gốc (Drive)</div>
-                   <div className="flex items-center gap-2">
-                     <span className="text-xs font-mono truncate max-w-[150px] text-indigo-600">{viewingTpl.file_id_drive}</span>
-                     <a href={`https://drive.google.com/file/d/${viewingTpl.file_id_drive}/view`} target="_blank" className="p-1 hover:bg-slate-100 rounded text-slate-400"><ExternalLink size={14} /></a>
+                <div className="lg:col-span-8 space-y-10">
+                   <div className="p-8 bg-slate-50 rounded-[2rem] border border-slate-200/60 relative overflow-hidden">
+                      <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-2">
+                         <Layers size={14} /> Cấu trúc bảng & Quan hệ
+                      </h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="space-y-4">
+                           <span className="text-[10px] font-black text-ocean-600 uppercase tracking-widest block mb-2 px-1">Master Table</span>
+                           <div className="space-y-4">
+                              <input required value={newTemplate.bang_chinh} onChange={e => setNewTemplate({...newTemplate, bang_chinh: e.target.value})} onBlur={() => fetchAppSheetCols(newTemplate.bang_chinh)} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm" placeholder="Tên bảng chính..." />
+                              <div className="flex gap-2">
+                                <select value={newTemplate.key_col} onChange={e => setNewTemplate({...newTemplate, key_col: e.target.value})} className="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm">
+                                  <option value="">-- Cột Khóa --</option>
+                                  {mainCols.map(c => <option key={c} value={c}>{c}</option>)}
+                                </select>
+                                <button type="button" onClick={() => fetchAppSheetCols(newTemplate.bang_chinh)} className="p-3 bg-white border border-slate-200 rounded-xl hover:bg-slate-50">
+                                   <RefreshCw size={16} className={isFetchingCols ? "animate-spin" : ""} />
+                                </button>
+                              </div>
+                           </div>
+                        </div>
+                        <div className="space-y-4">
+                           <span className="text-[10px] font-black text-amber-600 uppercase tracking-widest block mb-2 px-1">Detail Table</span>
+                           <div className="space-y-4">
+                              <div className="grid grid-cols-2 gap-3">
+                                <input value={newTemplate.child_table} onChange={e => setNewTemplate({...newTemplate, child_table: e.target.value})} onBlur={() => fetchAppSheetCols(newTemplate.child_table, true)} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm" placeholder="Bảng con..." />
+                                <select value={newTemplate.foreign_key} onChange={e => setNewTemplate({...newTemplate, foreign_key: e.target.value})} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm">
+                                  <option value="">-- Khóa ngoại --</option>
+                                  {childCols.map(c => <option key={c} value={c}>{c}</option>)}
+                                </select>
+                              </div>
+                              <input value={newTemplate.child_name} onChange={e => setNewTemplate({...newTemplate, child_name: e.target.value})} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-mono" placeholder="Biến danh sách (VD: items)" />
+                           </div>
+                        </div>
+                      </div>
+                   </div>
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                     <div className="space-y-2">
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Google Drive File ID (Template)</label>
+                        <input required value={newTemplate.file_id_drive} onChange={e => setNewTemplate({...newTemplate, file_id_drive: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-mono" placeholder="ID file mẫu..." />
+                     </div>
+                     <div className="space-y-2">
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Folder ID (Save to...)</label>
+                        <input value={newTemplate.thu_muc_luu} onChange={e => setNewTemplate({...newTemplate, thu_muc_luu: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-mono" placeholder="Folder ID output..." />
+                     </div>
                    </div>
                 </div>
-                <div className="space-y-1">
-                   <div className="text-[9px] font-bold text-slate-400 uppercase">Mã Mẫu</div>
-                   <div className="text-sm font-black text-slate-800">{viewingTpl.ma_mau}</div>
-                </div>
               </div>
 
-              <div className="flex justify-end pt-4">
-                <button onClick={() => setViewingTpl(null)} className="px-6 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-bold uppercase transition-all">ĐÓNG LẠI</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div className="bg-white rounded-3xl border border-slate-200/60 shadow-xl shadow-slate-200/30 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="bg-slate-50/80 border-b border-slate-100">
-                <th 
-                  className="px-6 py-4 text-left cursor-pointer group"
-                  onClick={() => handleSort('ten_mau')}
-                >
-                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-indigo-600 transition-colors">Mẫu biểu</span>
-                    {sortConfig.key === 'ten_mau' ? (sortConfig.direction === 'asc' ? <ChevronUp size={12} className="text-indigo-600" /> : <ChevronDown size={12} className="text-indigo-600" />) : <ArrowUpDown size={10} className="text-slate-300" />}
-                  </div>
-                </th>
-                <th className="px-6 py-4 text-left">
-                   <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Cấu hình In</span>
-                </th>
-                <th className="px-6 py-4 text-left">
-                   <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Thao tác nhanh</span>
-                </th>
-                <th className="px-6 py-4 text-right">
-                   <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Action</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-50">
-              {paginatedTemplates.length > 0 ? paginatedTemplates.map((tpl: any, i) => (
-                <tr key={i} className="hover:bg-indigo-50/20 transition-colors">
-                  <td className="px-6 py-5">
-                    <div className="font-bold text-slate-800 flex items-center gap-2">
-                      {tpl.loai_file === 'XLSX' ? <Grid size={16} className="text-emerald-600" /> : <FileText size={16} className="text-indigo-600" />}
-                      {tpl.ten_mau}
-                    </div>
-                    <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">ID: {tpl.file_id_drive?.slice(0, 15)}...</div>
-                  </td>
-                  <td className="px-6 py-5">
-                    <div className="flex flex-wrap gap-2">
-                      <span className="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[9px] font-black uppercase tracking-wider border border-indigo-100 shadow-sm">Mã: {tpl.ma_mau}</span>
-                      {tpl.child_table && <span className="px-3 py-1 bg-amber-50 text-amber-600 rounded-full text-[9px] font-black uppercase tracking-wider border border-amber-100 shadow-sm">Master Detail</span>}
-                    </div>
-                  </td>
-                  <td className="px-6 py-5">
-                    <div className="flex gap-2">
-                       <button onClick={() => startEdit(tpl)} className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-xl transition-all shadow-hover" title="Sửa"><Edit size={18} /></button>
-                       <button onClick={() => setViewingTpl(tpl)} className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-xl transition-all shadow-hover" title="Chi tiết công thức"><Eye size={18} /></button>
-                       <button onClick={() => copyToClipboard(generateActionLink(tpl), `Đã sao chép công thức AppSheet!`)} className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-xl transition-all shadow-hover" title="Sao chép nhanh"><Copy size={18} /></button>
-                    </div>
-                  </td>
-                  <td className="px-6 py-5 text-right">
-                    <button onClick={() => handleDelete(tpl.ma_id, tpl.ten_mau)} className="p-2 text-slate-300 hover:text-rose-600 transition-colors" title="Xóa mẫu biểu">
-                      <Trash2 size={20} />
+              <div className="p-8 bg-ocean-950 rounded-[2.5rem] text-white">
+                 <div className="flex justify-between items-center mb-4">
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-ocean-400">Live Action Preview</span>
+                    <button type="button" onClick={() => copyToClipboard(previewActionLink(), 'Đã sao chép!')} className="text-[10px] font-black text-ocean-400 uppercase tracking-widest hover:text-white flex items-center gap-2">
+                       <Copy size={12} /> Sao chép công thức
                     </button>
-                  </td>
-                </tr>
-              )) : (
-                <tr><td colSpan={4} className="text-center py-20 text-slate-300 italic uppercase tracking-widest text-[10px] font-black opacity-40">Không tìm thấy mẫu biểu nào</td></tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+                 </div>
+                 <div className="p-5 bg-white/5 rounded-2xl border border-white/10 font-mono text-xs text-ocean-100 overflow-x-auto whitespace-nowrap scrollbar-hide">
+                    {previewActionLink()}
+                 </div>
+              </div>
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="px-6 py-5 bg-slate-50/50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">
-               Trang <span className="text-indigo-600">{currentPage}</span> / {totalPages}
-            </p>
-            <div className="flex items-center gap-1">
-              <button 
-                onClick={() => setCurrentPage(1)} 
-                disabled={currentPage === 1}
-                className="p-2 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-indigo-600 disabled:opacity-50 transition-all font-bold shadow-sm"
-              >
-                <ChevronsLeft size={16} />
-              </button>
-              <button 
-                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))} 
-                disabled={currentPage === 1}
-                className="p-2 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-indigo-600 disabled:opacity-50 transition-all font-bold shadow-sm"
-              >
-                <ChevronLeft size={16} />
-              </button>
-              <button 
-                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))} 
-                disabled={currentPage === totalPages}
-                className="p-2 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-indigo-600 disabled:opacity-50 transition-all font-bold shadow-sm"
-              >
-                <ChevronRight size={16} />
-              </button>
-              <button 
-                onClick={() => setCurrentPage(totalPages)} 
-                disabled={currentPage === totalPages}
-                className="p-2 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-indigo-600 disabled:opacity-50 transition-all font-bold shadow-sm"
-              >
-                <ChevronsRight size={16} />
-              </button>
-            </div>
-          </div>
+              <div className="flex justify-end pt-6 border-t border-slate-100">
+                <button type="submit" className="btn-primary-modern !py-4 !px-16 !rounded-2xl shadow-xl shadow-ocean-600/20">
+                  {editingTemplate ? 'Cập nhật tài liệu' : 'Kích hoạt mẫu biểu'}
+                </button>
+              </div>
+            </form>
+          </motion.div>
         )}
+      </AnimatePresence>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+         {paginatedTemplates.length > 0 ? paginatedTemplates.map((tpl: any) => (
+           <motion.div layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} key={tpl.ma_id} className="card-modern group hover:border-ocean-300 transition-all bg-white flex flex-col h-full overflow-hidden">
+              <div className="p-6 space-y-5 flex-1">
+                 <div className="flex justify-between items-start">
+                    <div className="w-12 h-12 rounded-2xl bg-ocean-50 flex items-center justify-center text-ocean-600 group-hover:bg-ocean-600 group-hover:text-white transition-all duration-500">
+                       {tpl.loai_file === 'DOCX' ? <FileText size={24} /> : <Grid size={24} />}
+                    </div>
+                    <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${tpl.loai_file === 'DOCX' ? 'bg-indigo-100 text-indigo-700' : 'bg-emerald-100 text-emerald-700'}`}>
+                      {tpl.loai_file}
+                    </span>
+                 </div>
+                 <div>
+                    <h4 className="text-xl font-black text-slate-800 tracking-tight group-hover:text-ocean-700 transition-colors uppercase">{tpl.ten_mau}</h4>
+                    <p className="text-[10px] font-mono text-slate-400 mt-1 uppercase tracking-widest">SLUG: {tpl.ma_mau}</p>
+                 </div>
+                 <div className="space-y-3 pt-2">
+                    <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100/50">
+                       <Layout size={14} className="text-slate-400" />
+                       <span className="text-xs font-bold text-slate-700 truncate">{apps.find((a: any) => a.ma_id === tpl.ma_ung_dung)?.ten_ung_dung || 'Platform Hub'}</span>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100/50">
+                       <Database size={14} className="text-slate-400" />
+                       <span className="text-xs font-bold text-slate-700 truncate">{tpl.bang_chinh}</span>
+                    </div>
+                 </div>
+              </div>
+              <div className="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+                 <button onClick={() => setViewingTpl(tpl)} className="text-[10px] font-black text-ocean-600 uppercase tracking-widest hover:text-ocean-800 transition-all flex items-center gap-2">
+                    <Copy size={12} /> AppSheet Action
+                 </button>
+                 <div className="flex items-center gap-1">
+                    <button onClick={() => startEdit(tpl)} className="w-8 h-8 rounded-lg hover:bg-white hover:text-ocean-600 flex items-center justify-center text-slate-400 transition-all"><Edit size={16} /></button>
+                    <button onClick={() => handleDelete(tpl.ma_id, tpl.ten_mau)} className="w-8 h-8 rounded-lg hover:bg-white hover:text-red-500 flex items-center justify-center text-slate-400 transition-all"><Trash2 size={16} /></button>
+                 </div>
+              </div>
+           </motion.div>
+         )) : (
+            <div className="col-span-full py-24 flex flex-col items-center gap-4 opacity-30 grayscale">
+               <FilePlus size={64} className="text-slate-300" />
+               <p className="text-sm font-black uppercase tracking-[0.3em] text-slate-400">Chưa có mẫu biểu cấu hình</p>
+            </div>
+         )}
       </div>
+
+      {viewingTpl && (
+         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white rounded-[3rem] w-full max-w-2xl overflow-hidden shadow-2xl border border-white">
+               <div className="bg-ocean-950 p-10 text-white relative">
+                  <div className="flex items-center gap-4 relative z-10">
+                     <div className="w-14 h-14 rounded-2xl bg-ocean-400/20 flex items-center justify-center"><Zap size={28} className="text-ocean-400" /></div>
+                     <div><h3 className="text-2xl font-black tracking-tight uppercase">{viewingTpl.ten_mau}</h3><p className="text-ocean-500 text-xs font-black uppercase tracking-widest">AppSheet Action Formula</p></div>
+                  </div>
+                  <button onClick={() => setViewingTpl(null)} className="absolute top-8 right-8 p-3 hover:bg-white/10 rounded-full transition-colors text-white font-bold text-2xl">×</button>
+               </div>
+               <div className="p-10 space-y-8">
+                  <div className="space-y-4">
+                     <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest px-1">Sao chép công thức vào AppSheet Action</p>
+                     <div className="bg-slate-50 p-6 rounded-[2rem] border border-slate-200 flex flex-col gap-4">
+                        <pre className="text-xs font-mono text-slate-700 whitespace-pre-wrap break-all leading-relaxed">
+                           {generateActionLink(viewingTpl)}
+                        </pre>
+                        <button onClick={() => copyToClipboard(generateActionLink(viewingTpl), 'Đã chép!')} className="btn-primary-modern !py-3 !rounded-xl !text-[10px] w-full">SAO CHÉP CÔNG THỨC</button>
+                     </div>
+                  </div>
+                  <div className="bg-blue-50 p-6 rounded-2xl border border-blue-100 flex gap-4">
+                    <Info size={20} className="text-blue-600 shrink-0" />
+                    <p className="text-[11px] text-blue-800 font-medium leading-relaxed italic">
+                      <b>Hướng dẫn:</b> Trong AppSheet, hãy tạo một Action mới loại "External: open a website", dán công thức trên vào phần <b>Target</b>.
+                    </p>
+                  </div>
+                  <button onClick={() => setViewingTpl(null)} className="btn-secondary-modern w-full !py-4 font-black">HOÀN TẤT</button>
+               </div>
+            </motion.div>
+         </div>
+      )}
     </div>
   );
 };
@@ -1496,131 +1292,106 @@ const HistoryLog = () => {
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+    <div className="space-y-6 max-w-7xl mx-auto pb-20">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight mb-2">Nhật ký in ấn</h2>
-          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">Hệ thống ghi nhận thời gian thực từ AppSheet</p>
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-1.5 h-6 bg-ocean-600 rounded-full" />
+            <span className="text-[10px] font-black text-ocean-600 uppercase tracking-widest">Auditing & Compliance</span>
+          </div>
+          <h2 className="text-3xl font-black text-slate-900 tracking-tight">Nhật ký Hệ thống</h2>
+          <p className="text-slate-500 font-medium text-sm">Theo dõi toàn bộ lịch sử in ấn, xuất báo cáo và trạng thái giao dịch.</p>
         </div>
-        <div className="relative group">
-          <input 
-            type="text" 
-            placeholder="Tìm kiếm theo mẫu, ID dòng..." 
-            className="pl-11 pr-5 py-3 bg-white border border-slate-200 rounded-2xl text-xs font-medium focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-600 transition-all w-full md:w-72 shadow-sm group-hover:shadow-md"
-            value={searchTerm}
-            onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-          />
-          <Search size={18} className="absolute left-4 top-3 text-slate-300 group-focus-within:text-indigo-600 transition-colors" />
+        
+        <div className="flex items-center gap-3">
+          <div className="relative group">
+            <input 
+              type="text" 
+              placeholder="Tìm theo ID, tên mẫu..." 
+              className="pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-[1.25rem] text-sm focus:ring-4 focus:ring-ocean-500/10 focus:border-ocean-500 transition-all w-72 outline-none font-medium"
+              value={searchTerm}
+              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+            />
+            <Search size={18} className="absolute left-4 top-3.5 text-slate-400" />
+          </div>
+          <button onClick={fetchLogs} className="p-3 bg-white border border-slate-200 rounded-[1.25rem] hover:bg-slate-50 text-slate-400 hover:text-ocean-600 transition-all">
+            <RefreshCw size={20} className={loading ? "animate-spin" : ""} />
+          </button>
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200/60 shadow-xl shadow-slate-200/30 overflow-hidden">
+      <div className="card-modern overflow-hidden bg-white border-slate-200/60 shadow-xl shadow-slate-200/20">
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="bg-slate-50/80 border-b border-slate-100">
-                <th className="px-6 py-4 text-left cursor-pointer group" onClick={() => handleSort('ngay_tao')}>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-indigo-600 transition-colors">Thời điểm</span>
-                    {sortConfig.key === 'ngay_tao' ? (sortConfig.direction === 'asc' ? <ChevronUp size={12} className="text-indigo-600" /> : <ChevronDown size={12} className="text-indigo-600" />) : <ArrowUpDown size={10} className="text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" />}
-                  </div>
-                </th>
-                <th className="px-6 py-4 text-left cursor-pointer group" onClick={() => handleSort('ten_mau')}>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-indigo-600 transition-colors">Tên Mẫu Biểu</span>
-                    {sortConfig.key === 'ten_mau' ? (sortConfig.direction === 'asc' ? <ChevronUp size={12} className="text-indigo-600" /> : <ChevronDown size={12} className="text-indigo-600" />) : <ArrowUpDown size={10} className="text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" />}
-                  </div>
-                </th>
-                <th className="px-6 py-4 text-left">
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Dòng ID AppSheet</span>
-                </th>
-                <th className="px-6 py-4 text-right">
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Trạng thái</span>
-                </th>
+              <tr className="bg-ocean-950 text-white">
+                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-ocean-400">Thời gian</th>
+                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-ocean-400">Nội dung / Mẫu biểu</th>
+                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-ocean-400">Định danh Record</th>
+                <th className="px-6 py-5 text-center text-[10px] font-black uppercase tracking-widest text-ocean-400">Trạng thái</th>
+                <th className="px-6 py-5 text-right text-[10px] font-black uppercase tracking-widest text-ocean-400">Thao tác</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
+            <tbody className="divide-y divide-slate-100">
               {paginatedLogs.length > 0 ? paginatedLogs.map((log: any, i) => (
-                <tr key={i} className="hover:bg-indigo-50/20 transition-colors">
-                  <td className="px-6 py-5 whitespace-nowrap">
-                    <div className="flex flex-col">
-                      <span className="text-xs font-black text-slate-800">{new Date(log.ngay_tao).toLocaleDateString('vi-VN')}</span>
-                      <span className="text-[10px] font-bold text-slate-400 tabular-nums">{new Date(log.ngay_tao).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</span>
+                <tr key={i} className="hover:bg-ocean-50/30 transition-colors group">
+                  <td className="px-6 py-5">
+                    <div className="flex items-center gap-3">
+                       <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-white group-hover:text-ocean-600 transition-all">
+                          <Clock size={18} />
+                       </div>
+                       <div className="flex flex-col">
+                          <span className="text-xs font-black text-slate-800">{new Date(log.ngay_tao).toLocaleDateString('vi-VN')}</span>
+                          <span className="text-[10px] font-medium text-slate-400">{new Date(log.ngay_tao).toLocaleTimeString('vi-VN')}</span>
+                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-5">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600">
-                        <FileText size={16} />
-                      </div>
-                      <span className="text-sm font-bold text-slate-700">{log.ten_mau}</span>
+                    <div className="flex flex-col">
+                       <span className="text-sm font-bold text-slate-800 tracking-tight">{log.ten_mau}</span>
+                       <span className="text-[10px] font-mono text-slate-400 uppercase tracking-tighter">APP_REF: {log.ma_ung_dung?.slice(0, 8)}...</span>
                     </div>
                   </td>
                   <td className="px-6 py-5 whitespace-nowrap">
-                    <span className="px-2 py-1 bg-slate-100 text-slate-500 rounded-md text-[10px] font-mono font-bold tracking-tight border border-slate-200/50">
-                      ID: {log.ma_id?.length > 15 ? log.ma_id.slice(0, 15) + '...' : log.ma_id}
-                    </span>
+                    <div className="flex items-center gap-2">
+                       <div className="w-2 h-2 rounded-full bg-ocean-600" />
+                       <span className="text-xs font-mono font-bold text-ocean-600">{log.ma_id?.length > 15 ? log.ma_id.slice(0, 15) + '...' : log.ma_id}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-5">
+                    <div className="flex justify-center text-[9px] font-black uppercase tracking-widest">
+                       <span className={`px-3 py-1 rounded-full flex items-center gap-1.5 ${
+                         log.trang_thai === 'Thành công' || log.trang_thai === 'Hoàn tất' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'
+                       }`}>
+                          <div className={`w-1 h-1 rounded-full ${log.trang_thai === 'Thành công' || log.trang_thai === 'Hoàn tất' ? 'bg-emerald-500' : 'bg-rose-500'}`} />
+                          {log.trang_thai || 'Hoàn tất'}
+                       </span>
+                    </div>
                   </td>
                   <td className="px-6 py-5 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                       <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider ${
-                        log.trang_thai === 'Thành công' || log.trang_thai === 'Hoàn tất' ? 'bg-emerald-50 text-emerald-600 shadow-sm shadow-emerald-100' : 
-                        log.trang_thai === 'Đang xử lý' ? 'bg-amber-50 text-amber-600 animate-pulse' : 
-                        'bg-rose-50 text-rose-600 shadow-sm shadow-rose-100'
-                      }`}>
-                        <div className={`w-1.5 h-1.5 rounded-full ${
-                          log.trang_thai === 'Thành công' || log.trang_thai === 'Hoàn tất' ? 'bg-emerald-500' : 
-                          log.trang_thai === 'Đang xử lý' ? 'bg-amber-500' : 
-                          'bg-rose-500'
-                        }`}></div>
-                        {log.trang_thai || 'Hoàn tất'}
-                      </span>
-                    </div>
+                    <button className="p-2.5 bg-slate-100 text-slate-400 rounded-xl hover:bg-ocean-600 hover:text-white transition-all">
+                       <ExternalLink size={16} />
+                    </button>
                   </td>
                 </tr>
               )) : (
                 <tr>
-                  <td colSpan={4} className="px-6 py-20 text-center">
-                    <div className="flex flex-col items-center gap-2 opacity-40">
-                      <Search size={40} className="text-slate-300" />
-                      <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Không tìm thấy dữ liệu yêu cầu</p>
-                    </div>
+                  <td colSpan={5} className="py-32 text-center grayscale opacity-30">
+                     <History size={48} className="text-slate-300 mx-auto mb-4" />
+                     <p className="text-sm font-black uppercase tracking-[0.3em] text-slate-400">Không có dữ liệu nhật ký</p>
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
-
-        {/* Professional Pagination */}
+        
         {totalPages > 1 && (
-          <div className="px-6 py-5 bg-slate-50/50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">
-              Hiển thị <span className="text-indigo-600">{Math.min(filteredLogs.length, (currentPage - 1) * pageSize + 1)}</span> 
-              {" "}-{" "} 
-              <span className="text-indigo-600">{Math.min(filteredLogs.length, currentPage * pageSize)}</span> 
-              {" "}từ <span className="text-indigo-600">{filteredLogs.length}</span> báo cáo
-            </p>
-            <div className="flex items-center gap-1">
-              <button onClick={() => setCurrentPage(1)} disabled={currentPage === 1} className="p-2 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-indigo-600 disabled:opacity-50 transition-all font-bold shadow-sm">
-                <ChevronsLeft size={16} />
-              </button>
-              <button onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))} disabled={currentPage === 1} className="p-2 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-indigo-600 disabled:opacity-50 transition-all font-bold shadow-sm">
-                <ChevronLeft size={16} />
-              </button>
-              
-              <div className="flex items-center px-4 gap-2">
-                <span className="text-[11px] font-black text-indigo-600 shadow-sm bg-white border border-slate-200 w-8 h-8 rounded-xl flex items-center justify-center">{currentPage}</span>
-                <span className="text-[10px] font-black text-slate-300">/</span>
-                <span className="text-[11px] font-black text-slate-400">{totalPages}</span>
-              </div>
-
-              <button onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))} disabled={currentPage === totalPages} className="p-2 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-indigo-600 disabled:opacity-50 transition-all font-bold shadow-sm">
-                <ChevronRight size={16} />
-              </button>
-              <button onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages} className="p-2 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-indigo-600 disabled:opacity-50 transition-all font-bold shadow-sm">
-                <ChevronsRight size={16} />
-              </button>
+          <div className="px-8 py-6 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Trang {currentPage} / {totalPages}</span>
+            <div className="flex gap-2">
+               <button onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))} disabled={currentPage === 1} className="w-10 h-10 bg-white border border-slate-200 rounded-xl flex items-center justify-center disabled:opacity-50"><ChevronLeft size={16} /></button>
+               <button onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))} disabled={currentPage === totalPages} className="w-10 h-10 bg-white border border-slate-200 rounded-xl flex items-center justify-center disabled:opacity-50"><ChevronRight size={16} /></button>
             </div>
           </div>
         )}
@@ -2072,6 +1843,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, login, logout } = useAuth();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
   const menuItems = [
     { path: '/', icon: LayoutDashboard, label: 'Bảng điều khiển' },
@@ -2081,41 +1853,49 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     { path: '/settings', icon: Settings, label: 'Cấu hình' },
   ];
 
+  // Auto-collapse sidebar on smaller screens
+  React.useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) {
+        setIsSidebarOpen(false);
+      } else {
+        setIsSidebarOpen(true);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   if (!user) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-100 p-6 relative overflow-hidden">
-        <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-500/10 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-violet-500/10 blur-[120px] rounded-full" />
+      <div className="flex flex-col items-center justify-center min-h-screen bg-ocean-50 p-6 relative overflow-hidden">
+        <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-ocean-500/10 blur-[150px] rounded-full" />
+        <div className="absolute bottom-[-20%] left-[-10%] w-[60%] h-[60%] bg-indigo-500/10 blur-[150px] rounded-full" />
         
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-white p-10 text-center max-w-md w-full rounded-[2.5rem] shadow-2xl border border-slate-200 relative z-10 overflow-hidden"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="bg-white/80 backdrop-blur-xl p-12 text-center max-w-lg w-full rounded-[3.5rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] border border-white relative z-10 overflow-hidden"
         >
-          <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-500" />
-          <div className="w-24 h-24 bg-indigo-600 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-indigo-500/40 relative group cursor-default">
-            <Zap size={48} className="text-white fill-white group-hover:scale-110 transition-transform duration-500" />
+          <div className="w-28 h-28 bg-ocean-600 rounded-[2.5rem] flex items-center justify-center mx-auto mb-10 shadow-2xl shadow-ocean-600/40 relative group cursor-default" id="login-logo">
+            <Zap size={56} className="text-white fill-white group-hover:scale-110 transition-transform duration-500" />
           </div>
-          <h1 className="text-3xl font-black tracking-tighter text-slate-900 mb-2 uppercase">AS PRINT HUB</h1>
-          <p className="text-sm font-bold text-indigo-600 mb-1 tracking-[0.2em] uppercase">Vercel Edition</p>
-          <p className="text-sm text-slate-500 mb-10 leading-relaxed font-medium px-4">
-            Nền tảng tự động hóa báo cáo và in ấn chuyên nghiệp cho AppSheet.
-          </p>
+          <h1 className="text-4xl font-black tracking-tighter text-slate-900 mb-3 leading-none">AS PRINT HUB</h1>
+          <div className="inline-block px-4 py-1.5 bg-ocean-100 text-ocean-700 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-10">Professional Printing Engine</div>
+          
           <button 
             onClick={login} 
-            className="w-full flex items-center justify-center gap-4 bg-slate-900 hover:bg-black text-white font-black py-4.5 px-6 rounded-3xl transition-all shadow-xl active:scale-[0.98] group"
+            className="w-full h-16 flex items-center justify-center gap-4 bg-slate-900 hover:bg-black text-white font-black rounded-[1.5rem] transition-all shadow-xl active:scale-[0.97] group text-lg"
+            id="login-button"
           >
-            <img src="https://www.google.com/favicon.ico" width="22" height="22" alt="google" className="group-hover:rotate-12 transition-transform" />
+            <img src="https://www.google.com/favicon.ico" width="24" height="24" alt="google" className="group-hover:rotate-12 transition-transform" />
             TIẾP TỤC VỚI GOOGLE
           </button>
           
-          <div className="mt-8 pt-8 border-t border-slate-100">
-             <div className="flex justify-center gap-4">
-               <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-               <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest leading-loose">
-                 V2.0.4 • Smart Cloud Logic
-               </p>
-             </div>
+          <div className="mt-12 text-slate-400 font-medium text-xs flex items-center justify-center gap-4">
+             <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+             <span>Hệ thống sẵn sàng tại: <b>Production</b></span>
           </div>
         </motion.div>
       </div>
@@ -2124,55 +1904,75 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   return (
     <div className="flex h-screen bg-[#f8fafc] overflow-hidden no-scrollbar">
-      {/* Sidebar Rail */}
+      {/* Mobile Drawer Overlay */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] lg:hidden"
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Sidebar Rail / Desktop & Mobile Drawer */}
       <motion.aside 
-        animate={{ width: isSidebarOpen ? 280 : 96 }}
+        initial={false}
+        animate={{ 
+          width: isSidebarOpen ? 280 : (isMobileMenuOpen ? 280 : 96),
+          x: (isMobileMenuOpen || window.innerWidth >= 1024) ? 0 : -300
+        }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        className="bg-slate-950 text-white flex flex-col shrink-0 relative z-50 shadow-2xl shadow-slate-950/40"
+        className={`bg-ocean-950 text-white flex flex-col shrink-0 fixed inset-y-0 left-0 lg:relative z-[110] shadow-2xl transition-all ${isSidebarOpen ? 'lg:w-[280px]' : 'lg:w-[96px]'}`}
       >
-        <div className="h-24 px-6 flex items-center gap-4 shrink-0 overflow-hidden">
-          <div className="w-10 h-10 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-indigo-600/30 shadow-lg shrink-0">
-            <Zap size={22} className="fill-white" />
+        <div className="h-28 px-6 flex items-center gap-4 shrink-0 overflow-hidden">
+          <div className="w-12 h-12 bg-ocean-600 rounded-2xl flex items-center justify-center shadow-ocean-600/30 shadow-lg shrink-0">
+            <Zap size={24} className="fill-white" />
           </div>
           <AnimatePresence>
-            {isSidebarOpen && (
+            {(isSidebarOpen || isMobileMenuOpen) && (
               <motion.div
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -10 }}
                 className="flex flex-col"
               >
-                <span className="font-black text-lg tracking-tighter leading-none">AS PRINT <span className="text-indigo-400">HUB</span></span>
-                <span className="text-[9px] font-black text-slate-500 tracking-[0.2em] mt-1">V2.0 PRO</span>
+                <span className="font-extrabold text-xl tracking-tighter leading-none">AS PRINT <span className="text-ocean-400 underline decoration-ocean-500/50 decoration-4 underline-offset-4">HUB</span></span>
+                <span className="text-[10px] font-black text-ocean-400/50 tracking-[0.2em] mt-1.5 uppercase">v2.5 Deep Cloud</span>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
 
-        <nav className="flex-1 px-4 py-8 space-y-3 overflow-y-auto no-scrollbar">
+        <nav className="flex-1 px-4 py-8 space-y-2 overflow-y-auto no-scrollbar">
           {menuItems.map((item) => {
             const isActive = location.pathname === item.path;
             const Icon = item.icon;
+            const expanded = isSidebarOpen || isMobileMenuOpen;
             return (
               <Link 
                 key={item.path}
+                id={`nav-${item.path.replace('/', '') || 'home'}`}
                 to={item.path} 
-                className={`flex items-center gap-4 px-4 h-14 rounded-2xl transition-all relative group ${isActive ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-600/20' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`nav-item group ${isActive ? 'nav-item-active' : 'nav-item-inactive'}`}
               >
-                <Icon size={22} className={isActive ? 'text-white' : 'group-hover:scale-110 transition-transform'} />
+                <Icon size={22} className={isActive ? 'text-white' : 'group-hover:scale-110 transition-transform group-hover:text-ocean-400'} />
                 <AnimatePresence>
-                  {isSidebarOpen && (
+                  {expanded && (
                     <motion.span 
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="text-sm font-bold tracking-tight whitespace-nowrap"
+                      initial={{ opacity: 0, x: -5 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      className="text-sm font-bold truncate"
                     >
                       {item.label}
                     </motion.span>
                   )}
                 </AnimatePresence>
-                {!isSidebarOpen && (
-                  <div className="absolute left-full ml-4 px-3 py-1.5 bg-slate-800 text-white text-[10px] font-black rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity uppercase tracking-widest z-[100]">
+                {!expanded && (
+                  <div className="absolute left-full ml-4 px-3 py-2 bg-slate-800 text-white text-[10px] font-black rounded-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-all uppercase tracking-widest z-[150] shadow-xl whitespace-nowrap">
                     {item.label}
                   </div>
                 )}
@@ -2182,76 +1982,104 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         </nav>
 
         <div className="p-4 shrink-0 space-y-4">
-           {isSidebarOpen && (
-             <button 
-              onClick={() => window.open('/HUONG_DAN_TEMPLATES.md', '_blank')}
-              className="flex items-center gap-3 w-full p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl text-indigo-400 hover:bg-indigo-500/20 transition-colors"
-             >
-               <HelpCircle size={18} />
-               <span className="text-xs font-bold">Hướng dẫn sử dụng</span>
-             </button>
+           {(isSidebarOpen || isMobileMenuOpen) && (
+             <div className="p-5 bg-ocean-900/50 rounded-3xl border border-white/5 space-y-4">
+                <div className="flex gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-ocean-400">
+                    {user.picture ? <img src={user.picture} alt="ava" className="w-full h-full object-cover rounded-xl" /> : <UserIcon size={20} />}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-black truncate text-white uppercase tracking-tight">{user.name}</p>
+                    <p className="text-[10px] text-ocean-400 font-bold truncate">{user.email}</p>
+                  </div>
+                </div>
+                <button onClick={logout} className="w-full py-3 bg-red-500/10 hover:bg-red-500/20 text-red-400 text-[10px] font-black rounded-xl transition-all uppercase tracking-widest flex items-center justify-center gap-2">
+                  <LogOut size={14} />
+                  <span>Đăng xuất</span>
+                </button>
+             </div>
            )}
            
-           <div className={`p-4 bg-white/5 rounded-3xl flex items-center ${isSidebarOpen ? 'gap-3' : 'justify-center'} overflow-hidden`}>
-              <div className="w-10 h-10 rounded-2xl bg-slate-800 border-2 border-white/10 shrink-0 overflow-hidden">
-                {user.picture ? <img src={user.picture} alt="avatar" className="w-full h-full object-cover" /> : <UserIcon size={20} />}
+           {!isSidebarOpen && !isMobileMenuOpen && (
+              <div className="flex flex-col gap-3 items-center">
+                 <button onClick={logout} id="logout-button-collapsed" className="w-12 h-12 rounded-2xl bg-white/5 text-red-400 flex items-center justify-center hover:bg-red-500/10 transition-colors shadow-inner" title="Đăng xuất">
+                    <LogOut size={20} />
+                 </button>
+                 <div className="w-10 h-10 rounded-2xl overflow-hidden border border-white/10 shadow-lg">
+                    <img src={user.picture} alt="ava" className="w-full h-full object-cover" />
+                 </div>
               </div>
-              {isSidebarOpen && (
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-black truncate text-white">{user.name}</p>
-                  <button onClick={logout} className="text-[10px] font-black text-rose-400/80 hover:text-rose-400 transition-colors uppercase tracking-[0.1em]">Đăng xuất</button>
-                </div>
-              )}
-           </div>
+           )}
 
            <button 
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="flex items-center justify-center w-full h-10 rounded-xl bg-white/5 text-slate-500 hover:text-white transition-colors border border-white/5"
+            id="sidebar-toggle-desktop"
+            className="hidden lg:flex items-center justify-center w-full h-12 rounded-2xl bg-white/5 text-ocean-400 hover:text-white transition-all border border-white/5 shadow-inner"
           >
-            {isSidebarOpen ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
+            {isSidebarOpen ? <ChevronsLeft size={20} /> : <ChevronsRight size={20} />}
           </button>
         </div>
       </motion.aside>
 
       {/* Content Area */}
-      <main className="flex-1 overflow-y-auto bg-grid-slate relative no-scrollbar">
-        <header className="sticky top-0 z-40 bg-white/70 backdrop-blur-xl border-b border-slate-200/60 h-14 md:h-24 px-8 flex justify-between items-center transition-all">
-            <div className="flex items-center gap-4">
-               <div className="w-2 h-8 bg-indigo-600 rounded-full" />
-               <h1 className="text-xl font-black text-slate-900 tracking-tighter uppercase">{menuItems.find(i => i.path === location.pathname)?.label || 'Dashboard'}</h1>
-            </div>
-            <div className="flex items-center gap-4">
-               <div className="hidden lg:flex flex-col items-end mr-4">
-                  <div className="text-xs font-black text-slate-900">{user.email}</div>
-                  <div className="flex items-center gap-2 mt-1">
-                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
-                    <span className="text-[9px] font-black text-slate-400 tracking-widest uppercase">Verified Secure</span>
+      <main className="flex-1 flex flex-col overflow-hidden bg-white">
+        {/* Navbar */}
+        <header className="glass-header h-20 md:h-24 px-6 md:px-10 flex justify-between items-center transition-all">
+            <div className="flex items-center gap-6">
+               <button 
+                onClick={() => setIsMobileMenuOpen(true)}
+                id="mobile-menu-toggle"
+                className="lg:hidden p-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-100"
+               >
+                 <Grid size={22} />
+               </button>
+               <div className="hidden sm:flex items-center gap-4">
+                  <div className="w-1.5 h-10 bg-ocean-600 rounded-full shadow-lg shadow-ocean-600/40" />
+                  <div>
+                    <h1 className="text-xl md:text-2xl font-black text-slate-800 tracking-tighter uppercase leading-none">
+                      {menuItems.find(i => i.path === location.pathname)?.label || 'Báo cáo'}
+                    </h1>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Hệ thống Print HUB PRO</p>
                   </div>
                </div>
-               <button className="w-12 h-12 bg-white border border-slate-200 rounded-2xl flex items-center justify-center text-slate-500 hover:text-indigo-600 hover:border-indigo-100 hover:shadow-soft transition-all transition-transform active:scale-95">
-                  <Settings size={20} />
+            </div>
+            
+            <div className="flex items-center gap-3">
+               <div className="hidden md:flex items-center gap-3 px-5 py-2.5 bg-emerald-50 text-emerald-700 rounded-2xl border border-emerald-100">
+                  <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-sm" />
+                  <span className="text-[10px] font-black uppercase tracking-widest">Dữ liệu an toàn</span>
+               </div>
+               <button className="w-12 md:w-14 h-12 md:h-14 bg-white border border-slate-200 rounded-2xl flex items-center justify-center text-slate-400 hover:text-ocean-600 hover:border-ocean-600/30 hover:shadow-xl transition-all active:scale-95">
+                  <Settings size={22} />
                </button>
             </div>
         </header>
 
-        <div className="relative z-10">
+        {/* Scrollable Body */}
+        <div className="flex-1 overflow-y-auto no-scrollbar scroll-smooth">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              className="p-4 md:p-8 lg:p-12"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="p-6 md:p-10 lg:p-16 w-full"
             >
               {children}
             </motion.div>
           </AnimatePresence>
+          
+          {/* Global Footer Accent */}
+          <footer className="mt-auto py-10 px-10 text-center opacity-30 pointer-events-none">
+             <p className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-400">DESIGNED FOR DEEP AUTOMATION • 2026</p>
+          </footer>
         </div>
       </main>
     </div>
   );
 };
+
 
 export default function App() {
   return (
