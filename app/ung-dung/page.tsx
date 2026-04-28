@@ -24,17 +24,23 @@ export default function UngDungPage() {
   const fetchApps = async () => {
     try {
       setLoading(true);
+      setError(null);
       const res = await fetch('/api/config?table=ung_dung');
       const data = await res.json();
-      if (Array.isArray(data)) {
-        setApps(data.filter(app => !app.ma_id?.startsWith('DELETED_')));
+      
+      if (res.ok && Array.isArray(data)) {
+        setApps(data.filter(app => app.ma_id && !app.ma_id.startsWith('DELETED_')));
+      } else {
+        setError(data.error || 'Lỗi không xác định khi tải dữ liệu');
       }
     } catch (err) {
-      console.error('Lỗi tải ứng dụng:', err);
+      setError('Lỗi kết nối Server');
     } finally {
       setLoading(false);
     }
   };
+
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (session) fetchApps();
@@ -124,6 +130,15 @@ export default function UngDungPage() {
                     <td colSpan={4} className="text-center py-5">
                       <Loader2 size={24} className="animate-spin text-primary d-inline-block" />
                       <p className="mt-2 text-muted">Đang tải dữ liệu từ Google Sheets...</p>
+                    </td>
+                  </tr>
+                ) : error ? (
+                  <tr>
+                    <td colSpan={4} className="text-center py-5">
+                      <div className="alert alert-danger boder-0 m-0 d-inline-block">
+                        <strong>Lỗi:</strong> {error} <br/>
+                        <small>Hãy kiểm tra lại GOOGLE_SHEET_ID và quyền truy cập file.</small>
+                      </div>
                     </td>
                   </tr>
                 ) : apps.length === 0 ? (

@@ -24,6 +24,7 @@ export default function MauBieuPage() {
   const fetchData = async () => {
     try {
       setLoading(true);
+      setError(null);
       const [tplRes, appsRes] = await Promise.all([
         fetch('/api/config?table=mau_bieu'),
         fetch('/api/config?table=ung_dung')
@@ -31,14 +32,23 @@ export default function MauBieuPage() {
       const tpls = await tplRes.json();
       const apls = await appsRes.json();
       
-      if (Array.isArray(tpls)) setTemplates(tpls.filter(t => !t.ma_id?.startsWith('DELETED_')));
-      if (Array.isArray(apls)) setApps(apls.filter(a => !a.ma_id?.startsWith('DELETED_')));
+      if (tplRes.ok && Array.isArray(tpls)) {
+        setTemplates(tpls.filter(t => t.ma_id && !t.ma_id.startsWith('DELETED_')));
+      } else if (!tplRes.ok) {
+        setError(tpls.error || 'Lỗi tải danh sách mẫu biểu');
+      }
+
+      if (appsRes.ok && Array.isArray(apls)) {
+        setApps(apls.filter(a => a.ma_id && !a.ma_id.startsWith('DELETED_')));
+      }
     } catch (err) {
-      console.error('Lỗi tải dữ liệu:', err);
+      setError('Lỗi kết nối Server');
     } finally {
       setLoading(false);
     }
   };
+
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (session) fetchData();
@@ -102,6 +112,14 @@ export default function MauBieuPage() {
           <div className="col-12 text-center py-5">
             <Loader2 size={32} className="animate-spin text-primary d-inline-block" />
             <p className="mt-3 text-muted">Đang tải danh sách mẫu biểu...</p>
+          </div>
+        ) : error ? (
+          <div className="col-12 text-center py-5">
+            <div className="alert alert-danger border-0 shadow-sm d-inline-block px-5">
+              <h5 className="font-weight-bold mb-2">Lỗi tải dữ liệu</h5>
+              <p className="mb-0">{error}</p>
+              <small className="text-muted d-block mt-2">Vui lòng kiểm tra GOOGLE_SHEET_ID và các Sheet trong file.</small>
+            </div>
           </div>
         ) : templates.length === 0 ? (
           <div className="col-12 text-center py-5 text-muted">Chưa có mẫu biểu nào.</div>

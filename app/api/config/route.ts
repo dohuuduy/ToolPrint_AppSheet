@@ -20,20 +20,29 @@ export async function GET(req: NextRequest) {
 
   try {
     const data = await GoogleService.getSheetData(session.accessToken, sheetId, `${table}!A:Z`);
-    if (!data || data.length < 1) return NextResponse.json([]);
+    
+    if (!data || data.length === 0) {
+      console.warn(`Bảng ${table} trống hoặc không tồn tại.`);
+      return NextResponse.json([]);
+    }
     
     const headers = data[0];
+    if (!headers || headers.length === 0) return NextResponse.json([]);
+
     const rows = data.slice(1).map(row => {
       const obj: any = {};
       headers.forEach((header: string, index: number) => {
-        obj[header] = row[index] || '';
+        obj[header.trim()] = row[index] || '';
       });
       return obj;
     });
 
     return NextResponse.json(rows);
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error(`Lỗi lấy dữ liệu bảng ${table}:`, error);
+    const status = error.code === 404 ? 404 : 500;
+    const message = error.code === 404 ? `Không tìm thấy bảng hoặc Sheet '${table}'` : error.message;
+    return NextResponse.json({ error: message }, { status });
   }
 }
 

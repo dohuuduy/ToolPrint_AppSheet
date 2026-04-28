@@ -23,21 +23,31 @@ export default function AnhXaPage() {
   const fetchData = async () => {
     try {
       setLoading(true);
+      setError(null);
       const [mapRes, tplRes] = await Promise.all([
         fetch('/api/config?table=anh_xa_bien'),
         fetch('/api/config?table=mau_bieu')
       ]);
-      const maps = await mapRes.json();
-      const tpls = await tplRes.json();
+      const mapsData = await mapRes.json();
+      const tplsData = await tplRes.json();
       
-      if (Array.isArray(maps)) setMappings(maps.filter((m: any) => !m.ma_id?.startsWith('DELETED_')));
-      if (Array.isArray(tpls)) setTemplates(tpls.filter((t: any) => !t.ma_id?.startsWith('DELETED_')));
+      if (mapRes.ok && Array.isArray(mapsData)) {
+        setMappings(mapsData.filter((m: any) => m.ma_id && !m.ma_id.startsWith('DELETED_')));
+      } else if (!mapRes.ok) {
+        setError(mapsData.error || 'Lỗi tải quy tắc mapping');
+      }
+
+      if (tplRes.ok && Array.isArray(tplsData)) {
+        setTemplates(tplsData.filter((t: any) => t.ma_id && !t.ma_id.startsWith('DELETED_')));
+      }
     } catch (err) {
-      console.error('Lỗi tải mapping:', err);
+      setError('Lỗi kết nối Server');
     } finally {
       setLoading(false);
     }
   };
+
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (session) fetchData();
@@ -124,6 +134,14 @@ export default function AnhXaPage() {
                     <td colSpan={5} className="text-center py-5">
                       <Loader2 size={24} className="animate-spin text-primary d-inline-block" />
                       <p className="mt-2 text-muted">Đang tải quy tắc mapping...</p>
+                    </td>
+                  </tr>
+                ) : error ? (
+                  <tr>
+                    <td colSpan={5} className="text-center py-5">
+                      <div className="alert alert-danger border-0 m-0 d-inline-block">
+                        <strong>Lỗi:</strong> {error}
+                      </div>
                     </td>
                   </tr>
                 ) : mappings.length === 0 ? (
