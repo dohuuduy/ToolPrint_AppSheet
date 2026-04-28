@@ -230,10 +230,3 @@ export default function UngDungPage() {
     </main>
   );
 }
-
-      <div className="mt-4">
-        <Link href="/" className="btn btn-link p-0 text-decoration-none">← Quay lại Tổng quan</Link>
-      </div>
-    </main>
-  );
-}

@@ -9,6 +9,7 @@ export default function MauBieuPage() {
   const { data: session } = useSession();
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [templates, setTemplates] = useState<any[]>([]);
   const [apps, setApps] = useState<any[]>([]);
 
@@ -46,17 +47,20 @@ export default function MauBieuPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const payload = isEditing ? 
+        { table: 'mau_bieu', id: formData.ma_id, data: formData } : 
+        { table: 'mau_bieu', data: { ...formData, ma_id: 'MB' + Date.now() } };
+
+      const method = isEditing ? 'PUT' : 'POST';
       const res = await fetch('/api/config', {
-        method: 'POST',
+        method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          table: 'mau_bieu', 
-          data: { ...formData, ma_id: 'MB' + Date.now() } 
-        })
+        body: JSON.stringify(payload)
       });
 
       if (res.ok) {
         setShowModal(false);
+        setIsEditing(false);
         setFormData({ ma_id: '', ten_mau: '', ma_ung_dung: '', file_id_drive: '', thu_muc_luu: '' });
         fetchData();
       }
@@ -75,6 +79,12 @@ export default function MauBieuPage() {
     }
   };
 
+  const openEdit = (tpl: any) => {
+    setFormData(tpl);
+    setIsEditing(true);
+    setShowModal(true);
+  };
+
   return (
     <main className="container-fluid py-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -82,7 +92,7 @@ export default function MauBieuPage() {
           <h1 className="h3 mb-0 font-weight-bold text-primary">Mẫu biểu (Templates)</h1>
           <p className="text-muted mb-0 small">Quản lý các file Word/Excel mẫu trên Google Drive</p>
         </div>
-        <button onClick={() => setShowModal(true)} className="btn btn-primary d-flex align-items-center px-4 shadow-sm">
+        <button onClick={() => { setIsEditing(false); setFormData({ ma_id: '', ten_mau: '', ma_ung_dung: '', file_id_drive: '', thu_muc_luu: '' }); setShowModal(true); }} className="btn btn-primary d-flex align-items-center px-4 shadow-sm">
           <Plus size={18} className="me-2" /> Thêm mẫu mới
         </button>
       </div>
@@ -130,11 +140,14 @@ export default function MauBieuPage() {
                   </div>
 
                   <div className="d-flex gap-2 justify-content-end pt-2 border-top">
-                    <Link href={`https://drive.google.com/open?id=${tpl.file_id_drive}`} target="_blank" className="btn btn-sm btn-outline-secondary border-0">
-                      <ExternalLink size={14} />
+                    <Link href={`https://drive.google.com/open?id=${tpl.file_id_drive}`} target="_blank" className="btn btn-sm btn-outline-secondary border-0 px-2" title="Mở file mẫu">
+                      <ExternalLink size={16} />
                     </Link>
-                    <Link href={`/anh-xa?template=${tpl.ma_id}`} className="btn btn-sm btn-outline-primary border-0">Mapping</Link>
-                    <button onClick={() => deleteTemplate(tpl.ma_id)} className="btn btn-sm btn-outline-danger border-0">
+                    <Link href={`/anh-xa?template=${tpl.ma_id}`} className="btn btn-sm btn-outline-primary border-0" title="Cấu hình biến">Mapping</Link>
+                    <button onClick={() => openEdit(tpl)} className="btn btn-sm btn-outline-primary border-0" title="Sửa cấu hình">
+                      <Edit2 size={16} />
+                    </button>
+                    <button onClick={() => deleteTemplate(tpl.ma_id)} className="btn btn-sm btn-outline-danger border-0" title="Xóa">
                       <Trash2 size={16} />
                     </button>
                   </div>
@@ -151,7 +164,7 @@ export default function MauBieuPage() {
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content border-0 shadow-lg">
               <div className="modal-header border-0">
-                <h5 className="modal-title font-weight-bold">Cấu hình mẫu biểu mới</h5>
+                <h5 className="modal-title font-weight-bold">{isEditing ? 'Cập nhật mẫu biểu' : 'Cấu hình mẫu biểu mới'}</h5>
                 <button type="button" className="btn-close shadow-none" onClick={() => setShowModal(false)}></button>
               </div>
               <form onSubmit={handleSubmit}>

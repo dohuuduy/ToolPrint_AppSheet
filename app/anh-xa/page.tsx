@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Settings, Plus, Info, RefreshCw, Loader2, Trash2 } from 'lucide-react';
+import { Settings, Plus, Info, RefreshCw, Loader2, Edit2, Trash2 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 
 export default function AnhXaPage() {
   const { data: session } = useSession();
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [mappings, setMappings] = useState<any[]>([]);
   const [templates, setTemplates] = useState<any[]>([]);
 
@@ -45,17 +46,20 @@ export default function AnhXaPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const payload = isEditing ? 
+        { table: 'anh_xa_bien', id: formData.ma_id, data: formData } : 
+        { table: 'anh_xa_bien', data: { ...formData, ma_id: 'AX' + Date.now() } };
+
+      const method = isEditing ? 'PUT' : 'POST';
       const res = await fetch('/api/config', {
-        method: 'POST',
+        method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          table: 'anh_xa_bien',
-          data: { ...formData, ma_id: 'AX' + Date.now() }
-        })
+        body: JSON.stringify(payload)
       });
 
       if (res.ok) {
         setShowModal(false);
+        setIsEditing(false);
         setFormData({ ma_id: '', ma_mau: '', ten_bien: '', ten_cot_du_lieu: '' });
         fetchData();
       }
@@ -74,6 +78,12 @@ export default function AnhXaPage() {
     }
   };
 
+  const openEdit = (mapping: any) => {
+    setFormData(mapping);
+    setIsEditing(true);
+    setShowModal(true);
+  };
+
   return (
     <main className="container-fluid py-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -82,7 +92,7 @@ export default function AnhXaPage() {
           <p className="text-muted mb-0 small">Quy định dữ liệu AppSheet sẽ đi vào biến nào trong file mẫu</p>
         </div>
         <div className="d-flex gap-2">
-          <button onClick={() => setShowModal(true)} className="btn btn-primary d-flex align-items-center px-4 shadow-sm">
+          <button onClick={() => { setIsEditing(false); setFormData({ ma_id: '', ma_mau: '', ten_bien: '', ten_cot_du_lieu: '' }); setShowModal(true); }} className="btn btn-primary d-flex align-items-center px-4 shadow-sm">
             <Plus size={18} className="me-2" /> Thêm ánh xạ
           </button>
         </div>
@@ -126,6 +136,9 @@ export default function AnhXaPage() {
                       <td><code className="text-danger font-weight-bold">{m.ten_bien}</code></td>
                       <td><code className="text-success font-weight-bold">{m.ten_cot_du_lieu}</code></td>
                       <td className="text-end px-4">
+                        <button onClick={() => openEdit(m)} className="btn btn-sm btn-outline-primary border-0 me-2 shadow-none">
+                          <Edit2 size={16} />
+                        </button>
                         <button onClick={() => deleteMapping(m.ma_id)} className="btn btn-sm btn-outline-danger border-0 shadow-none">
                           <Trash2 size={16} />
                         </button>
@@ -145,7 +158,7 @@ export default function AnhXaPage() {
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content border-0 shadow-lg">
               <div className="modal-header border-0">
-                <h5 className="modal-title font-weight-bold">Thêm quy tắc ánh xạ</h5>
+                <h5 className="modal-title font-weight-bold">{isEditing ? 'Cập nhật ánh xạ' : 'Thêm quy tắc ánh xạ'}</h5>
                 <button type="button" className="btn-close shadow-none" onClick={() => setShowModal(false)}></button>
               </div>
               <form onSubmit={handleSubmit}>
