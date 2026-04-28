@@ -21,29 +21,20 @@ function ReportContent() {
       return;
     }
 
-    // Giả lập gọi API lấy dữ liệu từ AppSheet
-    // Trong thực tế, bạn sẽ gọi một API route của Next.js (vì AppSheet API cần Server Secret)
     const fetchData = async () => {
       try {
-        // fetch(`/api/report/data?id=${id}`)
-        // Demo: Giả lập dữ liệu thành công
-        setTimeout(() => {
-          setData({
-            ma_id: id,
-            ho_ten: "Nguyễn Văn Khách Hàng",
-            ngay_sinh: "01/01/1990",
-            dia_chi: "123 Đường ABC, Quận 1, TP. HCM",
-            so_dien_thoai: "0901234567",
-            email: "khachhang@example.com",
-            ten_mau: templateCode || "Mẫu Mặc Định",
-            ngay_tao: new Date().toLocaleDateString('vi-VN'),
-            noi_dung: "Nội dung chi tiết của báo cáo sẽ được hiển thị ở đây dựa trên dữ liệu thật từ AppSheet.",
-            tong_tien: "5,000,000 VNĐ"
-          });
-          setLoading(false);
-        }, 1500);
+        const response = await fetch(`/api/report/data?id=${id}`);
+        if (!response.ok) throw new Error("Không thể tải dữ liệu");
+        const jsonData = await response.json();
+        
+        setData({
+          ...jsonData,
+          ten_mau_hien_thi: templateCode || "Mẫu Mặc Định",
+          ngay_hien_tai: new Date().toLocaleDateString('vi-VN'),
+        });
+        setLoading(false);
       } catch (err) {
-        setError("Không thể tải dữ liệu từ AppSheet.");
+        setError("Không tìm thấy dữ liệu dòng này trong AppSheet. Vui lòng kiểm tra lại App ID và API Key.");
         setLoading(false);
       }
     };
@@ -53,6 +44,11 @@ function ReportContent() {
 
   const handlePrint = () => {
     window.print();
+  };
+
+  const handleDownloadWord = async () => {
+    alert("Tính năng trộn file trực tiếp đang được xử lý trên Server. File đã trộn sẽ tự động tải về.");
+    // Trong thực tế sẽ gọi: window.location.href = `/api/report/generate?id=${id}&template=${templateCode}`;
   };
 
   if (loading) {
