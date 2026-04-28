@@ -1,6 +1,6 @@
 {
-  "name": "AppSheet Print & Report Pro",
-  "description": "Giải pháp in ấn và báo cáo chuyên nghiệp cho AppSheet tích hợp Google Drive, Sheets và AppSheet API.",
+  "name": "Hệ thống In ấn Báo cáo AppSheet",
+  "description": "Giải pháp in ấn, xuất báo cáo PDF/Excel/Word chuyên nghiệp từ AppSheet sử dụng Google Sheets và Drive cá nhân.",
   "requestFramePermissions": [],
   "majorCapabilities": []
 }
