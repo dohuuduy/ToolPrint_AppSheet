@@ -28,7 +28,8 @@ import {
   X,
   Check,
   Info,
-  HelpCircle
+  HelpCircle,
+  Database
 } from 'lucide-react';
 
 import { 
@@ -77,6 +78,24 @@ const Dashboard = () => {
       <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Đang đồng bộ dữ liệu...</p>
     </div>
   );
+
+  if (!data.apps.length && !data.templates.length && !data.logs.length) {
+    return (
+      <div className="flex flex-col items-center justify-center p-20 gap-6 text-center">
+        <div className="w-20 h-20 bg-slate-100 rounded-3xl flex items-center justify-center text-slate-300">
+          <Database size={40} />
+        </div>
+        <div className="max-w-md">
+          <h3 className="text-xl font-black text-slate-900 mb-2">Hệ thống chưa có dữ liệu</h3>
+          <p className="text-sm text-slate-500 font-medium mb-6">Bạn cần cấu hình ứng dụng và mẫu báo cáo đầu tiên. Nếu đây là lần đầu chạy, hãy vào phần Cấu hình hệ thống.</p>
+          <div className="flex justify-center gap-3">
+             <Link to="/apps" className="btn-primary">Kết nối AppSheet</Link>
+             <Link to="/settings" className="btn-secondary">Cài đặt Hub</Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const stats = [
     { label: 'Tổng ứng dụng', value: data.apps.length, icon: Grid, color: 'bg-indigo-500', trend: 'Hoạt động' },
@@ -220,8 +239,45 @@ const AppManagement = () => {
     app_id: '', 
     khoa_api: '',
     folder_mau_id: '',
-    folder_xuat_id: ''
+    folder_xuat_id: '',
+    bang_chinh: 'KhachHang'
   });
+  const [testingConnection, setTestingConnection] = React.useState(false);
+
+  const testConnection = async () => {
+    if (!newApp.app_id || !newApp.khoa_api || !newApp.bang_chinh) {
+      alert('Vui lòng nhập App ID, API Key và Tên bảng chính để test.');
+      return;
+    }
+    setTestingConnection(true);
+    try {
+      const res = await fetch('/api/appsheet/columns', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          appId: newApp.app_id,
+          apiKey: newApp.khoa_api,
+          tableName: newApp.bang_chinh
+        }),
+        credentials: 'include'
+      });
+      if (res.ok) {
+        const cols = await res.json();
+        if (cols && cols.length > 0) {
+          alert(`Kết nối thành công! Tìm thấy bảng ${newApp.bang_chinh} với ${cols.length} cột.`);
+        } else {
+          alert(`Kết nối thành công nhưng bảng ${newApp.bang_chinh} không có dữ liệu để xác định cột.`);
+        }
+      } else {
+        const err = await res.json();
+        alert(`Kết nối thất bại: ${err.error || 'Lỗi không xác định'}`);
+      }
+    } catch (err) {
+      alert('Lỗi kết nối máy chủ khi test.');
+    } finally {
+      setTestingConnection(false);
+    }
+  };
   const [searchTerm, setSearchTerm] = React.useState('');
   const [currentPage, setCurrentPage] = React.useState(1);
   const [pageSize] = React.useState(10);
@@ -417,6 +473,10 @@ const AppManagement = () => {
                       <input required value={newApp.ten_ung_dung} onChange={e => setNewApp({...newApp, ten_ung_dung: e.target.value})} className="input-field" placeholder="Ví dụ: CRM Bất Động Sản" />
                     </div>
                     <div className="space-y-2">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Tên bảng chính</label>
+                      <input required value={newApp.bang_chinh} onChange={e => setNewApp({...newApp, bang_chinh: e.target.value})} className="input-field" placeholder="Tên bảng trên AppSheet (VD: KhachHang)" />
+                    </div>
+                    <div className="space-y-2">
                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">AppSheet Application ID</label>
                       <input required value={newApp.app_id} onChange={e => setNewApp({...newApp, app_id: e.target.value})} className="input-field font-mono text-indigo-600" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
                       <div className="flex items-center gap-2 px-1">
@@ -458,7 +518,16 @@ const AppManagement = () => {
                     </div>
                   </div>
                 </div>
-                <div className="flex justify-end pt-4">
+                <div className="flex justify-end pt-4 gap-4">
+                  <button 
+                    type="button" 
+                    onClick={testConnection} 
+                    disabled={testingConnection}
+                    className="px-8 py-4 bg-slate-100 text-slate-700 font-bold rounded-2xl hover:bg-slate-200 transition-all flex items-center gap-2"
+                  >
+                    {testingConnection ? <div className="animate-spin rounded-full h-4 w-4 border-2 border-indigo-600 border-t-transparent" /> : <Zap size={20} className="text-indigo-600" />}
+                    <span>Kiểm tra kết nối</span>
+                  </button>
                   <button type="submit" className="btn-primary px-12 py-4 text-base">
                     {editingApp ? 'Cập nhật cấu hình ngay' : 'Thiết lập kết nối Hub'}
                   </button>
@@ -1895,6 +1964,109 @@ const FileManagerModal = ({ app, onClose }: { app: any, onClose: () => void }) =
   );
 };
 
+// Setting Component
+const SettingsPage = () => {
+  const [loading, setLoading] = React.useState(false);
+  const [status, setStatus] = React.useState<null | 'success' | 'error'>(null);
+  const [message, setMessage] = React.useState('');
+
+  const initDb = async () => {
+    setLoading(true);
+    setStatus(null);
+    try {
+      const res = await fetch('/api/db/init', { credentials: 'include' });
+      const data = await res.json();
+      if (res.ok) {
+        setStatus('success');
+        setMessage(data.message || 'Hệ thống đã được khởi tạo thành công.');
+      } else {
+        setStatus('error');
+        setMessage(data.error || 'Không thể khởi tạo database. Hãy kiểm tra Google Sheet ID trong .env');
+      }
+    } catch (err) {
+      setStatus('error');
+      setMessage('Lỗi kết nối máy chủ.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-8 max-w-4xl mx-auto">
+      <div>
+        <h2 className="text-3xl font-black text-slate-900 tracking-tight">Cấu hình Hệ thống</h2>
+        <p className="text-slate-500 font-medium">Quản lý và thiết lập nền tảng kỹ thuật cho Hub của bạn.</p>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6">
+        <div className="card-premium p-8 space-y-6">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-indigo-100 rounded-2xl flex items-center justify-center text-indigo-600 shadow-sm">
+              <Database size={28} />
+            </div>
+            <div>
+              <h3 className="text-lg font-black text-slate-900 leading-tight">Khởi tạo Google Sheets Database</h3>
+              <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Hành động một lần</p>
+            </div>
+          </div>
+          
+          <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 italic text-sm text-slate-600 leading-relaxed font-medium">
+            Hệ thống sẽ tự động tạo các sheet cần thiết (<span className="text-indigo-600 font-bold">ung_dung, mau_bieu, nhat_ky_in, ...</span>) trong tệp Google Spreadsheet của bạn nếu chúng chưa tồn tại.
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center gap-4">
+            <button 
+              onClick={initDb}
+              disabled={loading}
+              className={`btn-primary px-8 py-4 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              {loading ? <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent" /> : <Zap size={20} />}
+              <span>{loading ? 'Đang khởi tạo...' : 'Kích hoạt Cấu trúc Database'}</span>
+            </button>
+            <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-tight max-w-[200px] text-center sm:text-left">
+              Đảm bảo Sheet ID đã được khai báo chính xác trong biến môi trường.
+            </div>
+          </div>
+
+          {status && (
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`p-5 rounded-2xl border flex items-center gap-4 ${status === 'success' ? 'bg-emerald-50 border-emerald-100 text-emerald-800' : 'bg-rose-50 border-rose-100 text-rose-800'}`}
+            >
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${status === 'success' ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'}`}>
+                {status === 'success' ? <Check size={20} /> : <X size={20} />}
+              </div>
+              <p className="text-sm font-bold">{message}</p>
+            </motion.div>
+          )}
+        </div>
+
+        <div className="card-premium p-8 bg-slate-900 border-0 text-white overflow-hidden relative">
+           <div className="absolute top-0 right-0 p-10 opacity-10">
+              <Settings size={140} className="fill-white" />
+           </div>
+           <div className="relative z-10 space-y-6">
+              <h3 className="text-xl font-black tracking-tight">Hướng dẫn Biến môi trường 🔑</h3>
+              <div className="space-y-4">
+                 {[
+                   { k: 'NEXTAUTH_SECRET', v: 'Khóa mã hóa phiên đăng nhập' },
+                   { k: 'GOOGLE_SHEET_ID', v: 'ID của file Google Sheet làm DB' },
+                   { k: 'GOOGLE_CLIENT_ID', v: 'Cấp từ Google Cloud Console' }
+                 ].map((item, i) => (
+                   <div key={i} className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
+                      <code className="text-indigo-400 font-mono text-xs">{item.k}</code>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{item.v}</span>
+                   </div>
+                 ))}
+              </div>
+           </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, login, logout } = useAuth();
   const location = useLocation();
@@ -1905,6 +2077,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     { path: '/apps', icon: Grid, label: 'Ứng dụng' },
     { path: '/templates', icon: FileText, label: 'Mẫu biểu' },
     { path: '/logs', icon: History, label: 'Nhật ký in' },
+    { path: '/settings', icon: Settings, label: 'Cấu hình' },
   ];
 
   if (!user) {
@@ -2089,6 +2262,7 @@ export default function App() {
             <Route path="/apps" element={<AppManagement />} />
             <Route path="/templates" element={<TemplateManagement />} />
             <Route path="/logs" element={<HistoryLog />} />
+            <Route path="/settings" element={<SettingsPage />} />
             <Route path="/report" element={<ReportingPage />} />
           </Routes>
         </Layout>
