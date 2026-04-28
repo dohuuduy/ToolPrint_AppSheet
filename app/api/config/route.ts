@@ -50,14 +50,19 @@ export async function POST(req: NextRequest) {
   try {
     // Lấy headers để đảm bảo thứ tự cột
     const sheetData = await GoogleService.getSheetData(session.accessToken, sheetId, `${table}!A1:Z1`);
-    const headers = sheetData?.[0] || [];
+    const headers = (sheetData?.[0] || []).map((h: string) => h.trim());
     
-    const rowValues = headers.map((h: string) => data[h] || '');
+    if (headers.length === 0) {
+      throw new Error(`Bảng ${table} không tồn tại hoặc không có hàng tiêu đề. Hãy tạo hàng tiêu đề trước.`);
+    }
+
+    const rowValues = headers.map((h: string) => data[h] !== undefined ? data[h] : '');
     
     await GoogleService.appendRow(session.accessToken, sheetId, table, rowValues);
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error('Config POST Error:', error);
+    return NextResponse.json({ error: error.message || 'Lỗi khi lưu dữ liệu vào Google Sheets' }, { status: 500 });
   }
 }
 
@@ -73,13 +78,14 @@ export async function PUT(req: NextRequest) {
 
   try {
     const sheetData = await GoogleService.getSheetData(session.accessToken, sheetId, `${table}!A1:Z1`);
-    const headers = sheetData?.[0] || [];
-    const rowValues = headers.map((h: string) => data[h] || '');
+    const headers = (sheetData?.[0] || []).map((h: string) => h.trim());
+    const rowValues = headers.map((h: string) => data[h] !== undefined ? data[h] : '');
 
     await GoogleService.updateRow(session.accessToken, sheetId, table, id, rowValues);
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error('Config PUT Error:', error);
+    return NextResponse.json({ error: error.message || 'Lỗi khi cập nhật dữ liệu' }, { status: 500 });
   }
 }
 

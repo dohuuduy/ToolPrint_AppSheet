@@ -15,8 +15,9 @@ export default function UngDungPage() {
   const [formData, setFormData] = useState({
     ma_id: '',
     ten_ung_dung: '',
-    app_id: '',
-    khoa_api: '',
+    app_id_appsheet: '',
+    api_key_appsheet: '',
+    ten_bang_appsheet: '',
     trang_thai: 'Hoạt động'
   });
 
@@ -56,11 +57,15 @@ export default function UngDungPage() {
       if (res.ok) {
         setShowModal(false);
         setIsEditing(false);
-        setFormData({ ma_id: '', ten_ung_dung: '', app_id: '', khoa_api: '', trang_thai: 'Hoạt động' });
+        setFormData({ ma_id: '', ten_ung_dung: '', app_id_appsheet: '', api_key_appsheet: '', ten_bang_appsheet: '', trang_thai: 'Hoạt động' });
         fetchApps();
+        alert('Cập nhật dữ liệu thành công!');
+      } else {
+        const errData = await res.json();
+        alert('Lỗi: ' + (errData.error || 'Không thể lưu dữ liệu'));
       }
     } catch (err) {
-      alert('Lỗi lưu dữ liệu');
+      alert('Lỗi kết nối server');
     }
   };
 
@@ -87,7 +92,7 @@ export default function UngDungPage() {
           <h1 className="h3 mb-0 font-weight-bold text-primary">Ứng dụng AppSheet</h1>
           <p className="text-muted mb-0 small">Quản lý các tài khoản kết nối AppSheet API</p>
         </div>
-        <button onClick={() => { setIsEditing(false); setFormData({ ma_id: '', ten_ung_dung: '', app_id: '', khoa_api: '', trang_thai: 'Hoạt động' }); setShowModal(true); }} className="btn btn-primary d-flex align-items-center px-4 shadow-sm">
+        <button onClick={() => { setIsEditing(false); setFormData({ ma_id: '', ten_ung_dung: '', app_id_appsheet: '', api_key_appsheet: '', ten_bang_appsheet: '', trang_thai: 'Hoạt động' }); setShowModal(true); }} className="btn btn-primary d-flex align-items-center px-4 shadow-sm">
           <Plus size={18} className="me-2" /> Thêm ứng dụng
         </button>
       </div>
@@ -135,11 +140,11 @@ export default function UngDungPage() {
                           </div>
                           <div>
                             <span className="font-weight-bold d-block">{app.ten_ung_dung}</span>
-                            <small className="text-muted">Mã: {app.ma_id}</small>
+                            <small className="text-muted">Bảng: {app.ten_bang_appsheet}</small>
                           </div>
                         </div>
                       </td>
-                      <td><code className="bg-light px-2 py-1 rounded small">{app.app_id}</code></td>
+                      <td><code className="bg-light px-2 py-1 rounded small">{app.app_id_appsheet}</code></td>
                       <td>
                         <span className={`badge rounded-pill ${app.trang_thai === 'Hoạt động' ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-warning'}`}>
                           {app.trang_thai}
@@ -189,9 +194,20 @@ export default function UngDungPage() {
                     <input 
                       type="text" 
                       className="form-control" 
-                      value={formData.app_id}
-                      onChange={e => setFormData({...formData, app_id: e.target.value})}
+                      value={formData.app_id_appsheet}
+                      onChange={e => setFormData({...formData, app_id_appsheet: e.target.value})}
                       placeholder="vd: a6485086-63e8-4223..." 
+                      required 
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label font-weight-bold small text-muted">Tên bảng trong AppSheet</label>
+                    <input 
+                      type="text" 
+                      className="form-control" 
+                      value={formData.ten_bang_appsheet}
+                      onChange={e => setFormData({...formData, ten_bang_appsheet: e.target.value})}
+                      placeholder="VD: DanhSachNhanVien" 
                       required 
                     />
                   </div>
@@ -200,8 +216,8 @@ export default function UngDungPage() {
                     <input 
                       type="password" 
                       className="form-control" 
-                      value={formData.khoa_api}
-                      onChange={e => setFormData({...formData, khoa_api: e.target.value})}
+                      value={formData.api_key_appsheet}
+                      onChange={e => setFormData({...formData, api_key_appsheet: e.target.value})}
                       placeholder="Nhập khóa API từ AppSheet" 
                       required 
                     />
