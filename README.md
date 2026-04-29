@@ -1,96 +1,85 @@
-# 🚀 AS PRINT HUB - GIẢI PHÁP IN ẤN CHUYÊN NGHIỆP CHO APPSHEET
+# PrintHub: Hệ thống In ấn & Báo cáo Tự động cho AppSheet
 
-Chào mừng bạn đến với **AS PRINT HUB**! Đây là ứng dụng web hoàn chỉnh, giúp bạn bứt phá giới hạn in ấn của AppSheet bằng cách trộn dữ liệu vào Word/Excel giữ nguyên định dạng, xuất PDF và quản lý lịch sử tập trung.
-
----
-
-## 🛠 1. CHUẨN BỊ BAN ĐẦU (GOOGLE SIDE)
-
-### Bước 1: Tạo Google Cloud Project
-1. Truy cập [Google Cloud Console](https://console.cloud.google.com/).
-2. Tạo mới một Project (ví dụ: `AppSheet-Print-System`).
-3. **Enable APIs:** Tìm và Bật 2 API sau:
-   - `Google Sheets API`
-   - `Google Drive API`
-
-### Bước 2: Cấu hình OAuth Consent Screen
-1. Chọn **OAuth consent screen** > Chọn **External** > **Create**.
-2. Điền thông tin cơ bản: Tên app, Email hỗ trợ.
-3. **Scopes:** Thêm `.../auth/spreadsheets` và `.../auth/drive`.
-4. **Publish App:** Bấm "PUBLISH APP" để chuyển sang trạng thái Production (để tránh hết hạn Token sau 7 ngày).
-
-### Bước 3: Tạo OAuth Client ID
-1. Vào **Credentials** > **Create Credentials** > **OAuth client ID**.
-2. Loại ứng dụng: **Web application**.
-3. **Authorized Redirect URIs:**
-   - Local: `http://localhost:3000/auth/callback`
-   - Vercel: `https://ten-app-cua-ban.vercel.app/auth/callback`
-4. Lưu lại **Client ID** và **Client Secret**.
+**PrintHub** là giải pháp trung gian mạnh mẽ giúp người dùng AppSheet vượt qua các giới hạn in ấn mặc định, cho phép tạo ra các báo cáo Word/Excel chuyên nghiệp từ dữ liệu AppSheet chỉ với một lần nhấn nút.
 
 ---
 
-## 📊 2. THIẾT LẬP DỮ LIỆU (GOOGLE SHEET)
+## 1. Luồng quy trình xử lý (Process Flow)
 
-Hãy tạo một file Google Sheet mới và lấy **Sheet ID** từ URL. Tạo 4 Sheet (Tab) với các tiêu đề cột sau (Dòng 1):
+Quy trình hoạt động của ứng dụng diễn ra theo 7 bước tự động hóa hoàn toàn:
 
-1. **ung_dung**: `ma_id`, `ten_ung_dung`, `app_id`, `khoa_api`, `folder_mau_id`, `folder_xuat_id`, `trang_thai`
-2. **mau_bieu**: `ma_id`, `ten_mau`, `ma_mau`, `file_id_drive`, `loai_file`, `ma_ung_dung`, `bang_chinh`, `key_col`, `child_table`, `foreign_key`, `child_name`, `trang_thai`
-3. **nhat_ky_in**: `ngay_tao`, `ma_id`, `nguoi_dung`, `ten_mau`, `trang_thai`, `file_id_drive`
-4. **cau_hinh**: `khoa`, `gia_tri`
-
----
-
-## 📤 3. HƯỚNG DẪN DEPLOY LÊN VERCEL
-
-### PHẦN A: Đưa code lên GitHub
-1. Tạo một repository mới trên GitHub.
-2. Tại Visual Studio Code / Terminal, chạy lệnh:
-   ```bash
-   git init
-   git add .
-   git commit -m "🚀 Khởi tạo hệ thống Print Hub"
-   git branch -M main
-   git remote add origin https://github.com/USER/RENAME_REPO.git
-   git push -u origin main
-   ```
-
-### PHẦN B: Deploy lên Vercel
-1. Truy cập [Vercel](https://vercel.com/) và Đăng nhập bằng GitHub.
-2. Chọn **Add New Project** > **Import** repo vừa tạo.
-3. **Environment Variables:** Thêm đầy đủ các biến đã chuẩn bị vào Vercel (Xem `.env.example`).
-   - `APP_URL`: Link Vercel của bạn (Vd: `https://my-app.vercel.app`)
-4. Bấm **Deploy**.
+1.  **Kích hoạt (Trigger):** Người dùng nhấn nút (Action) trên AppSheet. Action này mở một liên kết URL được định dạng sẵn (VD: `.../report?template=HD01&id=123`).
+2.  **Tiếp nhận & Xác thực:** Ứng dụng Next.js nhận yêu cầu, kiểm tra đăng nhập Google OAuth của người dùng và xác định mẫu báo cáo (`template`) cùng mã dữ liệu (`id`) cần in.
+3.  **Truy xuất cấu hình:** Hệ thống tra cứu bảng `mau_bieu` để lấy ID file mẫu Drive, và bảng `ung_dung` để lấy API Key của AppSheet tương ứng.
+4.  **Lấy dữ liệu AppSheet:** Ứng dụng gọi **AppSheet REST API** để lấy nội dung chi tiết của dòng (`id`) đó. Nếu mẫu có bảng con, hệ thống sẽ tự động truy vấn thêm các dòng liên quan.
+5.  **Tải Template:** Hệ thống sử dụng **Google Drive API** để tải file Word (.docx) hoặc Excel (.xlsx) mẫu về bộ nhớ đệm.
+6.  **Trộn dữ liệu (Mail Merge):** Toàn bộ dữ liệu từ AppSheet được ánh xạ vào các biến trong file mẫu (VD: `{ten_khach_hang}`). Giữ nguyên hoàn toàn định dạng, font chữ, bảng biểu của file gốc.
+7.  **Hiển thị & Ghi log:**
+    *   **Người dùng:** Thấy màn hình Preview, có thể tải về PDF, Docx hoặc in trực tiếp.
+    *   **Hệ thống:** Tự động ghi lại một dòng vào bảng `nhat_ky_in` trên Google Sheet để theo dõi.
 
 ---
 
-## 🔗 4. KẾT NỐI VỚI APPSHEET
+## 2. Cấu trúc dữ liệu (Data Schema)
 
-### Lấy thông tin AppSheet
-1. **App ID:** Lấy từ URL của AppSheet Editor (sau đoạn `?appId=`).
-2. **API Key:** Vào `Manage` > `Integrations` > `In` > `Enable API` > Đảm bảo có API Key.
-
-### Tạo Action In trong AppSheet
-1. Tạo một Action mới: **Go to a website**.
-2. **Target:** Sử dụng công thức do Hub sinh ra tại trang "Mẫu biểu". Ví dụ:
-   ```appsheet
-   CONCATENATE("https://ten-app.vercel.app/report?template=HOA_DON&id=", ENCODEURL([ma_id]))
-   ```
+Xem chi tiết tại: [schema.md](./schema.md)
 
 ---
 
-## ⚠️ 5. CHECKLIST LỖI THƯỜNG GẶP
+## 3. Hướng dẫn thiết lập AppSheet Action
 
-1. **Error 400: redirect_uri_mismatch**: Kiểm tra xem URL trong Google Cloud Console đã khớp chính xác với URL thực tế chưa (có hay không có `/` ở cuối).
-2. **404 Not Found (Template)**: Đảm bảo bạn đã SHARE quyền chỉnh sửa file mẫu Drive cho email đang sử dụng.
-3. **AppSheet Unauthorized**: Kiểm tra lại API Key và đảm bảo đã bật "Enable API" trong AppSheet.
-4. **Vercel Build Failed**: Thường do thiếu biến môi trường hoặc sai phiên bản Node.js.
+Để gọi ứng dụng từ AppSheet, bạn tạo một Action loại **"External: go to a website"** với công thức:
 
----
-
-## 👨‍💻 CHẠY LOCAL
-```bash
-npm install
-npm run dev
+```appsheet
+CONCATENATE(
+  "https://ten-app-cua-ban.vercel.app/report?id=", 
+  ENCODEURL([ma_id_cua_dong]), 
+  "&template=", 
+  "MA_MAU_TRONG_HETHONG"
+)
 ```
 
-**Chúc bạn thành công!** Nếu có thắc mắc, vui lòng kiểm tra tài liệu `HUONG_DAN_TEMPLATES.md` trong hệ thống.
+---
+
+## 4. Biến môi trường (.env) cần thiết
+
+Ứng dụng yêu cầu các biến sau để hoạt động:
+
+```env
+# NextAuth & Security
+NEXTAUTH_URL=https://your-domain.com
+NEXTAUTH_SECRET=your_secret_string
+
+# Google OAuth (Credential từ Google Cloud Console)
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+
+# Google Sheets Database (ID của file Spreadsheet lưu cấu hình)
+GOOGLE_SHEET_ID=...
+
+# AppSheet API Default (Dùng nếu không cấu hình trong bảng ung_dung)
+APPSHEET_APP_ID=...
+APPSHEET_API_KEY=...
+```
+
+---
+
+## 5. Các công nghệ sử dụng
+
+*   **Framework:** Next.js 14+ (App Router)
+*   **Dữ liệu:** Google Sheets API, AppSheet REST API
+*   **Lưu trữ:** Google Drive API
+*   **Xử lý tệp:** docxtemplater / exceljs
+*   **Giao diện:** Tailwind CSS, Lucide Icons, Framer Motion
+*   **Xác thực:** NextAuth.js (Google Provider)
+
+---
+
+## 6. Checklist kiểm tra lỗi
+
+*   **Lỗi 403 / Unauthorized:** Kiểm tra lại API Key trong bảng `ung_dung` và đảm bảo quyền truy cập file mẫu trên Drive cho email đang chạy app.
+*   **Biến không hiển thị:** Đảm bảo tên biến trong file Word `{ten_bien}` trùng khớp hoàn toàn với tên cột trong AppSheet.
+*   **Lỗi Vercel Build:** Kiểm tra lại việc cấu hình các biến môi trường trong Vercel Dashboard.
+
+---
+*Tài liệu được cập nhật bởi kiến trúc sư hệ thống PrintHub.*
