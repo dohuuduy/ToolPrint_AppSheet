@@ -70,10 +70,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen, isMobile, o
         )}
 
         {/* Header */}
-        <div className={`p-6 flex items-center h-20 ${!isOpen && !isMobile ? 'justify-center' : 'justify-between'}`}>
+        <div className={`p-8 flex items-center h-24 ${!isOpen && !isMobile ? 'justify-center border-b border-slate-50' : 'justify-between'}`}>
           <Link to="/" className="flex items-center gap-3 group overflow-hidden shrink-0">
-            <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-100 shrink-0 group-hover:rotate-6 transition-transform duration-500">
-              <Zap size={22} strokeWidth={3} />
+            <div className="w-11 h-11 bg-indigo-600 rounded-[1.2rem] flex items-center justify-center text-white shadow-xl shadow-indigo-200 shrink-0 group-hover:rotate-12 transition-all duration-700">
+              <Zap size={24} strokeWidth={3} />
             </div>
             {(isOpen || isMobile) && (
               <motion.div 
@@ -81,21 +81,21 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen, isMobile, o
                 animate={{ opacity: 1, x: 0 }}
                 className="flex flex-col whitespace-nowrap"
               >
-                <h1 className="text-xl font-black text-slate-900 tracking-tighter leading-none">PRINT<span className="text-indigo-600">HUB</span></h1>
-                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Automated Reporting</p>
+                <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">Print<span className="text-indigo-600">Hub</span></h1>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mt-0.5">Automation Engine</p>
               </motion.div>
             )}
           </Link>
 
           {isMobile && (
-            <button onClick={onCloseMobile} className="p-2 text-slate-400 hover:text-slate-900 transition-colors">
+            <button onClick={onCloseMobile} className="p-3 bg-slate-50 text-slate-400 hover:text-slate-900 rounded-2xl transition-all active:scale-95">
               <X size={20} />
             </button>
           )}
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-4 space-y-1 mt-4 overflow-y-auto overflow-x-hidden">
+        <nav className="flex-1 px-4 space-y-1 mt-6 overflow-y-auto overflow-x-hidden">
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path;
@@ -104,18 +104,18 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen, isMobile, o
                 key={item.path} 
                 to={item.path}
                 onClick={isMobile ? onCloseMobile : undefined}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group relative ${
+                className={`flex items-center gap-4 px-4 py-4 rounded-2xl transition-all duration-300 group relative ${
                   isActive 
-                    ? 'bg-indigo-50 text-indigo-600' 
-                    : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+                    ? 'bg-slate-900 text-white shadow-xl shadow-slate-200' 
+                    : 'text-slate-500 hover:bg-slate-50 hover:text-indigo-600'
                 }`}
               >
-                <Icon size={18} className={`shrink-0 ${isActive ? 'text-indigo-600' : 'text-slate-400 group-hover:text-slate-900 transition-colors'}`} />
+                <Icon size={19} className={`shrink-0 ${isActive ? 'text-indigo-400' : 'text-slate-400 group-hover:text-indigo-600 transition-colors'}`} />
                 {(isOpen || isMobile) && (
                   <motion.span 
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className={`text-[13px] font-bold tracking-tight whitespace-nowrap ${isActive ? 'font-black' : ''}`}
+                    className={`text-sm tracking-tight whitespace-nowrap ${isActive ? 'font-black' : 'font-bold'}`}
                   >
                     {item.label}
                   </motion.span>
@@ -123,7 +123,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen, isMobile, o
                 {isActive && (
                   <motion.div 
                     layoutId="sidebar-active-indicator"
-                    className="absolute left-0 w-1 h-5 bg-indigo-600 rounded-r-full"
+                    className="absolute right-0 w-1.5 h-6 bg-indigo-500 rounded-l-full"
                   />
                 )}
               </Link>
@@ -131,35 +131,43 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen, isMobile, o
           })}
         </nav>
 
-        {/* Footer / Profile */}
-        <div className="p-4 mt-auto">
-          <div className={`bg-slate-50 border border-slate-100 rounded-2xl p-3 transition-all ${isOpen || isMobile ? 'hover:bg-white hover:shadow-xl hover:shadow-slate-200/50 group' : 'flex justify-center'}`}>
-            <div className="flex items-center gap-3 w-full">
-              <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center overflow-hidden border border-slate-200 shadow-sm shrink-0">
+        {/* Footer actions like Support / API Docs */}
+        {(isOpen || isMobile) && (
+          <div className="px-6 py-4 space-y-1 border-t border-slate-50 mt-4">
+             <Link to="/support" className="flex items-center gap-3 py-2 text-[11px] font-black text-slate-400 uppercase tracking-widest hover:text-indigo-600 transition-colors">
+               <span>Hỗ trợ ky thuật</span>
+             </Link>
+             <Link to="/docs" className="flex items-center gap-3 py-2 text-[11px] font-black text-slate-400 uppercase tracking-widest hover:text-indigo-600 transition-colors">
+               <span>Tài liệu API</span>
+             </Link>
+          </div>
+        )}
+
+        {/* User Profile Section */}
+        <div className="p-6">
+          <div className={`bg-slate-50 border border-slate-100/50 rounded-[2rem] p-3 transition-all ${isOpen || isMobile ? 'hover:bg-white hover:shadow-2xl hover:shadow-slate-200/50 group' : 'flex justify-center'}`}>
+            <div className="flex items-center gap-4 w-full">
+              <div className="w-11 h-11 bg-white rounded-2xl flex items-center justify-center overflow-hidden border border-slate-100 shadow-sm shrink-0 group-hover:scale-110 transition-transform duration-500">
                 {user?.picture ? (
                   <img src={user.picture} alt="Avatar" className="w-full h-full object-cover" />
                 ) : (
-                  <div className="bg-indigo-100 w-full h-full flex items-center justify-center font-black text-indigo-600 uppercase text-sm">
+                  <div className="bg-gradient-to-br from-indigo-500 to-indigo-700 w-full h-full flex items-center justify-center font-black text-white uppercase text-sm">
                     {user?.name?.[0]}
                   </div>
                 )}
               </div>
               {(isOpen || isMobile) && (
                 <div className="flex-1 min-w-0">
-                  <p className="text-[11px] font-black text-slate-900 truncate tracking-tight">{user?.name || 'Thành viên'}</p>
-                  <div className="flex items-center gap-1">
-                    <div className="w-1 h-1 bg-emerald-500 rounded-full" />
-                    <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">Active</p>
-                  </div>
+                  <p className="text-[12px] font-black text-slate-900 truncate tracking-tight">{user?.name || 'Thành viên'}</p>
+                  <p className="text-[10px] font-bold text-slate-400 truncate opacity-60">Professional Plan</p>
                 </div>
               )}
               {(isOpen || isMobile) && (
                 <button 
                   onClick={logout}
-                  className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all"
-                  title="Đăng xuất"
+                  className="p-2.5 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all"
                 >
-                  <LogOut size={14} />
+                  <LogOut size={16} />
                 </button>
               )}
             </div>
