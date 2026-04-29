@@ -263,72 +263,72 @@ export const AppManagement: React.FC = () => {
         )}
       </AnimatePresence>
 
-      <div className="bg-white rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/20 overflow-hidden">
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="bg-slate-50/50 border-b border-slate-100">
                 <th 
-                  className="px-8 py-4 text-left cursor-pointer group" 
+                  className="px-6 py-3 text-left cursor-pointer group" 
                   onClick={() => handleSort('ten_ung_dung')}
                 >
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black uppercase text-slate-400 tracking-[0.1em] group-hover:text-indigo-600 transition-colors">Ứng dụng</span>
+                    <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider group-hover:text-indigo-600 transition-colors">Ứng dụng</span>
                     {sortConfig.key === 'ten_ung_dung' && (
                       <span className="text-indigo-500">
-                        {sortConfig.direction === 'asc' ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                        {sortConfig.direction === 'asc' ? <ChevronUp size={10} /> : <ChevronDown size={10} />}
                       </span>
                     )}
                   </div>
                 </th>
-                <th className="px-8 py-4 text-left hidden lg:table-cell">
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-[0.1em]">Application ID</span>
+                <th className="px-6 py-3 text-left hidden lg:table-cell">
+                  <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider">Application ID</span>
                 </th>
-                <th className="px-8 py-4 text-left">
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-[0.1em]">Trạng thái</span>
+                <th className="px-6 py-3 text-left">
+                  <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider">Trạng thái</span>
                 </th>
-                <th className="px-8 py-4 text-right">
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-[0.1em]">Thao tác</span>
+                <th className="px-6 py-3 text-right">
+                  <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider">Thao tác</span>
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {paginatedApps.map((app: any, i) => (
-                <tr key={i} className="hover:bg-slate-50 transition-colors group">
-                  <td className="px-8 py-5">
-                    <div className="font-bold text-slate-900 text-base tracking-tight">{app.ten_ung_dung || app.ten_app}</div>
-                    <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">{app.bang_chinh}</div>
+                <tr key={i} className="hover:bg-slate-50/50 transition-colors group">
+                  <td className="px-6 py-3">
+                    <div className="font-bold text-slate-900 text-sm tracking-tight">{app.ten_ung_dung || app.ten_app}</div>
+                    <div className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">{app.bang_chinh}</div>
                   </td>
-                  <td className="px-8 py-5 hidden lg:table-cell">
-                     <code className="text-[11px] font-mono px-2 py-1 bg-slate-100 text-slate-600 rounded-md border border-slate-200/50">{app.app_id}</code>
+                  <td className="px-6 py-3 hidden lg:table-cell">
+                     <code className="text-[10px] font-mono px-1.5 py-0.5 bg-slate-100 text-slate-500 rounded-md border border-slate-200/30">{app.app_id}</code>
                   </td>
-                  <td className="px-8 py-5">
-                     <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-50 text-emerald-600 uppercase tracking-widest border border-emerald-100">
-                      <div className="w-1 h-1 bg-emerald-500 rounded-full" /> Hoạt động
+                  <td className="px-6 py-3">
+                     <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-black bg-emerald-50 text-emerald-600 uppercase tracking-widest border border-emerald-100/50">
+                      <div className="w-1 h-1 bg-emerald-500 rounded-full" /> Online
                     </span>
                   </td>
-                  <td className="px-8 py-5 text-right">
-                    <div className="flex justify-end gap-1.5">
+                  <td className="px-6 py-3 text-right">
+                    <div className="flex justify-end gap-1">
                        <button 
                         onClick={() => setEditingApp(app)} 
-                        className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                        className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
                         title="Chỉnh sửa"
                        >
-                        <Edit size={16} />
+                        <Edit size={14} />
                        </button>
                        <button 
                         onClick={() => setViewingApp(app)} 
-                        className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all"
+                        className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all"
                         title="Chi tiết"
                        >
-                        <Eye size={16} />
+                        <Eye size={14} />
                        </button>
                        <button 
                         onClick={() => handleDelete(app.ma_id, app.ten_ung_dung)} 
-                        className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all"
+                        className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all"
                         title="Xóa"
                        >
-                        <Trash2 size={16} />
+                        <Trash2 size={14} />
                        </button>
                     </div>
                   </td>
@@ -338,6 +338,7 @@ export const AppManagement: React.FC = () => {
           </table>
         </div>
       </div>
+
     </div>
   );
 };

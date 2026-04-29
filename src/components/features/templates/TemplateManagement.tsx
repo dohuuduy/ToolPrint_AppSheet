@@ -246,22 +246,22 @@ export const TemplateManagement: React.FC = () => {
         )}
       </AnimatePresence>
 
-      <div className="bg-white rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/20 overflow-hidden">
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="bg-slate-50/50 border-b border-slate-100">
-                <th className="px-8 py-4 text-left">
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-[0.1em]">Mẫu & Ứng dụng</span>
+                <th className="px-6 py-3 text-left">
+                  <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider">Mẫu & Ứng dụng</span>
                 </th>
-                <th className="px-8 py-4 text-left">
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-[0.1em]">Bảng chính</span>
+                <th className="px-6 py-3 text-left">
+                  <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider">Bảng chính</span>
                 </th>
-                <th className="px-8 py-4 text-left">
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-[0.1em]">Loại tệp</span>
+                <th className="px-6 py-3 text-left">
+                  <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider">Loại tệp</span>
                 </th>
-                <th className="px-8 py-4 text-right">
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-[0.1em]">Thao tác</span>
+                <th className="px-6 py-3 text-right">
+                  <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider">Thao tác</span>
                 </th>
               </tr>
             </thead>
@@ -270,37 +270,37 @@ export const TemplateManagement: React.FC = () => {
                 const app = apps.find(a => a.ma_id === tpl.ma_ung_dung);
                 return (
                   <tr key={i} className="hover:bg-slate-50 transition-colors group">
-                    <td className="px-8 py-5">
-                      <div className="font-bold text-slate-900 text-base tracking-tight">{tpl.ten_mau}</div>
+                    <td className="px-6 py-3">
+                      <div className="font-bold text-slate-900 text-sm tracking-tight">{tpl.ten_mau}</div>
                       <div className="flex items-center gap-2 mt-0.5">
-                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{tpl.ma_mau}</span>
+                        <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">{tpl.ma_mau}</span>
                         <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
-                        <span className="text-[10px] text-indigo-500 font-black uppercase tracking-widest">{app?.ten_ung_dung || 'N/A'}</span>
+                        <span className="text-[9px] text-indigo-500 font-black uppercase tracking-widest">{app?.ten_ung_dung || 'N/A'}</span>
                       </div>
                     </td>
-                    <td className="px-8 py-5 text-sm font-bold text-slate-600">
+                    <td className="px-6 py-3 text-[13px] font-bold text-slate-600">
                       {tpl.bang_chinh}
                     </td>
-                    <td className="px-8 py-5">
-                      <span className="inline-flex items-center px-2 py-0.5 bg-indigo-50 text-indigo-600 text-[10px] font-black rounded-md uppercase tracking-widest border border-indigo-100">
+                    <td className="px-6 py-3">
+                      <span className="inline-flex items-center px-2 py-0.5 bg-indigo-50 text-indigo-600 text-[9px] font-black rounded-md uppercase tracking-widest border border-indigo-100/50">
                         {tpl.loai_file}
                       </span>
                     </td>
-                    <td className="px-8 py-5 text-right">
-                      <div className="flex justify-end gap-1.5">
+                    <td className="px-6 py-3 text-right">
+                      <div className="flex justify-end gap-1">
                         <button 
                           onClick={() => setEditingTemplate(tpl)} 
-                          className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                          className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
                           title="Chỉnh sửa"
                         >
-                          <Edit size={16} />
+                          <Edit size={14} />
                         </button>
                         <button 
                           onClick={() => handleDelete(tpl.ma_id, tpl.ten_mau)} 
-                          className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all"
+                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all"
                           title="Xóa"
                         >
-                          <Trash2 size={16} />
+                          <Trash2 size={14} />
                         </button>
                       </div>
                     </td>
@@ -311,6 +311,7 @@ export const TemplateManagement: React.FC = () => {
           </table>
         </div>
       </div>
+
     </div>
   );
 };
