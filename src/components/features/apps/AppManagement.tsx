@@ -20,7 +20,7 @@ import {
   ChevronDown,
   Check
 } from 'lucide-react';
-import { useAppStore } from '../../../store/useAppStore';
+import { useAppStore } from '../../../store/use-app-store';
 import { api } from '../../../services/api.service';
 import { AppSheetConfig } from '../../../types';
 

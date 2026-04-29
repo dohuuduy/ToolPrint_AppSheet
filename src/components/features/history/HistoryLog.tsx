@@ -11,7 +11,7 @@ import {
   ChevronRight,
   ChevronsRight
 } from 'lucide-react';
-import { useAppStore } from '../../../store/useAppStore';
+import { useAppStore } from '../../../store/use-app-store';
 import { PrintLog } from '../../../types';
 
 export const HistoryLog: React.FC = () => {

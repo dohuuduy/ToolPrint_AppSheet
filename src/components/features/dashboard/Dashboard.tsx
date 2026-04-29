@@ -11,7 +11,7 @@ import {
   Database, 
   ChevronRight 
 } from 'lucide-react';
-import { useAppStore } from '../../../store/useAppStore';
+import { useAppStore } from '../../../store/use-app-store';
 
 export const Dashboard: React.FC = () => {
   const { apps, templates, logs, loading, fetchAll } = useAppStore();
