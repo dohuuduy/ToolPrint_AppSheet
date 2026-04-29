@@ -1,9 +1,9 @@
 import React from 'react';
-import { useLocation, Settings } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { Sidebar } from './Sidebar';
 import { useAuth } from '../../context/AuthContext';
-import { Settings as SettingsIcon } from 'lucide-react';
+import { Settings as SettingsIcon, Terminal } from 'lucide-react';
 
 const pageTitles: Record<string, string> = {
   '/': 'DASHBOARD_HUB',
