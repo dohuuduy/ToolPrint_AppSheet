@@ -48,6 +48,19 @@ export const Dashboard: React.FC = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const chartData = React.useMemo(() => {
+    const days = Array.from({ length: 7 }, (_, i) => {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      return format(d, 'dd/MM');
+    }).reverse();
+
+    return days.map(date => ({
+      name: date,
+      count: logs.filter(log => format(new Date(log.ngay_tao), 'dd/MM') === date).length
+    }));
+  }, [logs]);
+
   if (loading) return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
       <div className="relative w-16 h-16">
@@ -63,19 +76,6 @@ export const Dashboard: React.FC = () => {
       </div>
     </div>
   );
-
-  const chartData = React.useMemo(() => {
-    const days = Array.from({ length: 7 }, (_, i) => {
-      const d = new Date();
-      d.setDate(d.getDate() - i);
-      return format(d, 'dd/MM');
-    }).reverse();
-
-    return days.map(date => ({
-      name: date,
-      count: logs.filter(log => format(new Date(log.ngay_tao), 'dd/MM') === date).length
-    }));
-  }, [logs]);
 
   if (!apps.length && !templates.length && !logs.length) {
     return (
@@ -93,9 +93,9 @@ export const Dashboard: React.FC = () => {
             <PlusCircle size={18} />
             <span className="text-sm">Kết nối App</span>
           </Link>
-          <Link to="/settings" className="flex items-center justify-center gap-3 p-4 bg-white border border-slate-200 text-slate-700 rounded-2xl font-bold hover:border-slate-400 transition-all">
-            <Settings size={18} />
-            <span className="text-sm">Cài đặt API</span>
+          <Link to="/templates" className="flex items-center justify-center gap-3 p-4 bg-white border border-slate-200 text-slate-700 rounded-2xl font-bold hover:border-slate-400 transition-all">
+            <FileText size={18} />
+            <span className="text-sm">Tạo mẫu biểu</span>
           </Link>
         </div>
       </div>
@@ -191,7 +191,7 @@ export const Dashboard: React.FC = () => {
             </div>
 
             <div className="h-[280px]">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                 <AreaChart data={chartData}>
                   <defs>
                     <linearGradient id="gridGradient" x1="0" y1="0" x2="0" y2="1">
