@@ -13,11 +13,11 @@ import {
 import { useAuth } from '../../context/AuthContext';
 
 const menuItems = [
-  { path: '/', label: 'Tổng quan', icon: LayoutDashboard },
-  { path: '/apps', label: 'Kết nối AppSheet', icon: Grid },
-  { path: '/templates', label: 'Mẫu báo cáo', icon: FileText },
-  { path: '/logs', label: 'Nhật ký in', icon: History },
-  { path: '/settings', label: 'Cài đặt hệ thống', icon: SettingsIcon },
+  { path: '/', label: 'DASHBOARD_HUB', icon: LayoutDashboard },
+  { path: '/apps', label: 'NODE_CONNECTOR', icon: Grid },
+  { path: '/templates', label: 'SCHEMA_MODELS', icon: FileText },
+  { path: '/logs', label: 'SECURITY_LOGS', icon: History },
+  { path: '/settings', label: 'SYSTEM_SETUP', icon: SettingsIcon },
 ];
 
 export const Sidebar: React.FC = () => {

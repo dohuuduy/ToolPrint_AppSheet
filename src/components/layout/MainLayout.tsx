@@ -6,11 +6,11 @@ import { useAuth } from '../../context/AuthContext';
 import { Settings as SettingsIcon } from 'lucide-react';
 
 const pageTitles: Record<string, string> = {
-  '/': 'Tổng quan hệ thống',
-  '/apps': 'Quản lý Ứng dụng',
-  '/templates': 'Mẫu biểu báo cáo',
-  '/logs': 'Nhật ký in ấn',
-  '/settings': 'Cấu hình Hub'
+  '/': 'DASHBOARD_HUB',
+  '/apps': 'NODE_CONNECTOR',
+  '/templates': 'SCHEMA_MODELS',
+  '/logs': 'SECURITY_LOGS',
+  '/settings': 'SYSTEM_SETUP'
 };
 
 export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -19,23 +19,27 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
 
   if (!user) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 p-6">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-900 p-6 overflow-hidden relative">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,#312e81,black)]" />
+        <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+        
         <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="bg-white p-12 text-center max-w-md w-full rounded-[3rem] shadow-2xl border border-slate-100"
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white/10 backdrop-blur-2xl p-12 text-center max-w-md w-full rounded-[3.5rem] shadow-[0_0_80px_rgba(0,0,0,0.5)] border border-white/10 relative z-10"
         >
-          <div className="w-24 h-24 bg-indigo-600 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-indigo-200">
-            <span className="text-white text-5xl font-black">P</span>
+          <div className="w-24 h-24 bg-white rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 shadow-2xl relative group">
+            <div className="absolute inset-0 bg-indigo-600 rounded-[2.5rem] animate-ping opacity-20 group-hover:scale-110 transition-transform" />
+            <Terminal size={48} className="text-slate-900 relative z-10" />
           </div>
-          <h1 className="text-3xl font-black text-slate-900 mb-2 uppercase tracking-tighter">Print Hub</h1>
-          <p className="text-slate-500 mb-10 font-medium leading-relaxed">Nền tảng tự động hóa báo cáo chuyên nghiệp cho AppSheet.</p>
+          <h1 className="text-4xl font-black text-white mb-2 uppercase tracking-tighter italic">Print<span className="text-indigo-400">Hub</span></h1>
+          <p className="text-slate-300 mb-10 font-medium text-sm leading-relaxed tracking-wide">Automated Enterprise Reporting for AppSheet.</p>
           <button 
             onClick={login} 
-            className="w-full flex items-center justify-center gap-4 bg-slate-900 hover:bg-black text-white font-black py-5 px-6 rounded-3xl transition-all"
+            className="w-full flex items-center justify-center gap-4 bg-white hover:bg-slate-100 text-slate-900 font-black py-5 px-6 rounded-3xl transition-all shadow-xl active:scale-95"
           >
             <img src="https://www.google.com/favicon.ico" width="20" height="20" alt="google" />
-            TIẾP TỤC VỚI GOOGLE
+            INITIALIZE AUTH_V1
           </button>
         </motion.div>
       </div>
