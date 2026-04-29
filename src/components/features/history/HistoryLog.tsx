@@ -77,35 +77,58 @@ export const HistoryLog: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-xl overflow-hidden">
+      <div className="bg-white rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/20 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-slate-50 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-100">
-                <th className="px-8 py-5 text-left cursor-pointer" onClick={() => handleSort('ngay_tao')}>Thời điểm</th>
-                <th className="px-8 py-5 text-left cursor-pointer" onClick={() => handleSort('ten_mau')}>Mẫu biểu</th>
-                <th className="px-8 py-5 text-left">Dòng ID</th>
-                <th className="px-8 py-5 text-right">Trạng thái</th>
+              <tr className="bg-slate-50/50 border-b border-slate-100">
+                <th className="px-8 py-4 text-left cursor-pointer group" onClick={() => handleSort('ngay_tao')}>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black uppercase text-slate-400 tracking-[0.1em]">Thời điểm</span>
+                    {sortConfig.key === 'ngay_tao' && (
+                      <span className="text-indigo-500">
+                        {sortConfig.direction === 'asc' ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                      </span>
+                    )}
+                  </div>
+                </th>
+                <th className="px-8 py-4 text-left cursor-pointer group" onClick={() => handleSort('ten_mau')}>
+                   <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black uppercase text-slate-400 tracking-[0.1em]">Mẫu biểu</span>
+                  </div>
+                </th>
+                <th className="px-8 py-4 text-left">
+                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-[0.1em]">Dòng ID</span>
+                </th>
+                <th className="px-8 py-4 text-right">
+                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-[0.1em]">Trạng thái</span>
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {paginatedLogs.map((log: any, i) => (
-                <tr key={i} className="hover:bg-slate-50/50 transition-all">
-                  <td className="px-8 py-6">
-                    <div className="font-black text-slate-800">{new Date(log.ngay_tao).toLocaleDateString('vi-VN')}</div>
-                    <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{new Date(log.ngay_tao).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</div>
+                <tr key={i} className="hover:bg-slate-50 transition-colors group">
+                  <td className="px-8 py-5">
+                    <div className="font-bold text-slate-900 text-sm tracking-tight">{new Date(log.ngay_tao).toLocaleDateString('vi-VN')}</div>
+                    <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">{new Date(log.ngay_tao).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</div>
                   </td>
-                  <td className="px-8 py-6">
+                  <td className="px-8 py-5">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600"><FileText size={16} /></div>
-                      <span className="font-bold text-slate-700">{log.ten_mau}</span>
+                      <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 border border-indigo-100"><FileText size={14} /></div>
+                      <span className="font-bold text-slate-700 text-sm">{log.ten_mau}</span>
                     </div>
                   </td>
-                  <td className="px-8 py-6">
-                    <code className="text-[10px] font-mono px-2 py-1 bg-slate-100 text-slate-500 rounded border border-slate-200">{log.ma_id?.slice(0, 20)}...</code>
+                  <td className="px-8 py-5">
+                    <code className="text-[10px] font-mono px-2 py-0.5 bg-slate-100 text-slate-500 rounded border border-slate-200">
+                      {log.ma_id?.length > 15 ? `${log.ma_id.slice(0, 15)}...` : log.ma_id}
+                    </code>
                   </td>
-                  <td className="px-8 py-6 text-right">
-                    <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${log.trang_thai === 'Thành công' ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'}`}>
+                  <td className="px-8 py-5 text-right">
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${
+                      log.trang_thai === 'Thành công' 
+                        ? 'bg-emerald-50 text-emerald-600 border-emerald-100' 
+                        : 'bg-amber-50 text-amber-600 border-amber-100'
+                    }`}>
                       {log.trang_thai || 'Hoàn tất'}
                     </span>
                   </td>

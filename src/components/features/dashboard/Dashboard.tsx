@@ -46,21 +46,21 @@ export const Dashboard: React.FC = () => {
   }
 
   const stats = [
-    { label: 'Tổng ứng dụng', value: apps.length, icon: Grid, color: 'bg-indigo-500', trend: 'Hoạt động' },
-    { label: 'Mẫu báo cáo', value: templates.length, icon: FileText, color: 'bg-emerald-500', trend: 'Sẵn sàng' },
-    { label: 'Lượt in tháng', value: logs.length, icon: Printer, color: 'bg-amber-500', trend: '+12% so với tháng trước' },
+    { label: 'Ứng dụng kết nối', value: apps.length, icon: Grid, color: 'bg-indigo-600', trend: 'Active' },
+    { label: 'Mẫu báo cáo', value: templates.length, icon: FileText, color: 'bg-slate-900', trend: 'Ready' },
+    { label: 'Lượt in hiện tại', value: logs.length, icon: Printer, color: 'bg-emerald-600', trend: 'Monthly' },
   ];
 
   return (
     <div className="space-y-8 max-w-6xl mx-auto">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-black text-slate-900 tracking-tight">Chào buổi sáng! 👋</h2>
-          <p className="text-slate-500 font-medium">Đây là những gì đang diễn ra với hệ thống in ấn của bạn.</p>
+          <h2 className="text-2xl font-black text-slate-900 tracking-tight">Tổng quan hệ thống</h2>
+          <p className="text-slate-500 font-medium text-sm">Xin chào! Hệ thống in ấn AppSheet đang hoạt động ổn định.</p>
         </div>
-        <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-2xl border border-slate-200 shadow-sm">
-           <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-           <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Hệ thống: Online</span>
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 text-emerald-600 rounded-full border border-emerald-100 italic">
+           <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+           <span className="text-[10px] font-black uppercase tracking-widest leading-none">Cloud Sync Enabled</span>
         </div>
       </div>
 
@@ -70,100 +70,104 @@ export const Dashboard: React.FC = () => {
           return (
             <motion.div 
               key={i}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
-              className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-xl shadow-slate-200/40 group cursor-default transition-all hover:shadow-2xl hover:shadow-indigo-500/10 hover:-translate-y-1"
+              className="bg-white rounded-3xl p-6 border border-slate-100 shadow-xl shadow-slate-200/20 group hover:-translate-y-1 transition-all duration-300"
             >
-              <div className="flex justify-between items-start mb-4">
-                <div className={`w-12 h-12 ${stat.color} rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-500`}>
-                  <Icon size={24} />
+              <div className="flex justify-between items-start mb-6">
+                <div className={`w-10 h-10 ${stat.color} rounded-xl flex items-center justify-center text-white shadow-lg shadow-black/5`}>
+                  <Icon size={20} />
                 </div>
-                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{stat.trend}</div>
+                <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{stat.trend}</div>
               </div>
-              <div className="text-4xl font-black text-slate-900 mb-1">{stat.value}</div>
-              <div className="text-sm font-bold text-slate-500 tracking-tight">{stat.label}</div>
+              <div className="text-3xl font-black text-slate-900 mb-1">{stat.value}</div>
+              <div className="text-[12px] font-bold text-slate-500 uppercase tracking-tight">{stat.label}</div>
             </motion.div>
           );
         })}
       </div>
 
       <div className="grid grid-cols-12 gap-6 pb-20">
-        <div className="col-span-12 lg:col-span-7 space-y-6">
-          <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/40 overflow-hidden">
-            <div className="p-6 border-b border-slate-50 flex justify-between items-center group">
-              <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] group-hover:text-indigo-600 transition-colors">Nhật ký in gần đây</h3>
-              <Link to="/logs" className="p-2 hover:bg-slate-50 rounded-xl transition-colors"><ChevronRight size={18} className="text-slate-400" /></Link>
-            </div>
-            <div className="p-2">
-              <div className="space-y-1">
-                {logs.length > 0 ? logs.slice(0, 5).map((log: any, i) => (
-                  <div key={i} className="flex items-center gap-4 p-4 hover:bg-slate-50 rounded-2xl transition-all group">
-                    <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-white group-hover:text-indigo-600 transition-colors shadow-sm">
-                      <FileText size={18} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-bold text-slate-800 truncate">{log.ten_mau}</p>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">ID: {log.ma_id}</p>
-                    </div>
-                    <div className="text-right shrink-0">
-                      <p className="text-sm font-black text-indigo-600">{new Date(log.ngay_tao).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{new Date(log.ngay_tao).toLocaleDateString('vi-VN')}</p>
-                    </div>
+        <div className="col-span-12 lg:col-span-12 space-y-6">
+           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Recent Logs Table Style List */}
+              <div className="bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/20 overflow-hidden">
+                <div className="p-5 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+                  <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nhật ký in gần đây</h3>
+                  <Link to="/logs" className="p-1 hover:bg-white rounded-lg transition-colors border border-transparent hover:border-slate-100"><ChevronRight size={16} className="text-slate-400" /></Link>
+                </div>
+                <div className="p-2">
+                  <div className="divide-y divide-slate-50">
+                    {logs.length > 0 ? logs.slice(0, 5).map((log: any, i) => (
+                      <div key={i} className="flex items-center gap-4 p-4 hover:bg-slate-50 rounded-2xl transition-all group">
+                        <div className="w-10 h-10 bg-white border border-slate-100 rounded-xl flex items-center justify-center text-slate-400 group-hover:text-indigo-600 transition-colors shadow-sm">
+                          <FileText size={18} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-bold text-slate-800 truncate">{log.ten_mau}</p>
+                          <div className="flex items-center gap-2">
+                            <code className="text-[9px] font-mono font-bold text-slate-400">ID: {log.ma_id?.slice(0, 8)}...</code>
+                            <span className="w-1 h-1 bg-slate-200 rounded-full"></span>
+                            <span className="text-[9px] font-black text-emerald-500 uppercase">Success</span>
+                          </div>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <p className="text-[11px] font-black text-slate-900">{new Date(log.ngay_tao).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{new Date(log.ngay_tao).toLocaleDateString('vi-VN')}</p>
+                        </div>
+                      </div>
+                    )) : (
+                      <div className="py-16 text-center text-slate-300 italic border-2 border-dashed border-slate-50 rounded-2xl mx-2 my-2">Lịch sử trống</div>
+                    )}
                   </div>
-                )) : (
-                  <div className="py-20 text-center text-slate-300 italic border-2 border-dashed border-slate-100 rounded-[2rem] mx-4 my-2">Lịch sử trống</div>
-                )}
+                </div>
               </div>
-            </div>
-            {logs.length > 5 && (
-              <div className="p-4 bg-slate-50 text-center">
-                 <Link to="/logs" className="text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-[0.2em]">Xem tất cả hoạt động</Link>
-              </div>
-            )}
-          </div>
-        </div>
 
-        <div className="col-span-12 lg:col-span-5 space-y-6">
-           <div className="bg-slate-900 rounded-[2.5rem] border-0 p-8 text-white relative overflow-hidden group shadow-2xl shadow-slate-900/20">
-              <div className="absolute top-0 right-0 p-10 opacity-10 group-hover:scale-110 transition-transform duration-700">
-                <Zap size={140} className="fill-white" />
-              </div>
-              <h3 className="text-xl font-black mb-6 relative z-10 tracking-tight">Thiết lập Action 🚀</h3>
-              <div className="space-y-6 relative z-10">
-                <div className="p-5 bg-white/5 rounded-2xl border border-white/5 hover:border-indigo-500/30 transition-colors">
-                  <p className="text-[10px] text-indigo-400 font-black uppercase tracking-widest mb-3">Formula AppSheet:</p>
-                  <code className="text-[11px] font-mono leading-relaxed break-all select-all block text-slate-300">
-                    {`CONCATENATE("${window.location.origin}/report?template=ID_MAU&id=", ENCODEURL([MA_ID]))`}
-                  </code>
-                </div>
-                <div className="flex gap-4 items-center">
-                  <div className="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-indigo-500/20">
-                    <HelpCircle size={20} />
+              {/* Action Config */}
+              <div className="space-y-6">
+                <div className="bg-slate-900 rounded-3xl p-8 text-white relative overflow-hidden shadow-2xl shadow-slate-900/20">
+                  <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform">
+                    <Zap size={100} className="fill-white" />
                   </div>
-                  <p className="text-xs text-slate-400 leading-relaxed font-bold">
-                    Dán URL này vào phần <span className="text-white">Behavior {'>'} Actions</span> trong AppSheet Editor của bạn.
-                  </p>
+                  <h3 className="text-lg font-black mb-6 relative z-10 tracking-tight flex items-center gap-2">
+                    <Zap size={18} className="text-indigo-400 fill-indigo-400" />
+                    Thiết lập AppSheet Action
+                  </h3>
+                  <div className="space-y-6 relative z-10">
+                    <div className="p-4 bg-white/5 rounded-xl border border-white/10 hover:border-indigo-500/50 transition-colors">
+                      <p className="text-[9px] text-indigo-400 font-black uppercase tracking-widest mb-2 italic">Copy Formula:</p>
+                      <code className="text-[10px] font-mono leading-relaxed break-all select-all block text-slate-400 bg-black/30 p-3 rounded-lg border border-white/5">
+                        {`CONCATENATE("${window.location.origin}/report?template=ID_MAU&id=", ENCODEURL([MA_ID]))`}
+                      </code>
+                    </div>
+                    <div className="flex gap-3 items-start">
+                      <div className="w-8 h-8 bg-indigo-500/20 rounded-lg flex items-center justify-center shrink-0 border border-indigo-500/30">
+                        <Info size={16} className="text-indigo-400" />
+                      </div>
+                      <p className="text-[11px] text-slate-400 leading-relaxed font-medium">
+                        Sử dụng công thức này trong <span className="text-white font-bold italic">Behavior {'>'} Open a website</span> để tự động mở báo cáo từ AppSheet.
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-           </div>
 
-           <div className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-xl shadow-slate-200/40">
-              <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-6">Trạng thái kết nối</h3>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl hover:bg-slate-100 transition-colors cursor-default">
-                  <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 bg-green-500 rounded-full" />
-                    <span className="text-sm font-bold text-slate-700">Google Sheets DB</span>
+                <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-xl shadow-slate-200/20">
+                  <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Trạng thái hạ tầng</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="p-4 bg-slate-50 border border-slate-100 rounded-2xl">
+                      <p className="text-[9px] font-black text-slate-400 uppercase mb-1">Database</p>
+                      <div className="flex items-center gap-2 font-bold text-emerald-600 text-sm italic">
+                        <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full shadow-sm" /> Connected
+                      </div>
+                    </div>
+                    <div className="p-4 bg-slate-50 border border-slate-100 rounded-2xl">
+                      <p className="text-[9px] font-black text-slate-400 uppercase mb-1">Storage</p>
+                      <div className="flex items-center gap-2 font-bold text-indigo-600 text-sm italic">
+                        <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full shadow-sm" /> Cloud Ready
+                      </div>
+                    </div>
                   </div>
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Đã kết nối</span>
-                </div>
-                <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl hover:bg-slate-100 transition-colors cursor-default">
-                  <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 bg-indigo-500 rounded-full" />
-                    <span className="text-sm font-bold text-slate-700">Google Drive API</span>
-                  </div>
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Sẵn sàng</span>
                 </div>
               </div>
            </div>

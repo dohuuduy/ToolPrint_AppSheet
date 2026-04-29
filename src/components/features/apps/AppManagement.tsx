@@ -263,47 +263,80 @@ export const AppManagement: React.FC = () => {
         )}
       </AnimatePresence>
 
-      <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/40 overflow-hidden">
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="bg-slate-50 text-slate-400 border-b border-slate-100">
-              <th className="px-8 py-5 text-left cursor-pointer group" onClick={() => handleSort('ten_ung_dung')}>
-                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] group-hover:text-indigo-600 transition-colors">Ứng dụng</span>
-                  {sortConfig.key === 'ten_ung_dung' && (sortConfig.direction === 'asc' ? <ChevronUp size={12} /> : <ChevronDown size={12} />)}
-                </div>
-              </th>
-              <th className="px-8 py-5 text-left hidden lg:table-cell"><span className="text-[10px] font-black uppercase tracking-[0.2em]">Application ID</span></th>
-              <th className="px-8 py-5 text-left"><span className="text-[10px] font-black uppercase tracking-[0.2em]">Trạng thái</span></th>
-              <th className="px-8 py-5 text-right"><span className="text-[10px] font-black uppercase tracking-[0.2em]">Thao tác</span></th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-50">
-            {paginatedApps.map((app: any, i) => (
-              <tr key={i} className="hover:bg-slate-50/50 transition-all group">
-                <td className="px-8 py-6">
-                  <div className="font-black text-slate-800 text-lg">{app.ten_ung_dung || app.ten_app}</div>
-                  <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">{app.bang_chinh}</div>
-                </td>
-                <td className="px-8 py-6 hidden lg:table-cell">
-                   <code className="text-[11px] font-mono px-3 py-1.5 bg-slate-50 text-slate-500 rounded-lg">{app.app_id}</code>
-                </td>
-                <td className="px-8 py-6">
-                   <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-black bg-emerald-50 text-emerald-600 uppercase tracking-widest border border-emerald-100">
-                    <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" /> Hoạt động
-                  </span>
-                </td>
-                <td className="px-8 py-6 text-right">
-                  <div className="flex justify-end gap-2">
-                     <button onClick={() => setEditingApp(app)} className="p-3 bg-white border border-slate-200 rounded-xl hover:bg-indigo-50 hover:text-indigo-600 transition-all shadow-sm"><Edit size={16} /></button>
-                     <button onClick={() => setViewingApp(app)} className="p-3 bg-white border border-slate-200 rounded-xl hover:bg-slate-100 transition-all shadow-sm"><Eye size={16} /></button>
-                     <button onClick={() => handleDelete(app.ma_id, app.ten_ung_dung)} className="p-3 bg-white border border-slate-200 rounded-xl hover:bg-rose-50 hover:text-rose-600 transition-all shadow-sm"><Trash2 size={16} /></button>
+      <div className="bg-white rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/20 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="bg-slate-50/50 border-b border-slate-100">
+                <th 
+                  className="px-8 py-4 text-left cursor-pointer group" 
+                  onClick={() => handleSort('ten_ung_dung')}
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black uppercase text-slate-400 tracking-[0.1em] group-hover:text-indigo-600 transition-colors">Ứng dụng</span>
+                    {sortConfig.key === 'ten_ung_dung' && (
+                      <span className="text-indigo-500">
+                        {sortConfig.direction === 'asc' ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                      </span>
+                    )}
                   </div>
-                </td>
+                </th>
+                <th className="px-8 py-4 text-left hidden lg:table-cell">
+                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-[0.1em]">Application ID</span>
+                </th>
+                <th className="px-8 py-4 text-left">
+                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-[0.1em]">Trạng thái</span>
+                </th>
+                <th className="px-8 py-4 text-right">
+                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-[0.1em]">Thao tác</span>
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-slate-50">
+              {paginatedApps.map((app: any, i) => (
+                <tr key={i} className="hover:bg-slate-50 transition-colors group">
+                  <td className="px-8 py-5">
+                    <div className="font-bold text-slate-900 text-base tracking-tight">{app.ten_ung_dung || app.ten_app}</div>
+                    <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">{app.bang_chinh}</div>
+                  </td>
+                  <td className="px-8 py-5 hidden lg:table-cell">
+                     <code className="text-[11px] font-mono px-2 py-1 bg-slate-100 text-slate-600 rounded-md border border-slate-200/50">{app.app_id}</code>
+                  </td>
+                  <td className="px-8 py-5">
+                     <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-50 text-emerald-600 uppercase tracking-widest border border-emerald-100">
+                      <div className="w-1 h-1 bg-emerald-500 rounded-full" /> Hoạt động
+                    </span>
+                  </td>
+                  <td className="px-8 py-5 text-right">
+                    <div className="flex justify-end gap-1.5">
+                       <button 
+                        onClick={() => setEditingApp(app)} 
+                        className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                        title="Chỉnh sửa"
+                       >
+                        <Edit size={16} />
+                       </button>
+                       <button 
+                        onClick={() => setViewingApp(app)} 
+                        className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all"
+                        title="Chi tiết"
+                       >
+                        <Eye size={16} />
+                       </button>
+                       <button 
+                        onClick={() => handleDelete(app.ma_id, app.ten_ung_dung)} 
+                        className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all"
+                        title="Xóa"
+                       >
+                        <Trash2 size={16} />
+                       </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

@@ -246,44 +246,70 @@ export const TemplateManagement: React.FC = () => {
         )}
       </AnimatePresence>
 
-      <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-xl overflow-hidden">
-        <table className="w-full">
-          <thead>
-            <tr className="bg-slate-50 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-100">
-              <th className="px-8 py-5 text-left">Tên mẫu & Ứng dụng</th>
-              <th className="px-8 py-5 text-left">Bảng chính</th>
-              <th className="px-8 py-5 text-left">Loại tệp</th>
-              <th className="px-8 py-5 text-right">Thao tác</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-50">
-            {paginatedTemplates.map((tpl: ReportTemplate, i) => {
-              const app = apps.find(a => a.ma_id === tpl.ma_ung_dung);
-              return (
-                <tr key={i} className="hover:bg-slate-50/50 transition-all group">
-                  <td className="px-8 py-6">
-                    <div className="font-black text-slate-800 text-lg">{tpl.ten_mau}</div>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{tpl.ma_mau}</span>
-                      <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
-                      <span className="text-[10px] text-indigo-500 font-black uppercase tracking-widest">{app?.ten_ung_dung || 'Không xác định'}</span>
-                    </div>
-                  </td>
-                  <td className="px-8 py-6 font-bold text-slate-600">{tpl.bang_chinh}</td>
-                  <td className="px-8 py-6">
-                    <span className="px-3 py-1 bg-indigo-50 text-indigo-600 text-[10px] font-black rounded-full uppercase tracking-widest border border-indigo-100">{tpl.loai_file}</span>
-                  </td>
-                  <td className="px-8 py-6 text-right">
-                    <div className="flex justify-end gap-2">
-                      <button onClick={() => setEditingTemplate(tpl)} className="p-3 bg-white border border-slate-200 rounded-xl hover:bg-indigo-50 hover:text-indigo-600 transition-all shadow-sm"><Edit size={16} /></button>
-                      <button onClick={() => handleDelete(tpl.ma_id, tpl.ten_mau)} className="p-3 bg-white border border-slate-200 rounded-xl hover:bg-rose-50 hover:text-rose-600 transition-all shadow-sm"><Trash2 size={16} /></button>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+      <div className="bg-white rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/20 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="bg-slate-50/50 border-b border-slate-100">
+                <th className="px-8 py-4 text-left">
+                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-[0.1em]">Mẫu & Ứng dụng</span>
+                </th>
+                <th className="px-8 py-4 text-left">
+                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-[0.1em]">Bảng chính</span>
+                </th>
+                <th className="px-8 py-4 text-left">
+                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-[0.1em]">Loại tệp</span>
+                </th>
+                <th className="px-8 py-4 text-right">
+                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-[0.1em]">Thao tác</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-50">
+              {paginatedTemplates.map((tpl: ReportTemplate, i) => {
+                const app = apps.find(a => a.ma_id === tpl.ma_ung_dung);
+                return (
+                  <tr key={i} className="hover:bg-slate-50 transition-colors group">
+                    <td className="px-8 py-5">
+                      <div className="font-bold text-slate-900 text-base tracking-tight">{tpl.ten_mau}</div>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{tpl.ma_mau}</span>
+                        <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
+                        <span className="text-[10px] text-indigo-500 font-black uppercase tracking-widest">{app?.ten_ung_dung || 'N/A'}</span>
+                      </div>
+                    </td>
+                    <td className="px-8 py-5 text-sm font-bold text-slate-600">
+                      {tpl.bang_chinh}
+                    </td>
+                    <td className="px-8 py-5">
+                      <span className="inline-flex items-center px-2 py-0.5 bg-indigo-50 text-indigo-600 text-[10px] font-black rounded-md uppercase tracking-widest border border-indigo-100">
+                        {tpl.loai_file}
+                      </span>
+                    </td>
+                    <td className="px-8 py-5 text-right">
+                      <div className="flex justify-end gap-1.5">
+                        <button 
+                          onClick={() => setEditingTemplate(tpl)} 
+                          className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                          title="Chỉnh sửa"
+                        >
+                          <Edit size={16} />
+                        </button>
+                        <button 
+                          onClick={() => handleDelete(tpl.ma_id, tpl.ten_mau)} 
+                          className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all"
+                          title="Xóa"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

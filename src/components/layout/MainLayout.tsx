@@ -50,20 +50,20 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-[#fbfcfd]">
       <Sidebar />
-      <main className="flex-1 md:ml-80 min-h-screen relative">
-        <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-slate-100 h-24 px-10 flex justify-between items-center">
-            <div className="flex items-center gap-4">
-               <div className="w-1.5 h-8 bg-indigo-600 rounded-full" />
-               <h1 className="text-xl font-black text-slate-900 tracking-tight uppercase">
+      <main className="flex-1 md:ml-72 min-h-screen relative">
+        <header className="sticky top-0 z-30 bg-white/40 backdrop-blur-md border-b border-slate-100 h-20 px-8 flex justify-between items-center">
+            <div className="flex items-center gap-3">
+               <div className="w-1 h-6 bg-indigo-600 rounded-full" />
+               <h1 className="text-lg font-black text-slate-900 tracking-tight">
                  {pageTitles[location.pathname] || 'Trang chủ'}
                </h1>
             </div>
-            <div className="flex items-center gap-4">
-               <div className="hidden lg:flex flex-col items-end mr-2">
-                  <div className="text-[11px] font-black text-slate-900 truncate max-w-[200px]">{user.email}</div>
-                  <div className="flex items-center gap-1.5 mt-1">
-                    <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
-                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Hệ thống sẵn sàng</span>
+            <div className="flex items-center gap-6">
+               <div className="hidden lg:flex flex-col items-end">
+                  <div className="text-[11px] font-black text-slate-900 leading-none">{user.email}</div>
+                  <div className="flex items-center gap-1.5 mt-1.5">
+                    <div className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse" />
+                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">Hệ thống sẵn sàng</span>
                   </div>
                </div>
             </div>
@@ -73,11 +73,11 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.3 }}
-              className="p-10"
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -10 }}
+              transition={{ duration: 0.2 }}
+              className="p-8"
             >
               {children}
             </motion.div>
