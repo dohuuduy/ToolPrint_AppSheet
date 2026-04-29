@@ -9,7 +9,8 @@ import {
   Bell, 
   User, 
   ChevronRight,
-  Maximize2
+  Maximize2,
+  Zap
 } from 'lucide-react';
 
 const pageTitles: Record<string, string> = {
