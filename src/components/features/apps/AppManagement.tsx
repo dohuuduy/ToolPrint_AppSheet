@@ -47,6 +47,30 @@ export const AppManagement: React.FC = () => {
     fetchApps();
   }, [fetchApps]);
 
+  // Đồng bộ form khi chọn Sửa
+  React.useEffect(() => {
+    if (editingApp) {
+      setNewApp({
+        ten_ung_dung: editingApp.ten_ung_dung,
+        app_id: editingApp.app_id,
+        khoa_api: editingApp.khoa_api,
+        folder_mau_id: editingApp.folder_mau_id,
+        folder_xuat_id: editingApp.folder_xuat_id,
+        bang_chinh: editingApp.bang_chinh
+      });
+      setShowForm(true);
+    } else {
+      setNewApp({ 
+        ten_ung_dung: '', 
+        app_id: '', 
+        khoa_api: '',
+        folder_mau_id: '',
+        folder_xuat_id: '',
+        bang_chinh: 'KhachHang'
+      });
+    }
+  }, [editingApp]);
+
   const testConnection = async () => {
     if (!newApp.app_id || !newApp.khoa_api || !newApp.bang_chinh) {
       alert('Vui lòng nhập App ID, API Key và Tên bảng chính để test.');
@@ -131,6 +155,15 @@ export const AppManagement: React.FC = () => {
     }
   };
 
+  const toggleForm = () => {
+    if (showForm) {
+      setEditingApp(null);
+      setShowForm(false);
+    } else {
+      setShowForm(true);
+    }
+  };
+
   if (loading) return (
     <div className="flex flex-col items-center justify-center py-32 text-slate-400 gap-4">
       <div className="w-12 h-12 border-4 border-indigo-600/20 border-t-indigo-600 rounded-full animate-spin shadow-lg shadow-indigo-100"></div>
@@ -156,7 +189,7 @@ export const AppManagement: React.FC = () => {
             />
             <Search size={18} className="absolute left-4 top-3.5 text-slate-400 group-focus-within:text-indigo-600 transition-colors" />
           </div>
-          <button onClick={() => setShowForm(!showForm)} className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition-all flex items-center gap-2 shadow-lg shadow-indigo-200">
+          <button onClick={toggleForm} className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition-all flex items-center gap-2 shadow-lg shadow-indigo-200">
             {showForm ? <X size={20} /> : <Plus size={20} />} 
             <span>{showForm ? 'Hủy bỏ' : 'Kết nối mới'}</span>
           </button>
