@@ -9,7 +9,8 @@ import {
   Zap, 
   HelpCircle, 
   Database, 
-  ChevronRight 
+  ChevronRight,
+  Info
 } from 'lucide-react';
 import { useAppStore } from '../../../store/use-app-store';
 
