@@ -18,11 +18,13 @@ import {
   ChevronsRight,
   ChevronUp,
   ChevronDown,
-  Check
+  Check,
+  Filter
 } from 'lucide-react';
 import { useAppStore } from '../../../store/use-app-store';
 import { api } from '../../../services/api.service';
 import { Pagination } from '../../ui/Pagination';
+import { AppSheetConfig } from '../../../types';
 
 export const AppManagement: React.FC = () => {
   const { apps, loading, fetchApps } = useAppStore();
@@ -38,6 +40,7 @@ export const AppManagement: React.FC = () => {
   });
   const [testingConnection, setTestingConnection] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState('');
+  const [statusFilter, setStatusFilter] = React.useState('all');
   const [currentPage, setCurrentPage] = React.useState(1);
   const [pageSize] = React.useState(10);
   const [sortConfig, setSortConfig] = React.useState({ key: 'ten_ung_dung', direction: 'asc' });
@@ -105,10 +108,16 @@ export const AppManagement: React.FC = () => {
   };
 
   const filteredApps = React.useMemo(() => {
-    let result = apps.filter((app: AppSheetConfig) => 
-      (app.ten_ung_dung || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (app.app_id || '').toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    let result = apps.filter((app: AppSheetConfig) => {
+      const matchesSearch = (app.ten_ung_dung || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                            (app.app_id || '').toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesStatus = statusFilter === 'all' || 
+                            (statusFilter === 'active' && app.trang_thai === 'Hoạt động') ||
+                            (statusFilter === 'inactive' && app.trang_thai === 'Ngừng hoạt động');
+      
+      return matchesSearch && matchesStatus;
+    });
 
     if (sortConfig.key) {
       result.sort((a: any, b: any) => {
@@ -120,7 +129,7 @@ export const AppManagement: React.FC = () => {
       });
     }
     return result;
-  }, [apps, searchTerm, sortConfig]);
+  }, [apps, searchTerm, statusFilter, sortConfig]);
 
   const paginatedApps = React.useMemo(() => {
     const startIndex = (currentPage - 1) * pageSize;
@@ -176,18 +185,18 @@ export const AppManagement: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <h2 className="text-3xl font-black text-slate-900 tracking-tight">Cấu hình Ứng dụng</h2>
-          <p className="text-slate-500 font-medium">Kết nối và quản lý các cổng API AppSheet của bạn.</p>
+          <p className="text-slate-500 font-medium text-sm">Kết nối và quản lý các cổng API AppSheet của bạn.</p>
         </div>
         <div className="flex items-center gap-3">
-          <div className="relative group hidden sm:block">
-            <input 
-              type="text" 
-              placeholder="Lọc ứng dụng..." 
-              className="pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all w-72 font-medium shadow-sm"
-              value={searchTerm}
-              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-            />
-            <Search size={18} className="absolute left-4 top-3.5 text-slate-400 group-focus-within:text-indigo-600 transition-colors" />
+          <div className="flex bg-white border border-slate-100 rounded-2xl p-1 shadow-sm sm:flex hidden">
+             <button 
+              onClick={() => { setStatusFilter('all'); setCurrentPage(1); }}
+              className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${statusFilter === 'all' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'text-slate-400 hover:text-slate-600'}`}
+             >Tất cả</button>
+             <button 
+              onClick={() => { setStatusFilter('active'); setCurrentPage(1); }}
+              className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${statusFilter === 'active' ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-100' : 'text-slate-400 hover:text-slate-600'}`}
+             >Hoạt động</button>
           </div>
           <button onClick={toggleForm} className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition-all flex items-center gap-2 shadow-lg shadow-indigo-200">
             {showForm ? <X size={20} /> : <Plus size={20} />} 
@@ -196,9 +205,20 @@ export const AppManagement: React.FC = () => {
         </div>
       </div>
 
+      <div className="relative group">
+        <input 
+          type="text" 
+          placeholder="Tìm tên ứng dụng hoặc App ID..." 
+          className="w-full pl-12 pr-4 py-4 bg-white border border-slate-200 rounded-[2rem] text-sm focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-medium shadow-sm"
+          value={searchTerm}
+          onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+        />
+        <Search size={22} className="absolute left-5 top-4 text-slate-300 group-focus-within:text-indigo-600 transition-colors" />
+      </div>
+
       <AnimatePresence>
         {showForm && (
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}>
+          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
             <div className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-2xl shadow-slate-200/40">
               <form onSubmit={handleSubmit} className="space-y-10">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -266,29 +286,38 @@ export const AppManagement: React.FC = () => {
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            {/* ... table content remains same ... */}
             <thead>
               <tr className="bg-slate-50/50 border-b border-slate-100">
                 <th 
-                  className="px-6 py-3 text-left cursor-pointer group" 
+                  className="px-6 py-4 text-left cursor-pointer group select-none transition-colors hover:bg-slate-100/50" 
                   onClick={() => handleSort('ten_ung_dung')}
                 >
                   <div className="flex items-center gap-2">
                     <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider group-hover:text-indigo-600 transition-colors">Ứng dụng</span>
                     {sortConfig.key === 'ten_ung_dung' && (
                       <span className="text-indigo-500">
-                        {sortConfig.direction === 'asc' ? <ChevronUp size={10} /> : <ChevronDown size={10} />}
+                        {sortConfig.direction === 'asc' ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
                       </span>
                     )}
                   </div>
                 </th>
-                <th className="px-6 py-3 text-left hidden lg:table-cell">
-                  <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider">Mã App ID</span>
+                <th 
+                  className="px-6 py-4 text-left hidden lg:table-cell cursor-pointer group select-none transition-colors hover:bg-slate-100/50"
+                  onClick={() => handleSort('app_id')}
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider group-hover:text-indigo-600 transition-colors">Mã App ID</span>
+                    {sortConfig.key === 'app_id' && (
+                      <span className="text-indigo-500">
+                        {sortConfig.direction === 'asc' ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                      </span>
+                    )}
+                  </div>
                 </th>
-                <th className="px-6 py-3 text-left">
+                <th className="px-6 py-4 text-left">
                   <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider">Trạng thái</span>
                 </th>
-                <th className="px-6 py-3 text-right">
+                <th className="px-6 py-4 text-right">
                   <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider">Thao tác</span>
                 </th>
               </tr>
@@ -296,19 +325,24 @@ export const AppManagement: React.FC = () => {
             <tbody className="divide-y divide-slate-50">
               {paginatedApps.map((app: any, i) => (
                 <tr key={i} className="hover:bg-slate-50/50 transition-colors group">
-                  <td className="px-6 py-3">
+                  <td className="px-6 py-4">
                     <div className="font-bold text-slate-900 text-sm tracking-tight">{app.ten_ung_dung || app.ten_app}</div>
                     <div className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">{app.bang_chinh}</div>
                   </td>
-                  <td className="px-6 py-3 hidden lg:table-cell">
+                  <td className="px-6 py-4 hidden lg:table-cell">
                      <code className="text-[10px] font-mono px-1.5 py-0.5 bg-slate-100 text-slate-500 rounded-md border border-slate-200/30">{app.app_id}</code>
                   </td>
-                  <td className="px-6 py-3">
-                     <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-black bg-emerald-50 text-emerald-600 uppercase tracking-widest border border-emerald-100/50">
-                      <div className="w-1 h-1 bg-emerald-500 rounded-full" /> Online
+                  <td className="px-6 py-4">
+                     <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${
+                       app.trang_thai === 'Hoạt động' 
+                        ? 'bg-emerald-50 text-emerald-600 border-emerald-100/50' 
+                        : 'bg-slate-100 text-slate-500 border-slate-200/50'
+                     }`}>
+                      <div className={`w-1 h-1 rounded-full ${app.trang_thai === 'Hoạt động' ? 'bg-emerald-500' : 'bg-slate-400'}`} /> 
+                      {app.trang_thai || 'Online'}
                     </span>
                   </td>
-                  <td className="px-6 py-3 text-right">
+                  <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-1">
                        <button 
                         onClick={() => setEditingApp(app)} 
@@ -338,7 +372,7 @@ export const AppManagement: React.FC = () => {
               {paginatedApps.length === 0 && (
                 <tr>
                   <td colSpan={4} className="px-6 py-20 text-center text-slate-400 text-xs font-bold uppercase tracking-widest">
-                    Không tìm thấy ứng dụng nào
+                    Không tìm thấy ứng dụng nào phù hợp
                   </td>
                 </tr>
               )}

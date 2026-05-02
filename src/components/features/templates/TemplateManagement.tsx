@@ -17,11 +17,13 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronsRight,
-  Database
+  Database,
+  Filter
 } from 'lucide-react';
 import { useAppStore } from '../../../store/use-app-store';
 import { api } from '../../../services/api.service';
 import { Pagination } from '../../ui/Pagination';
+import { ReportTemplate } from '../../../types';
 
 export const TemplateManagement: React.FC = () => {
   const { apps, templates, loading, fetchTemplates, fetchApps } = useAppStore();
@@ -34,9 +36,13 @@ export const TemplateManagement: React.FC = () => {
     loai_file: 'DOCX' as const, 
     ma_ung_dung: '',
     bang_chinh: '',
-    key_col: 'ma_id'
+    key_col: 'ma_id',
+    child_table: '',
+    foreign_key: '',
+    child_name: 'items'
   });
   const [searchTerm, setSearchTerm] = React.useState('');
+  const [appFilter, setAppFilter] = React.useState('all');
   const [currentPage, setCurrentPage] = React.useState(1);
   const [pageSize] = React.useState(10);
   const [sortConfig, setSortConfig] = React.useState({ key: 'ten_mau', direction: 'asc' });
@@ -99,10 +105,14 @@ export const TemplateManagement: React.FC = () => {
   };
 
   const filteredTemplates = React.useMemo(() => {
-    let result = templates.filter((tpl: ReportTemplate) => 
-      (tpl.ten_mau || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (tpl.ma_mau || '').toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    let result = templates.filter((tpl: ReportTemplate) => {
+      const matchesSearch = (tpl.ten_mau || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                            (tpl.ma_mau || '').toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesApp = appFilter === 'all' || tpl.ma_ung_dung === appFilter;
+      
+      return matchesSearch && matchesApp;
+    });
+
     if (sortConfig.key) {
       result.sort((a: any, b: any) => {
         const valA = (a[sortConfig.key] || '').toString().toLowerCase();
@@ -113,7 +123,7 @@ export const TemplateManagement: React.FC = () => {
       });
     }
     return result;
-  }, [templates, searchTerm, sortConfig]);
+  }, [templates, searchTerm, appFilter, sortConfig]);
 
   const paginatedTemplates = React.useMemo(() => {
     const startIndex = (currentPage - 1) * pageSize;
@@ -148,25 +158,54 @@ export const TemplateManagement: React.FC = () => {
     }
   };
 
-  if (loading) return <div className="py-20 text-center animate-pulse">Đang nạp mẫu biểu...</div>;
+  if (loading) return (
+    <div className="flex flex-col items-center justify-center py-32 text-slate-400 gap-4">
+      <div className="w-12 h-12 border-4 border-indigo-600/20 border-t-indigo-600 rounded-full animate-spin shadow-lg shadow-indigo-100"></div>
+      <p className="text-[10px] font-black uppercase tracking-[0.2em] animate-pulse">Đang nạp mẫu biểu báo cáo...</p>
+    </div>
+  );
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto pb-20">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <h2 className="text-3xl font-black text-slate-900 tracking-tight">Mẫu báo cáo</h2>
-          <p className="text-slate-500">Quản lý các tệp Word/Excel mẫu để trộn dữ liệu.</p>
+          <p className="text-slate-500 font-medium text-sm">Quản lý và thiết lập các tệp Word/Excel để trộn dữ liệu.</p>
         </div>
-        <button onClick={() => setShowForm(!showForm)} className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition-all flex items-center gap-2 shadow-lg shadow-indigo-200">
-          {showForm ? <X size={20} /> : <Plus size={20} />} 
-          <span>{showForm ? 'Hủy bỏ' : 'Thêm mẫu mới'}</span>
-        </button>
+        <div className="flex items-center gap-3">
+          <select 
+            value={appFilter}
+            onChange={(e) => { setAppFilter(e.target.value); setCurrentPage(1); }}
+            className="pl-4 pr-10 py-3 bg-white border border-slate-200 rounded-2xl text-[10px] font-black uppercase tracking-widest focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm outline-none appearance-none cursor-pointer"
+            style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.75rem center', backgroundSize: '1rem' }}
+          >
+            <option value="all">Tất cả ứng dụng</option>
+            {apps.map(app => (
+              <option key={app.ma_id} value={app.ma_id}>{app.ten_ung_dung}</option>
+            ))}
+          </select>
+          <button onClick={() => setShowForm(!showForm)} className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition-all flex items-center gap-2 shadow-lg shadow-indigo-200">
+            {showForm ? <X size={20} /> : <Plus size={20} />} 
+            <span>{showForm ? 'Hủy bỏ' : 'Thêm mẫu mới'}</span>
+          </button>
+        </div>
+      </div>
+
+      <div className="relative group">
+        <input 
+          type="text" 
+          placeholder="Tìm tên mẫu biểu hoặc token..." 
+          className="w-full pl-12 pr-4 py-4 bg-white border border-slate-200 rounded-[2rem] text-sm focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-medium shadow-sm"
+          value={searchTerm}
+          onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+        />
+        <Search size={22} className="absolute left-5 top-4 text-slate-300 group-focus-within:text-indigo-600 transition-colors" />
       </div>
 
       <AnimatePresence>
         {showForm && (
           <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
-            <div className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-xl overflow-hidden">
+            <div className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-2xl shadow-slate-200/40">
               <form onSubmit={handleSubmit} className="space-y-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-4">
@@ -255,16 +294,36 @@ export const TemplateManagement: React.FC = () => {
           <table className="w-full">
             <thead>
               <tr className="bg-slate-50/50 border-b border-slate-100">
-                <th className="px-6 py-3 text-left">
-                  <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider">Mẫu & Ứng dụng</span>
+                <th 
+                  className="px-6 py-4 text-left cursor-pointer group select-none transition-colors hover:bg-slate-100/50"
+                  onClick={() => handleSort('ten_mau')}
+                >
+                   <div className="flex items-center gap-2">
+                    <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider group-hover:text-indigo-600 transition-colors">Mẫu & Ứng dụng</span>
+                    {sortConfig.key === 'ten_mau' && (
+                      <span className="text-indigo-500">
+                        {sortConfig.direction === 'asc' ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                      </span>
+                    )}
+                  </div>
                 </th>
-                <th className="px-6 py-3 text-left">
-                  <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider">Bảng chính</span>
+                <th 
+                  className="px-6 py-4 text-left cursor-pointer group select-none transition-colors hover:bg-slate-100/50"
+                  onClick={() => handleSort('ma_mau')}
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider group-hover:text-indigo-600 transition-colors">Token</span>
+                    {sortConfig.key === 'ma_mau' && (
+                      <span className="text-indigo-500">
+                        {sortConfig.direction === 'asc' ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                      </span>
+                    )}
+                  </div>
                 </th>
-                <th className="px-6 py-3 text-left">
+                <th className="px-6 py-4 text-left">
                   <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider">Loại tệp</span>
                 </th>
-                <th className="px-6 py-3 text-right">
+                <th className="px-6 py-4 text-right">
                   <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider">Thao tác</span>
                 </th>
               </tr>
@@ -274,23 +333,23 @@ export const TemplateManagement: React.FC = () => {
                 const app = apps.find(a => a.ma_id === tpl.ma_ung_dung);
                 return (
                   <tr key={i} className="hover:bg-slate-50 transition-colors group">
-                    <td className="px-6 py-3">
+                    <td className="px-6 py-4">
                       <div className="font-bold text-slate-900 text-sm tracking-tight">{tpl.ten_mau}</div>
                       <div className="flex items-center gap-2 mt-0.5">
-                        <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">{tpl.ma_mau}</span>
-                        <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
                         <span className="text-[9px] text-indigo-500 font-black uppercase tracking-widest">{app?.ten_ung_dung || 'N/A'}</span>
+                        <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
+                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{tpl.bang_chinh}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-3 text-[13px] font-bold text-slate-600">
-                      {tpl.bang_chinh}
+                    <td className="px-6 py-4">
+                      <code className="text-[10px] font-mono px-1.5 py-0.5 bg-slate-100 text-slate-500 rounded-md border border-slate-200/30 font-bold uppercase">{tpl.ma_mau}</code>
                     </td>
-                    <td className="px-6 py-3">
+                    <td className="px-6 py-4">
                       <span className="inline-flex items-center px-2 py-0.5 bg-indigo-50 text-indigo-600 text-[9px] font-black rounded-md uppercase tracking-widest border border-indigo-100/50">
                         {tpl.loai_file}
                       </span>
                     </td>
-                    <td className="px-6 py-3 text-right">
+                    <td className="px-6 py-4 text-right">
                       <div className="flex justify-end gap-1">
                         <button 
                           onClick={() => setEditingTemplate(tpl)} 
@@ -314,7 +373,7 @@ export const TemplateManagement: React.FC = () => {
               {paginatedTemplates.length === 0 && (
                 <tr>
                   <td colSpan={4} className="px-6 py-20 text-center text-slate-400 text-xs font-bold uppercase tracking-widest">
-                    Chưa có mẫu báo cáo nào được tạo
+                    Không tìm thấy mẫu báo cáo nào phù hợp
                   </td>
                 </tr>
               )}
