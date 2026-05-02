@@ -115,8 +115,8 @@ export const TemplateManagement: React.FC = () => {
 
     if (sortConfig.key) {
       result.sort((a: any, b: any) => {
-        const valA = (a[sortConfig.key] || '').toString().toLowerCase();
-        const valB = (b[sortConfig.key] || '').toString().toLowerCase();
+        const valA = (a[sortConfig.key as keyof any] || '').toString().toLowerCase();
+        const valB = (b[sortConfig.key as keyof any] || '').toString().toLowerCase();
         if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1;
         if (valA > valB) return sortConfig.direction === 'asc' ? 1 : -1;
         return 0;
@@ -159,72 +159,46 @@ export const TemplateManagement: React.FC = () => {
   };
 
   if (loading) return (
-    <div className="flex flex-col items-center justify-center py-32 text-slate-400 gap-4">
-      <div className="w-12 h-12 border-4 border-indigo-600/20 border-t-indigo-600 rounded-full animate-spin shadow-lg shadow-indigo-100"></div>
-      <p className="text-[10px] font-black uppercase tracking-[0.2em] animate-pulse">Đang nạp mẫu biểu báo cáo...</p>
+    <div className="flex flex-col items-center justify-center py-20 text-slate-400 gap-4">
+      <RefreshCcw className="animate-spin text-indigo-600" size={32} />
+      <p className="text-sm font-medium">Đang nạp mẫu biểu báo cáo...</p>
     </div>
   );
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto pb-20">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div className="space-y-6 max-w-6xl mx-auto pb-10">
+      <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-black text-slate-900 tracking-tight">Mẫu báo cáo</h2>
-          <p className="text-slate-500 font-medium text-sm">Quản lý và thiết lập các tệp Word/Excel để trộn dữ liệu.</p>
+          <h2 className="text-xl font-bold text-slate-900 tracking-tight">Mẫu báo cáo</h2>
+          <p className="text-slate-500 text-sm">Quản lý các tệp Word/Excel để trộn dữ liệu.</p>
         </div>
-        <div className="flex items-center gap-3">
-          <select 
-            value={appFilter}
-            onChange={(e) => { setAppFilter(e.target.value); setCurrentPage(1); }}
-            className="pl-4 pr-10 py-3 bg-white border border-slate-200 rounded-2xl text-[10px] font-black uppercase tracking-widest focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm outline-none appearance-none cursor-pointer"
-            style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.75rem center', backgroundSize: '1rem' }}
-          >
-            <option value="all">Tất cả ứng dụng</option>
-            {apps.map(app => (
-              <option key={app.ma_id} value={app.ma_id}>{app.ten_ung_dung}</option>
-            ))}
-          </select>
-          <button onClick={() => setShowForm(!showForm)} className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition-all flex items-center gap-2 shadow-lg shadow-indigo-200">
-            {showForm ? <X size={20} /> : <Plus size={20} />} 
-            <span>{showForm ? 'Hủy bỏ' : 'Thêm mẫu mới'}</span>
-          </button>
-        </div>
-      </div>
-
-      <div className="relative group">
-        <input 
-          type="text" 
-          placeholder="Tìm tên mẫu biểu hoặc token..." 
-          className="w-full pl-12 pr-4 py-4 bg-white border border-slate-200 rounded-[2rem] text-sm focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-medium shadow-sm"
-          value={searchTerm}
-          onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-        />
-        <Search size={22} className="absolute left-5 top-4 text-slate-300 group-focus-within:text-indigo-600 transition-colors" />
+        <button onClick={() => setShowForm(!showForm)} className="btn-primary">
+          {showForm ? <X size={18} /> : <Plus size={18} />} 
+          <span>{showForm ? 'Hủy bỏ' : 'Thêm mẫu mới'}</span>
+        </button>
       </div>
 
       <AnimatePresence>
         {showForm && (
-          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
-            <div className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-2xl shadow-slate-200/40">
-              <form onSubmit={handleSubmit} className="space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-4">
-                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest block ml-1">Tên mẫu báo cáo</label>
-                    <input required value={newTemplate.ten_mau} onChange={handleTenMauChange} className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-700 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all" placeholder="Ví dụ: Hợp đồng mua bán" />
+          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 mb-6">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-sm">
+                  <div className="space-y-1.5">
+                    <label className="font-semibold text-slate-700">Tên mẫu báo cáo</label>
+                    <input required value={newTemplate.ten_mau} onChange={handleTenMauChange} className="input-modern" placeholder="Ví dụ: Hợp đồng mua bán" />
                   </div>
-                  <div className="space-y-4">
-                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest block ml-1">Mã Token (Tự động)</label>
-                    <input required value={newTemplate.ma_mau} readOnly className="w-full px-5 py-4 bg-slate-100 border border-slate-200 rounded-2xl font-mono text-indigo-600 font-bold outline-none" placeholder="MA_MAU_TU_DONG" />
+                  <div className="space-y-1.5">
+                    <label className="font-semibold text-slate-700">Mã Token (Tự động)</label>
+                    <input required value={newTemplate.ma_mau} readOnly className="input-modern bg-slate-50 cursor-not-allowed font-mono text-indigo-600" placeholder="MA_MAU" />
                   </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-4">
-                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest block ml-1">Ứng dụng AppSheet</label>
+                  <div className="space-y-1.5">
+                    <label className="font-semibold text-slate-700">Ứng dụng AppSheet</label>
                     <select 
                       required 
                       value={newTemplate.ma_ung_dung} 
                       onChange={(e) => setNewTemplate({ ...newTemplate, ma_ung_dung: e.target.value })}
-                      className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-700 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all"
+                      className="input-modern"
                     >
                       <option value="">Chọn ứng dụng...</option>
                       {apps.map(app => (
@@ -232,24 +206,24 @@ export const TemplateManagement: React.FC = () => {
                       ))}
                     </select>
                   </div>
-                  <div className="space-y-4">
-                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest block ml-1">Tên bảng chính</label>
-                    <input required value={newTemplate.bang_chinh} onChange={(e) => setNewTemplate({ ...newTemplate, bang_chinh: e.target.value })} className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-700 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all" placeholder="Ví dụ: KhachHang" />
+                  <div className="space-y-1.5">
+                    <label className="font-semibold text-slate-700">Tên bảng chính</label>
+                    <input required value={newTemplate.bang_chinh} onChange={(e) => setNewTemplate({ ...newTemplate, bang_chinh: e.target.value })} className="input-modern" placeholder="Ví dụ: KhachHang" />
                   </div>
-                  <div className="space-y-4">
-                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest block ml-1">Cột khóa chính (Key Column)</label>
-                    <input required value={newTemplate.key_col} onChange={(e) => setNewTemplate({ ...newTemplate, key_col: e.target.value })} className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-700 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all" placeholder="Mặc định: ma_id" />
+                  <div className="space-y-1.5">
+                    <label className="font-semibold text-slate-700">Cột khóa chính (Key Column)</label>
+                    <input required value={newTemplate.key_col} onChange={(e) => setNewTemplate({ ...newTemplate, key_col: e.target.value })} className="input-modern" placeholder="Mặc định: ma_id" />
                   </div>
-                  <div className="space-y-4">
-                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest block ml-1">Mã ID Tệp mẫu (Google Drive ID)</label>
-                    <input required value={newTemplate.file_id_drive} onChange={(e) => setNewTemplate({ ...newTemplate, file_id_drive: e.target.value })} className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-700 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all" placeholder="ID tệp từ URL Google Drive" />
+                  <div className="space-y-1.5">
+                    <label className="font-semibold text-slate-700">ID Google Drive ID</label>
+                    <input required value={newTemplate.file_id_drive} onChange={(e) => setNewTemplate({ ...newTemplate, file_id_drive: e.target.value })} className="input-modern font-mono" placeholder="ID tệp mẫu" />
                   </div>
-                  <div className="space-y-4">
-                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest block ml-1">Loại tệp</label>
+                  <div className="space-y-1.5">
+                    <label className="font-semibold text-slate-700">Loại tệp</label>
                     <select 
                       value={newTemplate.loai_file} 
                       onChange={(e) => setNewTemplate({ ...newTemplate, loai_file: e.target.value as any })}
-                      className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-700 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all"
+                      className="input-modern"
                     >
                       <option value="DOCX">Microsoft Word (DOCX)</option>
                       <option value="XLSX">Microsoft Excel (XLSX)</option>
@@ -257,30 +231,30 @@ export const TemplateManagement: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="border-t border-slate-100 pt-8 mt-8">
-                  <h3 className="text-sm font-black text-slate-900 mb-6 flex items-center gap-2">
+                <div className="border-t border-slate-100 pt-6">
+                  <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
                     <Database size={16} className="text-indigo-600" />
-                    Cấu hình Bảng con (Chi tiết)
+                    Bảng con (Dành cho Danh sách/Chi tiết)
                   </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest block ml-1">Tên bảng con</label>
-                      <input value={newTemplate.child_table} onChange={(e) => setNewTemplate({ ...newTemplate, child_table: e.target.value })} className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none focus:border-indigo-500 transition-all" placeholder="Ví dụ: ChiTietDonHang" />
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-1.5 text-xs">
+                      <label className="font-semibold text-slate-700">Tên bảng con</label>
+                      <input value={newTemplate.child_table} onChange={(e) => setNewTemplate({ ...newTemplate, child_table: e.target.value })} className="input-modern" placeholder="ChiTietDonHang" />
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest block ml-1">Khóa ngoại (Foreign Key)</label>
-                      <input value={newTemplate.foreign_key} onChange={(e) => setNewTemplate({ ...newTemplate, foreign_key: e.target.value })} className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none focus:border-indigo-500 transition-all" placeholder="Ví dụ: ma_id_cha" />
+                    <div className="space-y-1.5 text-xs">
+                      <label className="font-semibold text-slate-700">Khóa ngoại</label>
+                      <input value={newTemplate.foreign_key} onChange={(e) => setNewTemplate({ ...newTemplate, foreign_key: e.target.value })} className="input-modern" placeholder="ma_id_cha" />
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest block ml-1">Tên biến trong Template</label>
-                      <input value={newTemplate.child_name} onChange={(e) => setNewTemplate({ ...newTemplate, child_name: e.target.value })} className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none focus:border-indigo-500 transition-all" placeholder="Mặc định: items" />
+                    <div className="space-y-1.5 text-xs">
+                      <label className="font-semibold text-slate-700">Tên biến Template</label>
+                      <input value={newTemplate.child_name} onChange={(e) => setNewTemplate({ ...newTemplate, child_name: e.target.value })} className="input-modern" placeholder="items" />
                     </div>
                   </div>
                 </div>
 
-                <div className="flex justify-end pt-4">
-                  <button type="submit" className="px-12 py-4 bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200">
-                    {editingTemplate ? 'Cập nhật mẫu biểu' : 'Lưu mẫu biểu'}
+                <div className="flex justify-end pt-4 border-t border-slate-100">
+                  <button type="submit" className="btn-primary px-10">
+                    {editingTemplate ? 'Cập nhật mẫu' : 'Lưu mẫu biểu'}
                   </button>
                 </div>
               </form>
@@ -289,82 +263,63 @@ export const TemplateManagement: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Templates List */}
-      <div className="bg-white rounded-[2rem] border border-slate-200/60 shadow-xl shadow-slate-200/20 overflow-hidden">
-        {/* Desktop View */}
-        <div className="hidden md:block overflow-x-auto">
+      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div className="p-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between gap-4">
+          <div className="relative flex-1 max-w-sm">
+            <input 
+              type="text" 
+              placeholder="Tìm tên mẫu..." 
+              className="w-full pl-9 pr-4 py-1.5 bg-white border border-slate-300 rounded-lg text-xs outline-none focus:ring-2 focus:ring-indigo-500/20"
+              value={searchTerm}
+              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+            />
+            <Search size={14} className="absolute left-3 top-2.5 text-slate-400" />
+          </div>
+          <select 
+            value={appFilter}
+            onChange={(e) => { setAppFilter(e.target.value); setCurrentPage(1); }}
+            className="text-xs bg-white border border-slate-300 rounded-lg px-3 py-1.5 outline-none"
+          >
+            <option value="all">Tất cả ứng dụng</option>
+            {apps.map(app => (
+              <option key={app.ma_id} value={app.ma_id}>{app.ten_ung_dung}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="overflow-x-auto text-sm">
           <table className="w-full">
             <thead>
-              <tr className="bg-slate-50/50 border-b border-slate-100">
-                <th 
-                  className="px-8 py-6 text-left cursor-pointer group select-none transition-colors hover:bg-slate-100/50"
-                  onClick={() => handleSort('ten_mau')}
-                >
-                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest group-hover:text-indigo-600 transition-colors">Mẫu & Ứng dụng</span>
-                    {sortConfig.key === 'ten_mau' && (
-                      <span className="text-indigo-500">
-                        {sortConfig.direction === 'asc' ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-                      </span>
-                    )}
-                  </div>
-                </th>
-                <th 
-                  className="px-8 py-6 text-left cursor-pointer group select-none transition-colors hover:bg-slate-100/50"
-                  onClick={() => handleSort('ma_mau')}
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest group-hover:text-indigo-600 transition-colors">Token</span>
-                    {sortConfig.key === 'ma_mau' && (
-                      <span className="text-indigo-500">
-                        {sortConfig.direction === 'asc' ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-                      </span>
-                    )}
-                  </div>
-                </th>
-                <th className="px-8 py-6 text-left">
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Loại tệp</span>
-                </th>
-                <th className="px-8 py-6 text-right">
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Thao tác</span>
-                </th>
+              <tr className="border-b border-slate-200">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-widest cursor-pointer" onClick={() => handleSort('ten_mau')}>Tên mẫu</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-widest">Token</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-widest">Định dạng</th>
+                <th className="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-widest">Hành động</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
+            <tbody className="divide-y divide-slate-100">
               {paginatedTemplates.map((tpl: ReportTemplate, i) => {
                 const app = apps.find(a => a.ma_id === tpl.ma_ung_dung);
                 return (
-                  <tr key={i} className="hover:bg-slate-50/50 transition-all group">
-                    <td className="px-8 py-6">
-                      <div className="font-bold text-slate-900 text-sm tracking-tight group-hover:text-indigo-600 transition-colors">{tpl.ten_mau}</div>
-                      <div className="flex items-center gap-2 mt-1.5 overflow-hidden">
-                        <span className="text-[9px] text-indigo-500 font-black uppercase tracking-widest truncate max-w-[120px]">{app?.ten_ung_dung || 'N/A'}</span>
-                        <span className="w-1 h-1 bg-slate-200 rounded-full shrink-0"></span>
-                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest truncate">{tpl.bang_chinh}</span>
-                      </div>
+                  <tr key={i} className="hover:bg-slate-50 transition-all">
+                    <td className="px-6 py-4">
+                      <div className="font-semibold text-slate-900">{tpl.ten_mau}</div>
+                      <div className="text-[10px] text-indigo-600 font-medium mt-0.5">{app?.ten_ung_dung || 'N/A'} • {tpl.bang_chinh}</div>
                     </td>
-                    <td className="px-8 py-6">
-                      <code className="text-[10px] font-mono px-2 py-1 bg-slate-100/80 text-slate-500 rounded-lg border border-slate-200/30 font-bold uppercase tracking-tight">{tpl.ma_mau}</code>
+                    <td className="px-6 py-4">
+                      <code className="text-xs font-mono bg-slate-100 px-1.5 py-0.5 rounded text-slate-600">{tpl.ma_mau}</code>
                     </td>
-                    <td className="px-8 py-6">
-                      <span className="inline-flex items-center px-3 py-1 bg-indigo-50 text-indigo-600 text-[9px] font-black rounded-full uppercase tracking-widest border border-indigo-100/50">
+                    <td className="px-6 py-4 text-slate-600 capitalize">
+                      <span className="px-2 py-0.5 bg-slate-100 rounded text-[10px] font-bold text-slate-500">
                         {tpl.loai_file}
                       </span>
                     </td>
-                    <td className="px-8 py-6 text-right">
-                      <div className="flex justify-end gap-2 translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all">
-                        <button 
-                          onClick={() => setEditingTemplate(tpl)} 
-                          className="p-3 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-xl border border-transparent hover:border-slate-100 hover:shadow-xl hover:shadow-slate-200/50 transition-all"
-                          title="Chỉnh sửa"
-                        >
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex justify-end gap-1">
+                        <button onClick={() => setEditingTemplate(tpl)} className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all" title="Sửa">
                           <Edit size={16} />
                         </button>
-                        <button 
-                          onClick={() => handleDelete(tpl.ma_id, tpl.ten_mau)} 
-                          className="p-3 text-slate-400 hover:text-rose-600 hover:bg-white rounded-xl border border-transparent hover:border-slate-100 hover:shadow-xl hover:shadow-slate-200/50 transition-all"
-                          title="Xóa"
-                        >
+                        <button onClick={() => handleDelete(tpl.ma_id, tpl.ten_mau)} className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all" title="Xóa">
                           <Trash2 size={16} />
                         </button>
                       </div>
@@ -375,59 +330,10 @@ export const TemplateManagement: React.FC = () => {
             </tbody>
           </table>
         </div>
-
-        {/* Mobile View */}
-        <div className="md:hidden divide-y divide-slate-100">
-           {paginatedTemplates.map((tpl: ReportTemplate, i) => {
-             const app = apps.find(a => a.ma_id === tpl.ma_ung_dung);
-             return (
-               <div key={i} className="p-5 hover:bg-slate-50/50 transition-colors space-y-4">
-                  <div className="flex justify-between items-start">
-                     <div className="space-y-1">
-                        <div className="font-bold text-slate-900 text-sm tracking-tight">{tpl.ten_mau}</div>
-                        <div className="flex items-center gap-2">
-                           <span className="text-[9px] text-indigo-500 font-black uppercase tracking-widest">{app?.ten_ung_dung || 'N/A'}</span>
-                           <span className="w-1 h-1 bg-slate-200 rounded-full"></span>
-                           <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{tpl.bang_chinh}</span>
-                        </div>
-                     </div>
-                     <span className="px-2.5 py-1 bg-indigo-50 text-indigo-600 text-[8px] font-black rounded-full uppercase tracking-widest border border-indigo-100/50">
-                        {tpl.loai_file}
-                     </span>
-                  </div>
-                  
-                  <div className="bg-slate-50/50 rounded-xl p-3 border border-slate-200/40">
-                     <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Token Code</p>
-                     <code className="text-[10px] font-mono text-indigo-600 font-bold uppercase tracking-widest">{tpl.ma_mau}</code>
-                  </div>
-
-                  <div className="flex gap-2">
-                     <button 
-                      onClick={() => setEditingTemplate(tpl)}
-                      className="flex-1 py-3.5 bg-white border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-[0.1em] text-slate-600 flex items-center justify-center gap-2 active:scale-95 transition-all shadow-sm"
-                     >
-                       <Edit size={14} /> Chỉnh sửa
-                     </button>
-                     <button 
-                      onClick={() => handleDelete(tpl.ma_id, tpl.ten_mau)}
-                      className="p-3.5 bg-rose-50 border border-rose-100 text-rose-600 rounded-xl shadow-sm"
-                     >
-                       <Trash2 size={16} />
-                     </button>
-                  </div>
-               </div>
-             );
-           })}
-        </div>
-
+        
         {paginatedTemplates.length === 0 && (
-          <div className="px-6 py-24 text-center">
-            <div className="w-16 h-16 bg-slate-50 rounded-[2rem] flex items-center justify-center mx-auto mb-4 text-slate-200">
-               <Filter size={32} />
-            </div>
-            <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">
-              Hệ thống chưa có mẫu báo cáo nào
-            </p>
+          <div className="py-20 text-center text-slate-400">
+            <p>Không có mẫu báo cáo nào.</p>
           </div>
         )}
 
@@ -437,7 +343,6 @@ export const TemplateManagement: React.FC = () => {
           onPageChange={setCurrentPage} 
         />
       </div>
-
     </div>
   );
 };

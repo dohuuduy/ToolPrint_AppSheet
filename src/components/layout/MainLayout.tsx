@@ -25,27 +25,25 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
 
   if (!user) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-950 p-6 overflow-hidden relative">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,#312e81,black)]" />
-        <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 p-6 overflow-hidden relative">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,#EEF2FF,transparent)]" />
         
         <motion.div 
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white/5 backdrop-blur-3xl p-8 md:p-12 text-center max-w-md w-full rounded-[3rem] shadow-[0_0_80px_rgba(0,0,0,0.5)] border border-white/5 relative z-10"
+          className="bg-white p-8 md:p-10 text-center max-w-sm w-full rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-200 relative z-10"
         >
-          <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-2xl relative group">
-            <div className="absolute inset-0 bg-indigo-600 rounded-3xl animate-ping opacity-10 group-hover:scale-110 transition-transform" />
-            <Terminal size={40} className="text-slate-950 relative z-10" />
+          <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-lg shadow-indigo-200">
+            <Terminal size={32} className="text-white" />
           </div>
-          <h1 className="text-3xl md:text-4xl font-black text-white mb-2 uppercase tracking-tighter italic">Print<span className="text-indigo-400">Hub</span></h1>
-          <p className="text-slate-400 mb-10 font-medium text-sm leading-relaxed tracking-wide px-4">Hệ thống báo cáo tự động chuyên nghiệp cho người dùng AppSheet.</p>
+          <h1 className="text-2xl font-bold text-slate-900 mb-2 uppercase tracking-tight">Print<span className="text-indigo-600">Hub</span></h1>
+          <p className="text-slate-500 mb-10 text-sm leading-relaxed">Hệ thống báo cáo chuyên nghiệp cho AppSheet.</p>
           <button 
             onClick={login} 
-            className="w-full flex items-center justify-center gap-4 bg-white hover:bg-slate-50 text-slate-900 font-bold py-4.5 px-6 rounded-2xl transition-all shadow-xl active:scale-95 text-sm"
+            className="w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-50 text-slate-700 font-semibold border border-slate-200 py-3.5 px-6 rounded-xl transition-all shadow-sm active:scale-95 text-sm"
           >
             <img src="https://www.google.com/favicon.ico" width="18" height="18" alt="google" />
-            ĐẬNG NHẬP GOOGLE
+            Đăng nhập với Google
           </button>
         </motion.div>
       </div>
@@ -79,41 +77,35 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
 
       <main className="flex-1 min-h-screen relative flex flex-col">
         {/* Header */}
-        <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-200/60 h-16 md:h-20 px-4 md:px-8 flex justify-between items-center">
+        <header className="sticky top-0 z-40 bg-white border-b border-slate-200 h-14 md:h-16 px-4 md:px-8 flex justify-between items-center">
             <div className="flex items-center gap-4">
               <button 
                 onClick={() => setIsSidebarOpen(true)}
-                className="p-2 -ml-2 text-slate-500 hover:bg-slate-100 rounded-xl md:hidden transition-colors"
+                className="p-2 -ml-2 text-slate-500 hover:bg-slate-100 rounded-lg md:hidden transition-colors"
+                title="Mở Menu"
               >
                 <div className="space-y-1.5 w-5">
-                   <div className="h-0.5 bg-slate-600 rounded-full w-full" />
-                   <div className="h-0.5 bg-slate-600 rounded-full w-3/4" />
+                   <div className="h-0.5 bg-slate-500 rounded-full w-full" />
+                   <div className="h-0.5 bg-slate-500 rounded-full w-full" />
                 </div>
               </button>
-              <div className="flex items-center gap-2.5">
-                 <div className="w-1 h-6 md:h-7 bg-indigo-600 rounded-full hidden xs:block" />
-                 <h1 className="text-sm md:text-lg font-black text-slate-900 tracking-tight uppercase">
-                   {pageTitles[location.pathname] || 'Trang chủ'}
-                 </h1>
-              </div>
+              <h1 className="text-sm md:text-base font-semibold text-slate-800 tracking-tight">
+                {pageTitles[location.pathname] || 'Trang chủ'}
+              </h1>
             </div>
 
-            <div className="flex items-center gap-3">
-               {/* Activity Indicator (Desktop) */}
-               <div className="hidden lg:flex flex-col items-end mr-4">
-                  <div className="text-[10px] md:text-[11px] font-bold text-slate-900 leading-none">{user.email}</div>
-                  <div className="flex items-center gap-1.5 mt-1.5">
-                    <div className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse" />
-                    <span className="text-[8px] md:text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">Ready</span>
-                  </div>
+            <div className="flex items-center gap-4">
+               {/* User Info (Desktop) */}
+               <div className="hidden lg:flex flex-col items-end">
+                  <div className="text-xs font-semibold text-slate-700 leading-none">{user.name}</div>
+                  <div className="text-[10px] text-slate-400 mt-1">{user.email}</div>
                </div>
                
-               {/* Small User Info / Avatar (Mobile Friendly) */}
-               <div className="w-9 h-9 md:w-10 md:h-10 rounded-xl border border-slate-200 p-0.5 bg-white shadow-sm overflow-hidden flex-shrink-0">
+               <div className="w-8 h-8 md:w-9 md:h-9 rounded-full border border-slate-200 p-0.5 bg-white shadow-sm flex-shrink-0">
                   {user.picture ? (
-                    <img src={user.picture} alt="Profile" className="w-full h-full object-cover rounded-lg" />
+                    <img src={user.picture} alt="Profile" className="w-full h-full object-cover rounded-full" />
                   ) : (
-                    <div className="w-full h-full bg-indigo-50 text-indigo-600 flex items-center justify-center font-black rounded-lg text-xs">
+                    <div className="w-full h-full bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold rounded-full text-xs">
                       {user.name?.[0]}
                     </div>
                   )}

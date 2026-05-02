@@ -44,7 +44,6 @@ export const AppManagement: React.FC = () => {
   const [currentPage, setCurrentPage] = React.useState(1);
   const [pageSize] = React.useState(10);
   const [sortConfig, setSortConfig] = React.useState({ key: 'ten_ung_dung', direction: 'asc' });
-  const [viewingApp, setViewingApp] = React.useState<AppSheetConfig | null>(null);
 
   React.useEffect(() => {
     fetchApps();
@@ -121,8 +120,8 @@ export const AppManagement: React.FC = () => {
 
     if (sortConfig.key) {
       result.sort((a: any, b: any) => {
-        const valA = (a[sortConfig.key] || '').toString().toLowerCase();
-        const valB = (b[sortConfig.key] || '').toString().toLowerCase();
+        const valA = (a[sortConfig.key as keyof any] || '').toString().toLowerCase();
+        const valB = (b[sortConfig.key as keyof any] || '').toString().toLowerCase();
         if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1;
         if (valA > valB) return sortConfig.direction === 'asc' ? 1 : -1;
         return 0;
@@ -164,117 +163,64 @@ export const AppManagement: React.FC = () => {
     }
   };
 
-  const toggleForm = () => {
-    if (showForm) {
-      setEditingApp(null);
-      setShowForm(false);
-    } else {
-      setShowForm(true);
-    }
-  };
-
   if (loading) return (
-    <div className="flex flex-col items-center justify-center py-32 text-slate-400 gap-4">
-      <div className="w-12 h-12 border-4 border-indigo-600/20 border-t-indigo-600 rounded-full animate-spin shadow-lg shadow-indigo-100"></div>
-      <p className="text-[10px] font-black uppercase tracking-[0.2em] animate-pulse">Phân tích hệ thống ứng dụng...</p>
+    <div className="flex flex-col items-center justify-center py-20 text-slate-400 gap-4">
+      <RefreshCcw className="animate-spin text-indigo-600" size={32} />
+      <p className="text-sm font-medium">Đang tải danh sách ứng dụng...</p>
     </div>
   );
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto pb-20">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div className="space-y-6 max-w-6xl mx-auto pb-10">
+      <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-black text-slate-900 tracking-tight">Cấu hình Ứng dụng</h2>
-          <p className="text-slate-500 font-medium text-sm">Kết nối và quản lý các cổng API AppSheet của bạn.</p>
+          <h2 className="text-xl font-bold text-slate-900 tracking-tight">Kết nối AppSheet</h2>
+          <p className="text-slate-500 text-sm">Quản lý các nguồn dữ liệu từ AppSheet của bạn.</p>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="flex bg-white border border-slate-100 rounded-2xl p-1 shadow-sm sm:flex hidden">
-             <button 
-              onClick={() => { setStatusFilter('all'); setCurrentPage(1); }}
-              className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${statusFilter === 'all' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'text-slate-400 hover:text-slate-600'}`}
-             >Tất cả</button>
-             <button 
-              onClick={() => { setStatusFilter('active'); setCurrentPage(1); }}
-              className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${statusFilter === 'active' ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-100' : 'text-slate-400 hover:text-slate-600'}`}
-             >Hoạt động</button>
-          </div>
-          <button onClick={toggleForm} className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition-all flex items-center gap-2 shadow-lg shadow-indigo-200">
-            {showForm ? <X size={20} /> : <Plus size={20} />} 
-            <span>{showForm ? 'Hủy bỏ' : 'Kết nối mới'}</span>
-          </button>
-        </div>
-      </div>
-
-      <div className="relative group">
-        <input 
-          type="text" 
-          placeholder="Tìm tên ứng dụng hoặc App ID..." 
-          className="w-full pl-12 pr-4 py-4 bg-white border border-slate-200 rounded-[2rem] text-sm focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-medium shadow-sm"
-          value={searchTerm}
-          onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-        />
-        <Search size={22} className="absolute left-5 top-4 text-slate-300 group-focus-within:text-indigo-600 transition-colors" />
+        <button onClick={() => setShowForm(!showForm)} className="btn-primary">
+          {showForm ? <X size={18} /> : <Plus size={18} />} 
+          <span>{showForm ? 'Hủy bỏ' : 'Kết nối mới'}</span>
+        </button>
       </div>
 
       <AnimatePresence>
         {showForm && (
-          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
-            <div className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-2xl shadow-slate-200/40">
-              <form onSubmit={handleSubmit} className="space-y-10">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                  <div className="space-y-8">
-                     <div className="flex items-center gap-3 mb-2">
-                       <div className="w-1.5 h-6 bg-indigo-600 rounded-full" />
-                       <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest">Định danh kết nối</h4>
-                     </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Tên ứng dụng</label>
-                      <input required value={newApp.ten_ung_dung} onChange={e => setNewApp({...newApp, ten_ung_dung: e.target.value})} className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all font-bold text-slate-700" placeholder="Ví dụ: CRM Bất Động Sản" />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Tên bảng chính</label>
-                      <input required value={newApp.bang_chinh} onChange={e => setNewApp({...newApp, bang_chinh: e.target.value})} className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all font-bold text-slate-700" placeholder="Tên bảng trên AppSheet (VD: KhachHang)" />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Mã ID Ứng dụng (App ID)</label>
-                      <input required value={newApp.app_id} onChange={e => setNewApp({...newApp, app_id: e.target.value})} className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all font-mono text-indigo-600 font-bold" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Mã Khóa API (Access Key)</label>
-                      <input required type="password" value={newApp.khoa_api} onChange={e => setNewApp({...newApp, khoa_api: e.target.value})} className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all font-mono font-bold" placeholder="Nhập khóa API bảo mật..." />
-                    </div>
+          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 mb-6">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-700">Tên ứng dụng</label>
+                    <input required value={newApp.ten_ung_dung} onChange={e => setNewApp({...newApp, ten_ung_dung: e.target.value})} className="input-modern" placeholder="Ví dụ: CRM Bất Động Sản" />
                   </div>
-                  
-                  <div className="space-y-8">
-                    <div className="flex items-center gap-3 mb-2">
-                       <div className="w-1.5 h-6 bg-emerald-600 rounded-full" />
-                       <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest">Lưu trữ Google Drive</h4>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Thư mục nguồn (Mẫu)</label>
-                        <input required value={newApp.folder_mau_id} onChange={e => setNewApp({...newApp, folder_mau_id: e.target.value})} className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all font-mono font-bold" placeholder="Folder ID..." />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Thư mục đích (Xuất)</label>
-                        <input required value={newApp.folder_xuat_id} onChange={e => setNewApp({...newApp, folder_xuat_id: e.target.value})} className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all font-mono font-bold" placeholder="Folder ID..." />
-                      </div>
-                    </div>
-                    <div className="bg-amber-50 p-6 rounded-2xl border border-amber-100 flex gap-4">
-                      <HelpCircle size={20} className="text-amber-600 shrink-0" />
-                      <div className="text-xs text-amber-700 leading-relaxed font-bold">
-                        <span className="font-black">Lưu ý bảo mật:</span> Đảm bảo bạn đã bật "Enable API" trong AppSheet Editor của bạn.
-                      </div>
-                    </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-700">Tên bảng chính</label>
+                    <input required value={newApp.bang_chinh} onChange={e => setNewApp({...newApp, bang_chinh: e.target.value})} className="input-modern" placeholder="Tên bảng trên AppSheet" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-700">Mã ID Ứng dụng (App ID)</label>
+                    <input required value={newApp.app_id} onChange={e => setNewApp({...newApp, app_id: e.target.value})} className="input-modern font-mono" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-700">Mã Khóa API (Access Key)</label>
+                    <input required type="password" value={newApp.khoa_api} onChange={e => setNewApp({...newApp, khoa_api: e.target.value})} className="input-modern font-mono" placeholder="••••••••••••••••" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-700">Thư mục nguồn (Mẫu)</label>
+                    <input required value={newApp.folder_mau_id} onChange={e => setNewApp({...newApp, folder_mau_id: e.target.value})} className="input-modern font-mono" placeholder="Folder ID..." />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-700">Thư mục đích (Xuất)</label>
+                    <input required value={newApp.folder_xuat_id} onChange={e => setNewApp({...newApp, folder_xuat_id: e.target.value})} className="input-modern font-mono" placeholder="Folder ID..." />
                   </div>
                 </div>
-                <div className="flex justify-end pt-4 gap-4">
-                  <button type="button" onClick={testConnection} disabled={testingConnection} className="px-8 py-4 bg-slate-100 text-slate-700 font-bold rounded-2xl hover:bg-slate-200 transition-all flex items-center gap-2">
-                    {testingConnection ? "..." : <Zap size={20} className="text-indigo-600" />}
-                    <span>Kiểm tra kết nối</span>
+                <div className="flex justify-end gap-3 border-t border-slate-100 pt-6">
+                  <button type="button" onClick={testConnection} disabled={testingConnection} className="btn-secondary">
+                    <Zap size={16} className="text-amber-500" />
+                    {testingConnection ? "Đang thử..." : "Test kết nối"}
                   </button>
-                  <button type="submit" className="px-12 py-4 bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200">
-                    {editingApp ? 'Cập nhật' : 'Thiết lập ngay'}
+                  <button type="submit" className="btn-primary px-8">
+                    {editingApp ? 'Cập nhật' : 'Thiết lập'}
                   </button>
                 </div>
               </form>
@@ -283,90 +229,68 @@ export const AppManagement: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Applications List */}
-      <div className="bg-white rounded-[2rem] border border-slate-200/60 shadow-xl shadow-slate-200/20 overflow-hidden">
-        {/* Desktop View */}
-        <div className="hidden md:block overflow-x-auto">
+      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div className="p-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+          <div className="relative w-64">
+            <input 
+              type="text" 
+              placeholder="Tìm ứng dụng..." 
+              className="w-full pl-9 pr-4 py-1.5 bg-white border border-slate-300 rounded-lg text-xs outline-none focus:ring-2 focus:ring-indigo-500/20"
+              value={searchTerm}
+              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+            />
+            <Search size={14} className="absolute left-3 top-2.5 text-slate-400" />
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-slate-400 mr-2">Bộ lọc:</span>
+            <select 
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="text-xs bg-white border border-slate-300 rounded-lg px-2 py-1.5 outline-none"
+            >
+              <option value="all">Tất cả</option>
+              <option value="active">Hoạt động</option>
+              <option value="inactive">Tạm dừng</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="overflow-x-auto text-sm">
           <table className="w-full">
             <thead>
-              <tr className="bg-slate-50/50 border-b border-slate-100">
-                <th 
-                  className="px-8 py-6 text-left cursor-pointer group select-none transition-colors hover:bg-slate-100/50" 
-                  onClick={() => handleSort('ten_ung_dung')}
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest group-hover:text-indigo-600 transition-colors">Ứng dụng & Bảng</span>
-                    {sortConfig.key === 'ten_ung_dung' && (
-                      <span className="text-indigo-500">
-                        {sortConfig.direction === 'asc' ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-                      </span>
-                    )}
-                  </div>
-                </th>
-                <th 
-                  className="px-8 py-6 text-left hidden lg:table-cell cursor-pointer group select-none transition-colors hover:bg-slate-100/50"
-                  onClick={() => handleSort('app_id')}
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest group-hover:text-indigo-600 transition-colors">Mã App ID</span>
-                    {sortConfig.key === 'app_id' && (
-                      <span className="text-indigo-500">
-                        {sortConfig.direction === 'asc' ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-                      </span>
-                    )}
-                  </div>
-                </th>
-                <th className="px-8 py-6 text-left">
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Trạng thái</span>
-                </th>
-                <th className="px-8 py-6 text-right">
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Thao tác</span>
-                </th>
+              <tr className="border-b border-slate-200">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-widest cursor-pointer" onClick={() => handleSort('ten_ung_dung')}>Ứng dụng</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-widest">Bảng chính</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-widest">Trạng thái</th>
+                <th className="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-widest">Hành động</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
+            <tbody className="divide-y divide-slate-100">
               {paginatedApps.map((app: any, i) => (
-                <tr key={i} className="hover:bg-slate-50/50 transition-all group">
-                  <td className="px-8 py-6">
-                    <div className="font-bold text-slate-900 text-sm tracking-tight group-hover:text-indigo-600 transition-colors">{app.ten_ung_dung || app.ten_app}</div>
-                    <div className="text-[9px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-1.5">{app.bang_chinh}</div>
+                <tr key={i} className="hover:bg-slate-50 transition-all">
+                  <td className="px-6 py-4">
+                    <div className="font-semibold text-slate-900">{app.ten_ung_dung}</div>
+                    <div className="text-[10px] font-mono text-slate-400 mt-0.5">{app.app_id.split('-')[0]}...</div>
                   </td>
-                  <td className="px-8 py-6 hidden lg:table-cell">
-                     <code className="text-[10px] font-mono px-2 py-1 bg-slate-100/80 text-slate-500 rounded-lg border border-slate-200/30 font-bold tracking-tight">{app.app_id}</code>
-                  </td>
-                  <td className="px-8 py-6">
-                     <span className={`badge-status ${
+                  <td className="px-6 py-4 text-slate-600 font-medium">{app.bang_chinh}</td>
+                  <td className="px-6 py-4">
+                    <span className={`badge-status ${
                        app.trang_thai === 'Hoạt động' 
-                        ? 'bg-emerald-50 text-emerald-600 border-emerald-100' 
-                        : 'bg-slate-100 text-slate-500 border-slate-200'
-                     }`}>
-                      <div className={`w-1.5 h-1.5 rounded-full ${app.trang_thai === 'Hoạt động' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} /> 
-                      {app.trang_thai || 'Online'}
+                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
+                        : 'bg-slate-100 text-slate-600 border-slate-200'
+                    }`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${app.trang_thai === 'Hoạt động' ? 'bg-emerald-500' : 'bg-slate-400'}`} />
+                      {app.trang_thai}
                     </span>
                   </td>
-                  <td className="px-8 py-6 text-right">
-                    <div className="flex justify-end gap-2 translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all">
-                       <button 
-                        onClick={() => setEditingApp(app)} 
-                        className="p-3 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-xl border border-transparent hover:border-slate-100 hover:shadow-xl hover:shadow-slate-200/50 transition-all"
-                        title="Chỉnh sửa"
-                       >
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex justify-end gap-1">
+                      <button onClick={() => setEditingApp(app)} className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all" title="Sửa">
                         <Edit size={16} />
-                       </button>
-                       <button 
-                        onClick={() => setViewingApp(app)} 
-                        className="p-3 text-slate-400 hover:text-slate-900 hover:bg-white rounded-xl border border-transparent hover:border-slate-100 hover:shadow-xl hover:shadow-slate-200/50 transition-all"
-                        title="Chi tiết"
-                       >
-                        <Eye size={16} />
-                       </button>
-                       <button 
-                        onClick={() => handleDelete(app.ma_id, app.ten_ung_dung)} 
-                        className="p-3 text-slate-400 hover:text-rose-600 hover:bg-white rounded-xl border border-transparent hover:border-slate-100 hover:shadow-xl hover:shadow-slate-200/50 transition-all"
-                        title="Xóa"
-                       >
+                      </button>
+                      <button onClick={() => handleDelete(app.ma_id, app.ten_ung_dung)} className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all" title="Xóa">
                         <Trash2 size={16} />
-                       </button>
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -374,63 +298,10 @@ export const AppManagement: React.FC = () => {
             </tbody>
           </table>
         </div>
-
-        {/* Mobile View */}
-        <div className="md:hidden divide-y divide-slate-100">
-           {paginatedApps.map((app: any, i) => (
-             <div key={i} className="p-5 hover:bg-slate-50/50 transition-colors space-y-4">
-                <div className="flex justify-between items-start">
-                   <div className="space-y-1">
-                      <div className="font-bold text-slate-900 text-sm tracking-tight">{app.ten_ung_dung || app.ten_app}</div>
-                      <div className="text-[9px] font-black uppercase text-slate-400 tracking-widest">{app.bang_chinh}</div>
-                   </div>
-                   <span className={`badge-status ${
-                       app.trang_thai === 'Hoạt động' 
-                        ? 'bg-emerald-50 text-emerald-600 border-emerald-100' 
-                        : 'bg-slate-100 text-slate-500 border-slate-200'
-                    }`}>
-                      <div className={`w-1.5 h-1.5 rounded-full ${app.trang_thai === 'Hoạt động' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} /> 
-                      {app.trang_thai || 'Online'}
-                   </span>
-                </div>
-                
-                <div className="bg-slate-50/50 rounded-xl p-3 border border-slate-200/40">
-                   <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1.5">App ID Key</p>
-                   <code className="text-[10px] font-mono text-indigo-600 font-bold break-all leading-relaxed">{app.app_id}</code>
-                </div>
-
-                <div className="flex gap-2">
-                   <button 
-                    onClick={() => setEditingApp(app)}
-                    className="flex-1 py-3.5 bg-white border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-[0.1em] text-slate-600 flex items-center justify-center gap-2 active:scale-95 transition-all shadow-sm"
-                   >
-                     <Edit size={14} /> Chỉnh sửa
-                   </button>
-                   <button 
-                    onClick={() => setViewingApp(app)}
-                    className="p-3.5 bg-white border border-slate-200 rounded-xl text-slate-600 shadow-sm"
-                   >
-                     <Eye size={16} />
-                   </button>
-                   <button 
-                    onClick={() => handleDelete(app.ma_id, app.ten_ung_dung)}
-                    className="p-3.5 bg-rose-50 border border-rose-100 text-rose-600 rounded-xl shadow-sm"
-                   >
-                     <Trash2 size={16} />
-                   </button>
-                </div>
-             </div>
-           ))}
-        </div>
-
+        
         {paginatedApps.length === 0 && (
-          <div className="px-6 py-24 text-center">
-            <div className="w-16 h-16 bg-slate-50 rounded-[2rem] flex items-center justify-center mx-auto mb-4 text-slate-200">
-               <Filter size={32} />
-            </div>
-            <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">
-              Hệ thống chưa ghi nhận ứng dụng nào
-            </p>
+          <div className="py-20 text-center text-slate-400">
+            <p>Không tìm thấy ứng dụng nào.</p>
           </div>
         )}
 
@@ -440,7 +311,6 @@ export const AppManagement: React.FC = () => {
           onPageChange={setCurrentPage} 
         />
       </div>
-
     </div>
   );
 };

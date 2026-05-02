@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { Printer } from 'lucide-react';
+import { Printer, RefreshCcw, AlertTriangle, ArrowLeft } from 'lucide-react';
 import { api } from '../../../services/api.service';
 import { ReportTemplate, AppSheetConfig } from '../../../types';
 
@@ -39,7 +39,7 @@ export const ReportingPage: React.FC = () => {
       const app = apps.find((a: AppSheetConfig) => a.ma_id === template.ma_ung_dung);
       if (!app) throw new Error('Không tìm thấy ứng dụng AppSheet tương ứng.');
 
-      setStatus(`Đang lấy dữ liệu từ AppSheet [${rowId}]...`);
+      setStatus(`Đang lấy dữ liệu từ AppSheet...`);
       setProgress(40);
 
       const result = await api.generateReport({
@@ -74,39 +74,35 @@ export const ReportingPage: React.FC = () => {
   }, [rowId, templateMaId]);
 
   return (
-    <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
       <div className="max-w-md w-full">
-        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[40px] p-12 text-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-indigo-600/5 animate-pulse" />
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-xl p-10 text-center">
+          <div className={`w-20 h-20 mx-auto mb-6 rounded-2xl flex items-center justify-center ${isGenerating ? 'bg-indigo-50 text-indigo-600' : 'bg-rose-50 text-rose-500'}`}>
+            {isGenerating ? <RefreshCcw className="animate-spin" size={40} /> : <AlertTriangle size={40} />}
+          </div>
+
+          <h2 className="text-xl font-bold text-slate-900 mb-2">
+            {isGenerating ? 'Đang xuất báo cáo' : 'Lỗi xuất báo cáo'}
+          </h2>
           
-          <div className="relative z-10">
-            <div className={`w-28 h-28 mx-auto mb-10 rounded-[35px] flex items-center justify-center ${isGenerating ? 'bg-indigo-600 shadow-2xl shadow-indigo-500/50 animate-bounce' : 'bg-rose-500/20'}`}>
-              <Printer className={isGenerating ? 'text-white' : 'text-rose-500'} size={48} />
-            </div>
+          <p className="text-slate-500 text-sm mb-8">{status}</p>
 
-            <h2 className="text-2xl font-black text-white uppercase tracking-tighter mb-6">
-              {isGenerating ? 'Đang xuất báo cáo' : 'Lỗi hệ thống'}
-            </h2>
-            
-            <div className="bg-black/40 rounded-2xl p-6 border border-white/5 mb-10">
-              <p className="text-sm font-bold text-slate-300 italic">"{status}"</p>
-            </div>
-
-            {isGenerating && (
-              <div className="space-y-4 mb-10">
-                <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
-                  <div className="h-full bg-indigo-500 transition-all duration-700" style={{ width: `${progress}%` }} />
-                </div>
-                <div className="flex justify-between text-[10px] font-black text-slate-500 uppercase tracking-widest">
-                  <span>Processing</span>
-                  <span>{Math.round(progress)}%</span>
-                </div>
+          {isGenerating && (
+            <div className="space-y-3 mb-8">
+              <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                <div className="h-full bg-indigo-600 transition-all duration-700" style={{ width: `${progress}%` }} />
               </div>
-            )}
-
-            <div className="flex flex-col gap-4">
-              <Link to="/" className="px-10 py-4 bg-white/5 hover:bg-white/10 text-white font-black text-xs uppercase tracking-widest rounded-2xl transition-all border border-white/5">Hủy lệnh & Quay lại</Link>
+              <div className="flex justify-center text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                {Math.round(progress)}%
+              </div>
             </div>
+          )}
+
+          <div className="flex flex-col gap-3">
+            <Link to="/" className="flex items-center justify-center gap-2 px-6 py-3 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-sm rounded-xl transition-all">
+              <ArrowLeft size={16} />
+              Quay lại Dashboard
+            </Link>
           </div>
         </div>
       </div>
