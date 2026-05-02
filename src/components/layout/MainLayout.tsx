@@ -77,11 +77,11 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
 
       <main className="flex-1 min-h-screen relative flex flex-col">
         {/* Header */}
-        <header className="sticky top-0 z-40 bg-white border-b border-slate-200 h-14 md:h-16 px-4 md:px-8 flex justify-between items-center">
+        <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-100 h-16 md:h-20 px-6 md:px-10 flex justify-between items-center">
             <div className="flex items-center gap-4">
               <button 
                 onClick={() => setIsSidebarOpen(true)}
-                className="p-2 -ml-2 text-slate-500 hover:bg-slate-100 rounded-lg md:hidden transition-colors"
+                className="p-2 -ml-2 text-slate-500 hover:bg-slate-100 rounded-xl md:hidden transition-colors"
                 title="Mở Menu"
               >
                 <div className="space-y-1.5 w-5">
@@ -89,23 +89,24 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
                    <div className="h-0.5 bg-slate-500 rounded-full w-full" />
                 </div>
               </button>
-              <h1 className="text-sm md:text-base font-semibold text-slate-800 tracking-tight truncate max-w-[150px] md:max-w-none">
-                {pageTitles[location.pathname] || 'Trang chủ'}
-              </h1>
+              {/* Removed redundant text title here to let page content handle it */}
             </div>
 
-            <div className="flex items-center gap-4">
-               {/* User Info (Desktop) */}
-               <div className="hidden lg:flex flex-col items-end min-w-0 max-w-[200px]">
-                  <div className="text-xs font-semibold text-slate-700 leading-none truncate w-full">{user.name}</div>
-                  <div className="text-[10px] text-slate-400 mt-1 truncate w-full">{user.email}</div>
+            <div className="flex items-center gap-5">
+               {/* User info moved to sidebar or simplified here */}
+               <div className="hidden md:flex flex-col items-end">
+                  <div className="text-[10px] font-black text-slate-900 leading-none uppercase tracking-widest">{user.name}</div>
+                  <div className="flex items-center gap-1.5 mt-1.5">
+                    <div className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse" />
+                    <span className="text-[8px] font-black text-slate-400 uppercase tracking-[0.2em] leading-none">System Ready</span>
+                  </div>
                </div>
                
-               <div className="w-8 h-8 md:w-9 md:h-9 rounded-full border border-slate-200 p-0.5 bg-white shadow-sm flex-shrink-0">
+               <div className="w-10 h-10 rounded-2xl border border-slate-200 p-0.5 bg-white shadow-sm flex-shrink-0">
                   {user.picture ? (
-                    <img src={user.picture} alt="Profile" className="w-full h-full object-cover rounded-full" />
+                    <img src={user.picture} alt="Profile" className="w-full h-full object-cover rounded-[14px]" />
                   ) : (
-                    <div className="w-full h-full bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold rounded-full text-xs">
+                    <div className="w-full h-full bg-indigo-50 text-indigo-600 flex items-center justify-center font-black rounded-[14px] text-xs">
                       {user.name?.[0]}
                     </div>
                   )}
