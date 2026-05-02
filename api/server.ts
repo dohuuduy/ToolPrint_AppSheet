@@ -227,12 +227,12 @@ app.post('/api/appsheet/columns', async (req: any, res) => {
 
 app.post('/api/report/generate', async (req: any, res) => {
   try {
-    const { appId, apiKey, tableName, rowId, templateId, folderOutputId, keyCol, childTable, foreignKey, childName } = req.body;
+    const { appId, apiKey, tableName, rowId, templateId, templateName, folderOutputId, keyCol, childTable, foreignKey, childName } = req.body;
     const { google: googleSvc } = getServices(req);
     const appsheetSvc = new AppSheetService(appId, apiKey);
     const keyColumn = keyCol || 'ma_id';
     
-    console.log(`[REPORT] Starting for App: ${appId}, Table: ${tableName}, Row: ${rowId}, KeyCol: ${keyColumn}`);
+    console.log(`[REPORT] Starting for App: ${appId}, Table: ${tableName}, Row: ${rowId}, KeyCol: ${keyColumn}, TemplateName: ${templateName}`);
 
     // 1. Lấy dữ liệu từ AppSheet
     let rowData;
@@ -316,7 +316,7 @@ app.post('/api/report/generate', async (req: any, res) => {
         ngay_tao: new Date().toISOString(),
         ma_id: rowId,
         nguoi_dung: 'Hệ thống',
-        ten_mau: templateId,
+        ten_mau: templateName || templateId,
         trang_thai: 'Thành công',
         file_id_drive: uploadResult.id
       });

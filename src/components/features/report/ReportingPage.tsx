@@ -48,6 +48,7 @@ export const ReportingPage: React.FC = () => {
         tableName: template.bang_chinh,
         rowId: rowId,
         templateId: template.file_id_drive,
+        templateName: template.ten_mau,
         folderOutputId: app.folder_xuat_id,
         keyCol: template.key_col,
         childTable: template.child_table,
