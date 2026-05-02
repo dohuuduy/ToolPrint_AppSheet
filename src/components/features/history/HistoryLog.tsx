@@ -12,7 +12,7 @@ import {
   ChevronsRight
 } from 'lucide-react';
 import { useAppStore } from '../../../store/use-app-store';
-import { PrintLog } from '../../../types';
+import { Pagination } from '../../ui/Pagination';
 
 export const HistoryLog: React.FC = () => {
   const { logs, loading, fetchLogs } = useAppStore();
@@ -129,14 +129,26 @@ export const HistoryLog: React.FC = () => {
                         ? 'bg-emerald-50 text-emerald-600 border-emerald-100/50' 
                         : 'bg-amber-50 text-amber-600 border-amber-100/50'
                     }`}>
-                      {log.trang_thai || 'Success'}
+                      {log.trang_thai || 'Thành công'}
                     </span>
                   </td>
                 </tr>
               ))}
+              {paginatedLogs.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="px-6 py-20 text-center text-slate-400 text-xs font-bold uppercase tracking-widest">
+                    Chưa có hoạt động in ấn nào
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
+        <Pagination 
+          currentPage={currentPage} 
+          totalPages={totalPages} 
+          onPageChange={setCurrentPage} 
+        />
       </div>
     </div>
   );

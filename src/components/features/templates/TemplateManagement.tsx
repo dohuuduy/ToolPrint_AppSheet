@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import { useAppStore } from '../../../store/use-app-store';
 import { api } from '../../../services/api.service';
-import { ReportTemplate } from '../../../types';
+import { Pagination } from '../../ui/Pagination';
 
 export const TemplateManagement: React.FC = () => {
   const { apps, templates, loading, fetchTemplates, fetchApps } = useAppStore();
@@ -174,7 +174,7 @@ export const TemplateManagement: React.FC = () => {
                     <input required value={newTemplate.ten_mau} onChange={handleTenMauChange} className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-700 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all" placeholder="Ví dụ: Hợp đồng mua bán" />
                   </div>
                   <div className="space-y-4">
-                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest block ml-1">Mã mẫu (Token)</label>
+                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest block ml-1">Mã Token (Tự động)</label>
                     <input required value={newTemplate.ma_mau} readOnly className="w-full px-5 py-4 bg-slate-100 border border-slate-200 rounded-2xl font-mono text-indigo-600 font-bold outline-none" placeholder="MA_MAU_TU_DONG" />
                   </div>
                 </div>
@@ -198,7 +198,11 @@ export const TemplateManagement: React.FC = () => {
                     <input required value={newTemplate.bang_chinh} onChange={(e) => setNewTemplate({ ...newTemplate, bang_chinh: e.target.value })} className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-700 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all" placeholder="Ví dụ: KhachHang" />
                   </div>
                   <div className="space-y-4">
-                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest block ml-1">ID File Google Drive (Template)</label>
+                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest block ml-1">Cột khóa chính (Key Column)</label>
+                    <input required value={newTemplate.key_col} onChange={(e) => setNewTemplate({ ...newTemplate, key_col: e.target.value })} className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-700 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all" placeholder="Mặc định: ma_id" />
+                  </div>
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest block ml-1">Mã ID Tệp mẫu (Google Drive ID)</label>
                     <input required value={newTemplate.file_id_drive} onChange={(e) => setNewTemplate({ ...newTemplate, file_id_drive: e.target.value })} className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-700 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all" placeholder="ID tệp từ URL Google Drive" />
                   </div>
                   <div className="space-y-4">
@@ -307,9 +311,21 @@ export const TemplateManagement: React.FC = () => {
                   </tr>
                 );
               })}
+              {paginatedTemplates.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="px-6 py-20 text-center text-slate-400 text-xs font-bold uppercase tracking-widest">
+                    Chưa có mẫu báo cáo nào được tạo
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
+        <Pagination 
+          currentPage={currentPage} 
+          totalPages={totalPages} 
+          onPageChange={setCurrentPage} 
+        />
       </div>
 
     </div>

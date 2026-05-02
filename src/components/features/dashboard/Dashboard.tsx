@@ -137,8 +137,8 @@ export const Dashboard: React.FC = () => {
                 <Terminal size={20} />
              </div>
              <div>
-                <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none">SYSTEM_DASHBOARD</h1>
-                <p className="text-[10px] font-mono text-slate-400 font-bold uppercase tracking-widest">Core Status: Stable_Operational</p>
+                <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none">BẢNG ĐIỀU KHIỂN</h1>
+                <p className="text-[10px] font-mono text-slate-400 font-bold uppercase tracking-widest">Trạng thái: Máy chủ ổn định</p>
              </div>
           </div>
         </div>
@@ -146,16 +146,16 @@ export const Dashboard: React.FC = () => {
         <div className="flex flex-wrap items-center gap-4">
           <div className="px-5 py-2 bg-white rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
             <div className="flex flex-col">
-              <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">Net_Region</span>
+              <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">Khu vực mạng</span>
               <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5 mt-1">
                 <Globe size={12} className="text-indigo-600" />
-                Global_Cloud
+                Đám mây toàn cầu
               </span>
             </div>
             <div className="w-px h-8 bg-slate-100" />
             <div className="flex flex-col">
-              <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">Build_Ver</span>
-              <span className="text-xs font-mono font-bold text-slate-900 mt-1 italic">v1.4.2-PRO</span>
+              <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">Phiên bản</span>
+              <span className="text-xs font-mono font-bold text-slate-900 mt-1 italic">v1.5.0-PRO</span>
             </div>
           </div>
           <button 
@@ -176,9 +176,9 @@ export const Dashboard: React.FC = () => {
           {/* Key Intelligence Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { label: 'Active Clusters', value: apps.length, icon: Layers, color: 'text-indigo-600', meta: 'Connected' },
-              { label: 'Document Models', value: templates.length, icon: FileText, color: 'text-slate-900', meta: 'Compiled' },
-              { label: 'Total Executions', value: logs.length, icon: Activity, color: 'text-emerald-600', meta: 'Success' },
+              { label: 'Cụm ứng dụng', value: apps.length, icon: Layers, color: 'text-indigo-600', meta: 'Đang kết nối' },
+              { label: 'Mẫu báo cáo', value: templates.length, icon: FileText, color: 'text-slate-900', meta: 'Đã sẵn sàng' },
+              { label: 'Tổng lượt in', value: logs.length, icon: Activity, color: 'text-emerald-600', meta: 'Thành công' },
             ].map((stat, i) => (
               <motion.div 
                 key={i}
@@ -203,12 +203,12 @@ export const Dashboard: React.FC = () => {
           <div className="bg-white rounded-[48px] border border-slate-100 shadow-sm p-10 relative overflow-hidden h-[460px] flex flex-col">
             <div className="flex items-center justify-between mb-10 shrink-0">
                <div className="space-y-1">
-                  <h3 className="text-xs font-black text-slate-900 tracking-[0.3em] uppercase">Operations_Timeline</h3>
-                  <p className="text-[10px] font-mono text-slate-400 italic">Sequential load distribution across nodes</p>
+                  <h3 className="text-xs font-black text-slate-900 tracking-[0.3em] uppercase">Biểu đồ lượt in</h3>
+                  <p className="text-[10px] font-mono text-slate-400 italic">Thống kê lưu lượng truy xuất mẫu biểu theo ngày</p>
                </div>
                <div className="flex gap-2">
                   <div className="w-2.5 h-2.5 bg-indigo-600 rounded-full animate-pulse" />
-                  <span className="text-[10px] font-mono font-bold text-slate-400">LIVE_FEED</span>
+                  <span className="text-[10px] font-mono font-bold text-slate-400">TRỰC TIẾP</span>
                </div>
             </div>
 
@@ -250,10 +250,10 @@ export const Dashboard: React.FC = () => {
           {/* Infrastructure Quick Access */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
              {[
-               { to: '/report', label: 'EXECUTE_PRINT', icon: Printer, dark: true },
-               { to: '/apps', label: 'CONFIG_APPS', icon: PlusCircle, dark: false },
-               { to: '/templates', label: 'MANAGE_MODELS', icon: FileText, dark: false },
-               { to: '/settings', label: 'GLOBAL_VARS', icon: Settings, dark: false }
+               { to: '/report', label: 'TẠO BÁO CÁO', icon: Printer, dark: true },
+               { to: '/apps', label: 'CẤU HÌNH APP', icon: PlusCircle, dark: false },
+               { to: '/templates', label: 'QUẢN LÝ MẪU', icon: FileText, dark: false },
+               { to: '/settings', label: 'HỆ THỐNG', icon: Settings, dark: false }
              ].map((action, i) => (
                <Link 
                 key={i} 
@@ -283,14 +283,14 @@ export const Dashboard: React.FC = () => {
                 <div className="flex items-center justify-between">
                    <div className="flex items-center gap-2">
                       <Zap size={18} className="text-indigo-600 fill-indigo-600" />
-                      <h3 className="text-xs font-black tracking-widest uppercase">Integration_Node</h3>
+                      <h3 className="text-xs font-black tracking-widest uppercase">Liên kết API</h3>
                    </div>
                    <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
                 </div>
                 
                 <div className="space-y-4">
                    <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 relative group/box">
-                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2 italic">Output_Schema_Link:</p>
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2 italic">Dòng lệnh AppSheet:</p>
                       <div className="flex flex-col gap-3">
                          <div className="bg-white p-3 rounded-xl border border-slate-100 text-[10px] font-mono text-slate-600 leading-relaxed break-all select-all">
                             {formula}
@@ -300,7 +300,7 @@ export const Dashboard: React.FC = () => {
                           className="w-full flex items-center justify-center gap-2 py-3 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-100"
                          >
                             {copied ? <CheckCircle2 size={14} /> : <Copy size={14} />}
-                            {copied ? 'Copied_Successful' : 'Copy_API_String'}
+                            {copied ? 'Đã sao chép' : 'SAO CHÉP CÔNG THỨC'}
                          </button>
                       </div>
                    </div>
@@ -308,7 +308,7 @@ export const Dashboard: React.FC = () => {
                    <div className="flex items-start gap-4 p-4 bg-indigo-50 border border-indigo-100 rounded-2xl">
                       <HelpCircle size={18} className="text-indigo-600 shrink-0 mt-0.5" />
                       <p className="text-[10px] font-medium text-indigo-900 leading-relaxed italic">
-                        Inject this string into <span className="font-black">AppSheet Behavior {'>>'} External Site</span> to trigger automatic reporting.
+                        Dán công thức này vào AppSheet mục <span className="font-black">Behavior {'>>'} External Site</span> để kết nối báo cáo.
                       </p>
                    </div>
                 </div>
@@ -319,10 +319,10 @@ export const Dashboard: React.FC = () => {
           <div className="bg-white rounded-[48px] border border-slate-100 shadow-sm overflow-hidden flex flex-col h-[520px]">
             <div className="p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
                <div>
-                  <h3 className="text-xs font-black text-slate-900 tracking-widest uppercase">Security_Logs</h3>
-                  <p className="text-[9px] font-mono text-slate-400 mt-1">Ready for trace analysis</p>
+                  <h3 className="text-xs font-black text-slate-900 tracking-widest uppercase">Nhật ký in ấn</h3>
+                  <p className="text-[9px] font-mono text-slate-400 mt-1">Sẵn sàng phân tích vết</p>
                </div>
-               <Link to="/history" className="w-10 h-10 bg-white border border-slate-100 rounded-xl flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:border-indigo-100 transition-all shadow-sm">
+               <Link to="/logs" className="w-10 h-10 bg-white border border-slate-100 rounded-xl flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:border-indigo-100 transition-all shadow-sm">
                   <ChevronRight size={20} />
                </Link>
             </div>
@@ -349,7 +349,7 @@ export const Dashboard: React.FC = () => {
                            <div className="flex items-center gap-2 mt-1">
                               <span className="px-1.5 py-0.5 bg-slate-100 rounded-md text-[8px] font-mono font-bold text-slate-500">ID# {log.ma_id?.slice(0, 6)}</span>
                               <div className="w-1 h-1 bg-emerald-500 rounded-full" />
-                              <span className="text-[8px] font-black text-emerald-600 uppercase">Process_Ok</span>
+                              <span className="text-[8px] font-black text-emerald-600 uppercase">Thành công</span>
                            </div>
                         </div>
                      </motion.div>
@@ -358,14 +358,14 @@ export const Dashboard: React.FC = () => {
                ) : (
                  <div className="h-full flex flex-col items-center justify-center text-slate-200 grayscale opacity-40">
                     <Clock size={48} strokeWidth={1} />
-                    <p className="text-[10px] font-black uppercase tracking-[0.4em] mt-4">Buffer_Null</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.4em] mt-4">Trống dữ liệu</p>
                  </div>
                )}
             </div>
 
             <div className="p-6 bg-slate-50/50 border-t border-slate-100 text-center">
-               <Link to="/history" className="text-[9px] font-black text-slate-400 uppercase tracking-widest hover:text-indigo-600 transition-colors flex items-center justify-center gap-2 group">
-                  EXPLORE_FULL_HISTORY
+               <Link to="/logs" className="text-[9px] font-black text-slate-400 uppercase tracking-widest hover:text-indigo-600 transition-colors flex items-center justify-center gap-2 group">
+                  XEM TOÀN BỘ LỊCH SỬ
                   <ExternalLink size={12} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                </Link>
             </div>
@@ -380,8 +380,8 @@ export const Dashboard: React.FC = () => {
                    <ShieldCheck size={20} className="text-emerald-400" />
                 </div>
                 <div>
-                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Server_Armor</p>
-                   <p className="text-xs font-bold font-mono">End-to-End Encryption</p>
+                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Bảo vệ máy chủ</p>
+                   <p className="text-xs font-bold font-mono">Mã hóa chuẩn doanh nghiệp</p>
                 </div>
              </div>
              <div className="relative z-10 p-2 bg-emerald-500 rounded-lg shadow-lg">

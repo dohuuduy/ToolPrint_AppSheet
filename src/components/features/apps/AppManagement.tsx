@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import { useAppStore } from '../../../store/use-app-store';
 import { api } from '../../../services/api.service';
-import { AppSheetConfig } from '../../../types';
+import { Pagination } from '../../ui/Pagination';
 
 export const AppManagement: React.FC = () => {
   const { apps, loading, fetchApps } = useAppStore();
@@ -216,11 +216,11 @@ export const AppManagement: React.FC = () => {
                       <input required value={newApp.bang_chinh} onChange={e => setNewApp({...newApp, bang_chinh: e.target.value})} className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all font-bold text-slate-700" placeholder="Tên bảng trên AppSheet (VD: KhachHang)" />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">AppSheet Application ID</label>
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Mã ID Ứng dụng (App ID)</label>
                       <input required value={newApp.app_id} onChange={e => setNewApp({...newApp, app_id: e.target.value})} className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all font-mono text-indigo-600 font-bold" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Application Access Key</label>
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Mã Khóa API (Access Key)</label>
                       <input required type="password" value={newApp.khoa_api} onChange={e => setNewApp({...newApp, khoa_api: e.target.value})} className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all font-mono font-bold" placeholder="Nhập khóa API bảo mật..." />
                     </div>
                   </div>
@@ -266,6 +266,7 @@ export const AppManagement: React.FC = () => {
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
+            {/* ... table content remains same ... */}
             <thead>
               <tr className="bg-slate-50/50 border-b border-slate-100">
                 <th 
@@ -282,7 +283,7 @@ export const AppManagement: React.FC = () => {
                   </div>
                 </th>
                 <th className="px-6 py-3 text-left hidden lg:table-cell">
-                  <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider">Application ID</span>
+                  <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider">Mã App ID</span>
                 </th>
                 <th className="px-6 py-3 text-left">
                   <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider">Trạng thái</span>
@@ -334,9 +335,21 @@ export const AppManagement: React.FC = () => {
                   </td>
                 </tr>
               ))}
+              {paginatedApps.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="px-6 py-20 text-center text-slate-400 text-xs font-bold uppercase tracking-widest">
+                    Không tìm thấy ứng dụng nào
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
+        <Pagination 
+          currentPage={currentPage} 
+          totalPages={totalPages} 
+          onPageChange={setCurrentPage} 
+        />
       </div>
 
     </div>

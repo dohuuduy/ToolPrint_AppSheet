@@ -6,11 +6,11 @@ import { useAuth } from '../../context/AuthContext';
 import { Settings as SettingsIcon, Terminal } from 'lucide-react';
 
 const pageTitles: Record<string, string> = {
-  '/': 'DASHBOARD_HUB',
-  '/apps': 'NODE_CONNECTOR',
-  '/templates': 'SCHEMA_MODELS',
-  '/logs': 'SECURITY_LOGS',
-  '/settings': 'SYSTEM_SETUP'
+  '/': 'BẢNG ĐIỀU KHIỂN',
+  '/apps': 'KẾT NỐI APPSHEET',
+  '/templates': 'MẪU BIỂU BÁO CÁO',
+  '/logs': 'NHẬT KÝ HỆ THỐNG',
+  '/settings': 'CẤU HÌNH API'
 };
 
 export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -33,13 +33,13 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
             <Terminal size={48} className="text-slate-900 relative z-10" />
           </div>
           <h1 className="text-4xl font-black text-white mb-2 uppercase tracking-tighter italic">Print<span className="text-indigo-400">Hub</span></h1>
-          <p className="text-slate-300 mb-10 font-medium text-sm leading-relaxed tracking-wide">Automated Enterprise Reporting for AppSheet.</p>
+          <p className="text-slate-300 mb-10 font-medium text-sm leading-relaxed tracking-wide">Giải pháp in ấn và báo cáo tự động cho AppSheet.</p>
           <button 
             onClick={login} 
             className="w-full flex items-center justify-center gap-4 bg-white hover:bg-slate-100 text-slate-900 font-black py-5 px-6 rounded-3xl transition-all shadow-xl active:scale-95"
           >
             <img src="https://www.google.com/favicon.ico" width="20" height="20" alt="google" />
-            INITIALIZE AUTH_V1
+            ĐĂNG NHẬP VỚI GOOGLE
           </button>
         </motion.div>
       </div>
