@@ -186,7 +186,7 @@ export const AppManagement: React.FC = () => {
       <AnimatePresence>
         {showForm && (
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 mb-6">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 mb-6">
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
                   <div className="space-y-1.5">
@@ -219,8 +219,8 @@ export const AppManagement: React.FC = () => {
                     <Zap size={16} className="text-amber-500 shrink-0" />
                     <span className="truncate">{testingConnection ? "Đang gửi yêu cầu..." : "Test kết nối"}</span>
                   </button>
-                  <button type="submit" className="btn-primary min-w-[120px]">
-                    <span className="truncate">{editingApp ? 'Cập nhật' : 'Thiết lập'}</span>
+                  <button type="submit" className="btn-primary min-w-[140px]">
+                    <span className="truncate">{editingApp ? 'Cập nhật ứng dụng' : 'Thiết lập kết nối'}</span>
                   </button>
                 </div>
               </form>

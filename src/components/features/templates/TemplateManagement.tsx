@@ -181,7 +181,7 @@ export const TemplateManagement: React.FC = () => {
       <AnimatePresence>
         {showForm && (
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 mb-6">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 mb-6">
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-sm">
                   <div className="space-y-1.5">
@@ -265,26 +265,26 @@ export const TemplateManagement: React.FC = () => {
 
       <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
         <div className="p-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between gap-4">
-          <div className="relative flex-1 max-w-sm">
-            <input 
-              type="text" 
-              placeholder="Tìm tên mẫu..." 
-              className="w-full pl-9 pr-4 py-1.5 bg-white border border-slate-300 rounded-lg text-xs outline-none focus:ring-2 focus:ring-indigo-500/20"
-              value={searchTerm}
-              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-            />
-            <Search size={14} className="absolute left-3 top-2.5 text-slate-400" />
-          </div>
-          <select 
-            value={appFilter}
-            onChange={(e) => { setAppFilter(e.target.value); setCurrentPage(1); }}
-            className="text-xs bg-white border border-slate-300 rounded-lg px-3 py-1.5 outline-none"
-          >
-            <option value="all">Tất cả ứng dụng</option>
-            {apps.map(app => (
-              <option key={app.ma_id} value={app.ma_id}>{app.ten_ung_dung}</option>
-            ))}
-          </select>
+            <div className="relative flex-1 max-w-sm">
+              <input 
+                type="text" 
+                placeholder="Tìm tên mẫu hồ sơ..." 
+                className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all"
+                value={searchTerm}
+                onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+              />
+              <Search size={14} className="absolute left-3 top-2.5 text-slate-400" />
+            </div>
+            <select 
+              value={appFilter}
+              onChange={(e) => { setAppFilter(e.target.value); setCurrentPage(1); }}
+              className="text-xs bg-white border border-slate-200 rounded-xl px-4 py-2 outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-medium"
+            >
+              <option value="all">Tất cả ứng dụng</option>
+              {apps.map(app => (
+                <option key={app.ma_id} value={app.ma_id}>{app.ten_ung_dung}</option>
+              ))}
+            </select>
         </div>
 
         <div className="overflow-x-auto text-sm">

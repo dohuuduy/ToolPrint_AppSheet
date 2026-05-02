@@ -99,9 +99,9 @@ export const ReportingPage: React.FC = () => {
           )}
 
           <div className="flex flex-col gap-3">
-            <Link to="/" className="flex items-center justify-center gap-2 px-6 py-3 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-sm rounded-xl transition-all">
-              <ArrowLeft size={16} />
-              Quay lại Dashboard
+            <Link to="/" className="btn-secondary w-full py-4 text-sm">
+              <ArrowLeft size={16} className="shrink-0" />
+              <span>Quay lại Dashboard</span>
             </Link>
           </div>
         </div>
