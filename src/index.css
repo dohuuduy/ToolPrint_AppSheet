@@ -55,12 +55,51 @@
   .badge-status {
     @apply px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.2em] border flex items-center gap-2;
   }
+
+  .a4-preview {
+    @apply bg-white shadow-2xl mx-auto overflow-hidden relative;
+    width: 210mm;
+    min-height: 297mm;
+    aspect-ratio: 210 / 297;
+  }
+
+  @media (max-width: 210mm) {
+    .a4-preview {
+      width: 100%;
+      height: auto;
+      aspect-ratio: auto;
+    }
+  }
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* Print Styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    background: white !important;
+  }
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .a4-preview {
+    width: 100% !important;
+    height: auto !important;
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
 }
 
 ::-webkit-scrollbar-track {

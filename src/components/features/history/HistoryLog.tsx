@@ -4,7 +4,8 @@ import {
   FileText, 
   ChevronUp, 
   ChevronDown, 
-  RefreshCw
+  RefreshCw,
+  History
 } from 'lucide-react';
 import { useAppStore } from '../../../store/use-app-store';
 import { Pagination } from '../../ui/Pagination';
@@ -60,83 +61,91 @@ export const HistoryLog: React.FC = () => {
   );
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto pb-10">
-      <div className="flex items-center justify-between">
+    <div className="space-y-8 max-w-7xl mx-auto pb-10">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h2 className="text-xl font-bold text-slate-900 tracking-tight">Nhật ký in ấn</h2>
-          <p className="text-slate-500 text-sm">Theo dõi lịch sử xuất báo cáo và in ấn.</p>
+           <h2 className="text-3xl font-black text-slate-900 tracking-tight uppercase italic">Nhật ký <span className="text-indigo-600">Hệ thống</span></h2>
+           <p className="text-slate-500 text-sm font-medium mt-1">Lịch sử kết xuất báo cáo và các hoạt động in ấn thời gian thực.</p>
         </div>
         <div className="relative group">
           <input 
             type="text" 
-            placeholder="Tìm kiếm..." 
-            className="pl-9 pr-4 py-2 bg-white border border-slate-300 rounded-lg text-xs outline-none focus:ring-2 focus:ring-indigo-500/20 w-64 shadow-sm"
+            placeholder="Tìm theo mẫu biểu, ID..." 
+            className="w-full md:w-80 pl-12 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-xs outline-none focus:ring-8 focus:ring-indigo-500/5 focus:border-indigo-500 transition-all font-bold placeholder:text-slate-300 shadow-sm"
             value={searchTerm}
             onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
           />
-          <Search size={14} className="absolute left-3 top-2.5 text-slate-400" />
+          <Search size={18} className="absolute left-4 top-3.5 text-slate-400" />
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
-        <div className="overflow-x-auto text-sm">
+      <div className="bg-white rounded-[2rem] border border-slate-200 overflow-hidden shadow-sm">
+        <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-slate-200 bg-slate-50/50">
-                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-widest cursor-pointer" onClick={() => handleSort('ngay_tao')}>
-                  <div className="flex items-center gap-1.5">
+              <tr className="border-b border-slate-100 bg-slate-50/50">
+                <th className="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest cursor-pointer group" onClick={() => handleSort('ngay_tao')}>
+                  <div className="flex items-center gap-2 group-hover:text-indigo-600 transition-colors">
                     Thời điểm
                     {sortConfig.key === 'ngay_tao' && (
-                      <span className="text-indigo-500">
-                        {sortConfig.direction === 'asc' ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-                      </span>
+                        <span className="text-indigo-600">
+                          {sortConfig.direction === 'asc' ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                        </span>
                     )}
                   </div>
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-widest cursor-pointer" onClick={() => handleSort('ten_mau')}>Mẫu biểu</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-widest">Dòng ID</th>
-                <th className="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-widest">Trạng thái</th>
+                <th className="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Mẫu báo cáo</th>
+                <th className="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Mã Row ID (AppSheet)</th>
+                <th className="px-8 py-5 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest">Trình trạng</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-50">
               {paginatedLogs.map((log: any, i) => (
-                <tr key={i} className="hover:bg-slate-50 transition-all">
-                  <td className="px-6 py-4">
-                    <div className="font-semibold text-slate-900">{new Date(log.ngay_tao).toLocaleDateString('vi-VN')}</div>
-                    <div className="text-[10px] text-slate-500 mt-0.5">{new Date(log.ngay_tao).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <FileText size={14} className="text-indigo-500" />
-                      <span className="font-medium text-slate-700">{log.ten_mau}</span>
+                <tr key={i} className="hover:bg-slate-50/50 transition-all group">
+                  <td className="px-8 py-6">
+                    <div className="font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">{new Date(log.ngay_tao).toLocaleDateString('vi-VN')}</div>
+                    <div className="text-[10px] font-black text-slate-400 mt-1 uppercase tracking-widest leading-none">
+                       {new Date(log.ngay_tao).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <code className="text-xs font-mono bg-slate-100 px-1.5 py-0.5 rounded text-slate-600">
-                      {log.ma_id?.length > 15 ? `${log.ma_id.slice(0, 15)}...` : log.ma_id}
+                  <td className="px-8 py-6">
+                    <div className="flex items-center gap-2.5">
+                      <div className="p-2 bg-indigo-50 rounded-xl">
+                        <FileText size={16} className="text-indigo-600" />
+                      </div>
+                      <span className="font-bold text-slate-700 tracking-tight text-sm">{log.ten_mau}</span>
+                    </div>
+                  </td>
+                  <td className="px-8 py-6">
+                    <code className="text-[10px] font-mono bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200/50 text-slate-500 font-bold">
+                      {log.ma_id || 'SYSTEM_EVENT'}
                     </code>
                   </td>
-                  <td className="px-6 py-4 text-right">
-                    <span className={`badge-status ${
+                  <td className="px-8 py-6 text-right">
+                    <span className={`badge-status ms-auto ${
                       log.trang_thai === 'Thành công' 
-                        ? 'bg-emerald-50 text-emerald-700 border-emerald-100' 
-                        : 'bg-amber-50 text-amber-700 border-amber-100'
+                        ? 'bg-emerald-50 text-emerald-600 border-emerald-100' 
+                        : 'bg-amber-50 text-amber-600 border-amber-100'
                     }`}>
-                      {log.trang_thai || 'Thành công'}
+                      <span className={`w-1.5 h-1.5 rounded-full ${log.trang_thai === 'Thành công' ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
+                      {log.trang_thai || 'Đã in'}
                     </span>
                   </td>
                 </tr>
               ))}
-              {paginatedLogs.length === 0 && (
-                <tr>
-                  <td colSpan={4} className="py-20 text-center text-slate-400">
-                    Chưa có hoạt động in ấn nào.
-                  </td>
-                </tr>
-              )}
             </tbody>
           </table>
         </div>
+
+        {paginatedLogs.length === 0 && (
+          <div className="py-24 text-center text-slate-300">
+            <div className="w-20 h-20 bg-slate-50 rounded-[2rem] flex items-center justify-center mx-auto mb-6">
+               <History size={32} className="opacity-20" />
+            </div>
+            <p className="text-xs font-black uppercase tracking-widest">Nhật ký đang trống</p>
+          </div>
+        )}
+
         <Pagination 
           currentPage={currentPage} 
           totalPages={totalPages} 

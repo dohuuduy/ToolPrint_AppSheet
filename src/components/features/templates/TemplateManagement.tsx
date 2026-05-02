@@ -18,7 +18,9 @@ import {
   ChevronRight,
   ChevronsRight,
   Database,
-  Filter
+  Filter,
+  RefreshCw,
+  Check
 } from 'lucide-react';
 import { useAppStore } from '../../../store/use-app-store';
 import { api } from '../../../services/api.service';
@@ -180,81 +182,123 @@ export const TemplateManagement: React.FC = () => {
 
       <AnimatePresence>
         {showForm && (
-          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
-            <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl shadow-slate-200/50 p-8 md:p-10 mb-10">
-              <form onSubmit={handleSubmit} className="space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6 text-sm">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Tên mẫu báo cáo</label>
-                    <input required value={newTemplate.ten_mau} onChange={handleTenMauChange} className="input-modern" placeholder="Ví dụ: Hợp đồng mua bán" />
+          <motion.div 
+            initial={{ opacity: 0, y: -20, height: 0 }} 
+            animate={{ opacity: 1, y: 0, height: 'auto' }} 
+            exit={{ opacity: 0, y: -20, height: 0 }} 
+            className="overflow-hidden"
+          >
+            <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl shadow-slate-200/40 p-6 md:p-10 mb-10 relative overflow-hidden">
+               {/* Decorative background element */}
+               <div className="absolute top-0 right-0 w-40 h-40 bg-indigo-50/50 rounded-full -mr-20 -mt-20 blur-3xl pointer-events-none" />
+               
+              <form onSubmit={handleSubmit} className="space-y-10 relative z-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                       <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full" />
+                       Tên mẫu báo cáo
+                    </label>
+                    <input required value={newTemplate.ten_mau} onChange={handleTenMauChange} className="input-modern" placeholder="Ví dụ: Phiếu Thu - Chi" />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Mã Token (Tự động)</label>
-                    <input required value={newTemplate.ma_mau} readOnly className="input-modern bg-slate-50 cursor-not-allowed font-mono text-indigo-600" placeholder="MA_MAU" />
+
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                       <div className="w-1.5 h-1.5 bg-slate-300 rounded-full" />
+                       Mã Token (Slug)
+                    </label>
+                    <input required value={newTemplate.ma_mau} readOnly className="input-modern bg-slate-50 cursor-not-allowed font-mono text-indigo-600 hover:shadow-none" />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Ứng dụng AppSheet</label>
+
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                       <div className="w-1.5 h-1.5 bg-violet-500 rounded-full" />
+                       Ứng dụng AppSheet
+                    </label>
                     <select 
                       required 
                       value={newTemplate.ma_ung_dung} 
                       onChange={(e) => setNewTemplate({ ...newTemplate, ma_ung_dung: e.target.value })}
-                      className="input-modern"
+                      className="input-modern appearance-none"
                     >
-                      <option value="">Chọn ứng dụng...</option>
+                      <option value="">Chọn ứng dụng kết nối...</option>
                       {apps.map(app => (
                         <option key={app.ma_id} value={app.ma_id}>{app.ten_ung_dung}</option>
                       ))}
                     </select>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Tên bảng chính</label>
+
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                       <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+                       Tên bảng chính
+                    </label>
                     <input required value={newTemplate.bang_chinh} onChange={(e) => setNewTemplate({ ...newTemplate, bang_chinh: e.target.value })} className="input-modern" placeholder="Ví dụ: KhachHang" />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Cột khóa chính (Key Column)</label>
+
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                       <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
+                       Cột khóa chính (ID)
+                    </label>
                     <input required value={newTemplate.key_col} onChange={(e) => setNewTemplate({ ...newTemplate, key_col: e.target.value })} className="input-modern" placeholder="Mặc định: ma_id" />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">ID Google Drive ID</label>
-                    <input required value={newTemplate.file_id_drive} onChange={(e) => setNewTemplate({ ...newTemplate, file_id_drive: e.target.value })} className="input-modern font-mono" placeholder="ID tệp mẫu" />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Loại tệp</label>
+
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                       <div className="w-1.5 h-1.5 bg-rose-500 rounded-full" />
+                       Loại tệp mẫu
+                    </label>
                     <select 
                       value={newTemplate.loai_file} 
                       onChange={(e) => setNewTemplate({ ...newTemplate, loai_file: e.target.value as any })}
-                      className="input-modern"
+                      className="input-modern appearance-none"
                     >
                       <option value="DOCX">Microsoft Word (DOCX)</option>
                       <option value="XLSX">Microsoft Excel (XLSX)</option>
                     </select>
                   </div>
+
+                  <div className="space-y-3 lg:col-span-3">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                       <div className="w-1.5 h-1.5 bg-amber-500 rounded-full" />
+                       Google Drive File ID
+                    </label>
+                    <input required value={newTemplate.file_id_drive} onChange={(e) => setNewTemplate({ ...newTemplate, file_id_drive: e.target.value })} className="input-modern font-mono text-xs" placeholder="Copy ID từ link Drive của tệp mẫu" />
+                  </div>
                 </div>
 
-                <div className="border-t border-slate-50 pt-8">
-                  <h3 className="text-xs font-black text-slate-900 mb-6 flex items-center gap-2 uppercase tracking-widest">
-                    <Database size={16} className="text-indigo-600" />
-                    Dữ liệu danh sách (Bảng con)
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="space-y-2">
+                <div className="bg-slate-50/50 p-6 md:p-10 rounded-[2rem] border border-slate-100">
+                  <div className="flex items-center gap-3 mb-8">
+                     <div className="p-2.5 bg-white border border-slate-200 rounded-xl shadow-sm">
+                        <Database size={18} className="text-indigo-600" />
+                     </div>
+                     <div>
+                        <h3 className="text-sm font-black text-slate-900 uppercase tracking-tighter italic leading-none">Dữ liệu quan hệ</h3>
+                        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1">Cấu hình bảng con (Nested List)</p>
+                     </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                    <div className="space-y-3">
                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Tên bảng con</label>
-                      <input value={newTemplate.child_table} onChange={(e) => setNewTemplate({ ...newTemplate, child_table: e.target.value })} className="input-modern" placeholder="ChiTietDonHang" />
+                      <input value={newTemplate.child_table} onChange={(e) => setNewTemplate({ ...newTemplate, child_table: e.target.value })} className="input-modern border-white bg-white" placeholder="Ví dụ: ChiTietDonHang" />
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Khóa ngoại</label>
-                      <input value={newTemplate.foreign_key} onChange={(e) => setNewTemplate({ ...newTemplate, foreign_key: e.target.value })} className="input-modern" placeholder="ma_id_cha" />
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Tên cột khóa ngoại</label>
+                      <input value={newTemplate.foreign_key} onChange={(e) => setNewTemplate({ ...newTemplate, foreign_key: e.target.value })} className="input-modern border-white bg-white" placeholder="foreign_id" />
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Tên biến Template</label>
-                      <input value={newTemplate.child_name} onChange={(e) => setNewTemplate({ ...newTemplate, child_name: e.target.value })} className="input-modern" placeholder="items" />
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Ký hiệu biến mẫu</label>
+                      <input value={newTemplate.child_name} onChange={(e) => setNewTemplate({ ...newTemplate, child_name: e.target.value })} className="input-modern border-white bg-white font-mono" placeholder="Biến lặp: items" />
                     </div>
                   </div>
                 </div>
 
-                <div className="flex justify-end pt-8 border-t border-slate-50">
-                  <button type="submit" className="btn-primary px-12">
-                    {editingTemplate ? 'Cập nhật mẫu' : 'Lưu mẫu biểu'}
+                <div className="flex justify-end pt-10 border-t border-slate-50">
+                  <button type="submit" className="btn-primary min-w-[280px]">
+                    <Zap size={18} />
+                    <span className="font-black uppercase tracking-widest leading-none">{editingTemplate ? 'Cập nhật mẫu biểu' : 'Kích hoạt mẫu báo cáo'}</span>
                   </button>
                 </div>
               </form>

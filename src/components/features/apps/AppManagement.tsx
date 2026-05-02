@@ -19,7 +19,8 @@ import {
   ChevronUp,
   ChevronDown,
   Check,
-  Filter
+  Filter,
+  RefreshCw
 } from 'lucide-react';
 import { useAppStore } from '../../../store/use-app-store';
 import { api } from '../../../services/api.service';
@@ -185,42 +186,80 @@ export const AppManagement: React.FC = () => {
 
       <AnimatePresence>
         {showForm && (
-          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
-            <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl shadow-slate-200/50 p-8 md:p-10 mb-10">
-              <form onSubmit={handleSubmit} className="space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Tên ứng dụng</label>
-                    <input required value={newApp.ten_ung_dung} onChange={e => setNewApp({...newApp, ten_ung_dung: e.target.value})} className="input-modern" placeholder="Ví dụ: CRM Bất Động Sản" />
+          <motion.div 
+            initial={{ opacity: 0, y: -20, height: 0 }} 
+            animate={{ opacity: 1, y: 0, height: 'auto' }} 
+            exit={{ opacity: 0, y: -20, height: 0 }} 
+            className="overflow-hidden"
+          >
+            <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl shadow-slate-200/40 p-6 md:p-10 mb-10 relative overflow-hidden">
+               {/* Decorative background element */}
+               <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50/50 rounded-full -mr-16 -mt-16 blur-3xl pointer-events-none" />
+               
+              <form onSubmit={handleSubmit} className="space-y-10 relative z-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                         <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full" />
+                         Tên ứng dụng
+                      </label>
+                      <HelpCircle size={14} className="text-slate-300" />
+                    </div>
+                    <input required value={newApp.ten_ung_dung} onChange={e => setNewApp({...newApp, ten_ung_dung: e.target.value})} className="input-modern" placeholder="Ví dụ: CRM Bán Hàng" />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Tên bảng chính</label>
-                    <input required value={newApp.bang_chinh} onChange={e => setNewApp({...newApp, bang_chinh: e.target.value})} className="input-modern" placeholder="Tên bảng trên AppSheet" />
+
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                       <div className="w-1.5 h-1.5 bg-violet-500 rounded-full" />
+                       Bảng chính AppSheet
+                    </label>
+                    <input required value={newApp.bang_chinh} onChange={e => setNewApp({...newApp, bang_chinh: e.target.value})} className="input-modern" placeholder="Thường là Tên Sheet" />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Mã ID Ứng dụng (App ID)</label>
-                    <input required value={newApp.app_id} onChange={e => setNewApp({...newApp, app_id: e.target.value})} className="input-modern font-mono" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
+
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                       <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+                       App ID
+                    </label>
+                    <input required value={newApp.app_id} onChange={e => setNewApp({...newApp, app_id: e.target.value})} className="input-modern font-mono text-xs" placeholder="xxxxxxxx-xxxx-..." />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Mã Khóa API (Access Key)</label>
+
+                  <div className="space-y-3 lg:col-span-1">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                       <div className="w-1.5 h-1.5 bg-amber-500 rounded-full" />
+                       API Access Key
+                    </label>
                     <input required type="password" value={newApp.khoa_api} onChange={e => setNewApp({...newApp, khoa_api: e.target.value})} className="input-modern font-mono" placeholder="••••••••••••••••" />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Thư mục nguồn (Mẫu)</label>
-                    <input required value={newApp.folder_mau_id} onChange={e => setNewApp({...newApp, folder_mau_id: e.target.value})} className="input-modern font-mono" placeholder="Folder ID..." />
+
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                       <div className="w-1.5 h-1.5 bg-indigo-400 rounded-full" />
+                       Thư mục Mẫu (Folder ID)
+                    </label>
+                    <input required value={newApp.folder_mau_id} onChange={e => setNewApp({...newApp, folder_mau_id: e.target.value})} className="input-modern font-mono text-xs" placeholder="Lấy từ link Google Drive" />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Thư mục đích (Xuất)</label>
-                    <input required value={newApp.folder_xuat_id} onChange={e => setNewApp({...newApp, folder_xuat_id: e.target.value})} className="input-modern font-mono" placeholder="Folder ID..." />
+
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                       <div className="w-1.5 h-1.5 bg-rose-400 rounded-full" />
+                       Thư mục Xuất (Folder ID)
+                    </label>
+                    <input required value={newApp.folder_xuat_id} onChange={e => setNewApp({...newApp, folder_xuat_id: e.target.value})} className="input-modern font-mono text-xs" placeholder="Nơi lưu file kết quả" />
                   </div>
                 </div>
-                <div className="flex justify-end gap-4 border-t border-slate-50 pt-8">
-                  <button type="button" onClick={testConnection} disabled={testingConnection} className="btn-secondary">
-                    <Zap size={18} className="text-amber-500 shrink-0" />
-                    <span className="truncate">{testingConnection ? "Đang gửi..." : "Test kết nối"}</span>
+
+                <div className="flex flex-col md:flex-row justify-end gap-4 pt-10 border-t border-slate-50">
+                  <button type="button" onClick={testConnection} disabled={testingConnection} className="btn-secondary group min-w-[200px]">
+                    <motion.div animate={testingConnection ? { rotate: 360 } : {}} transition={{ repeat: Infinity, duration: 1 }}>
+                        <Zap size={18} className={testingConnection ? 'text-indigo-400' : 'text-amber-500'} />
+                    </motion.div>
+                    <span className="font-black">{testingConnection ? "Đang kiểm tra..." : "Test kết nối API"}</span>
                   </button>
-                  <button type="submit" className="btn-primary px-10">
-                    <span className="truncate">{editingApp ? 'Cập nhật ứng dụng' : 'Thiết lập kết nối'}</span>
+                  <button type="submit" className="btn-primary min-w-[240px]">
+                    <Check size={18} />
+                    <span className="font-black">{editingApp ? 'Cập nhật cấu hình' : 'Thiết lập hệ thống'}</span>
                   </button>
                 </div>
               </form>

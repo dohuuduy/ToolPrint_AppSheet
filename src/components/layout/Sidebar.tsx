@@ -48,7 +48,7 @@ export const Sidebar: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
         )}
       </div>
 
-      <nav className="flex-1 px-3 space-y-1 py-4">
+      <nav className="flex-1 px-4 space-y-1 py-8">
         {menuItems.map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
@@ -56,14 +56,16 @@ export const Sidebar: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
             <Link 
               key={item.path} 
               to={item.path}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all text-sm font-medium ${
+              className={`flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all group ${
                 isActive 
-                  ? 'bg-indigo-50 text-indigo-700 font-semibold' 
-                  : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                  ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-100' 
+                  : 'text-slate-500 hover:bg-slate-50 hover:text-indigo-600'
               }`}
             >
-              <Icon size={18} className={isActive ? 'text-indigo-600' : 'text-slate-400'} />
-              {item.label}
+              <Icon size={20} className={isActive ? 'text-white' : 'text-slate-400 group-hover:text-indigo-600 transition-colors'} />
+              <span className={`text-[11px] uppercase tracking-widest font-black ${isActive ? 'opacity-100' : 'opacity-80'}`}>
+                {item.label}
+              </span>
             </Link>
           );
         })}

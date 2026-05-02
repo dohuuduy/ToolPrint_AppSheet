@@ -12,6 +12,8 @@ export const ReportingPage: React.FC = () => {
   const rowId = searchParams.get('id');
   const templateMaId = searchParams.get('template');
 
+  const [reportUrl, setReportUrl] = React.useState<string | null>(null);
+
   const startGenerate = async () => {
     if (!rowId || !templateMaId) return;
     setIsGenerating(true);
@@ -57,14 +59,19 @@ export const ReportingPage: React.FC = () => {
 
       setProgress(100);
       setStatus('Hoàn tất! Đang mở tài liệu...');
-      setTimeout(() => {
-        window.location.href = result.viewLink || `https://drive.google.com/file/d/${result.fileId}/view`;
-      }, 1200);
+      const url = result.viewLink || `https://drive.google.com/file/d/${result.fileId}/view`;
+      setReportUrl(url);
+      setIsGenerating(false);
+      clearInterval(interval);
     } catch (err: any) {
       setStatus(err.message);
       setIsGenerating(false);
       clearInterval(interval);
     }
+  };
+
+  const handlePrint = () => {
+    window.print();
   };
 
   React.useEffect(() => {
@@ -74,37 +81,82 @@ export const ReportingPage: React.FC = () => {
   }, [rowId, templateMaId]);
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
-      <div className="max-w-md w-full">
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-xl p-10 text-center">
-          <div className={`w-20 h-20 mx-auto mb-6 rounded-2xl flex items-center justify-center ${isGenerating ? 'bg-indigo-50 text-indigo-600' : 'bg-rose-50 text-rose-500'}`}>
-            {isGenerating ? <RefreshCw className="animate-spin" size={40} /> : <AlertTriangle size={40} />}
+    <div className="min-h-screen bg-slate-100 flex flex-col items-center py-10 px-4 md:px-8">
+      {/* Header for report page */}
+      <div className="w-full max-w-5xl flex items-center justify-between mb-8 no-print">
+        <div className="flex items-center gap-3">
+          <Link to="/" className="p-3 bg-white hover:bg-slate-50 border border-slate-200 rounded-2xl transition-all shadow-sm">
+            <ArrowLeft size={20} className="text-slate-600" />
+          </Link>
+          <h1 className="text-xl font-black text-slate-900 tracking-tighter uppercase italic">Xem trước <span className="text-indigo-600">Báo cáo</span></h1>
+        </div>
+        
+        {reportUrl && (
+          <div className="flex items-center gap-3">
+             <a href={reportUrl} target="_blank" rel="noopener noreferrer" className="btn-secondary py-3 px-6 text-[9px] font-black tracking-widest flex items-center gap-2">
+                Mở Google Drive
+             </a>
+             <button onClick={handlePrint} className="btn-primary py-3 px-6 text-[9px] font-black tracking-widest flex items-center gap-2">
+                <Printer size={16} />
+                In báo cáo
+             </button>
           </div>
+        )}
+      </div>
 
-          <h2 className="text-xl font-bold text-slate-900 mb-2">
-            {isGenerating ? 'Đang xuất báo cáo' : 'Lỗi xuất báo cáo'}
-          </h2>
-          
-          <p className="text-slate-500 text-sm mb-8">{status}</p>
-
-          {isGenerating && (
-            <div className="space-y-3 mb-8">
-              <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                <div className="h-full bg-indigo-600 transition-all duration-700" style={{ width: `${progress}%` }} />
+      <div className="w-full h-full flex items-center justify-center">
+        {isGenerating ? (
+          <div className="max-w-md w-full bg-white rounded-[2.5rem] border border-slate-200 shadow-2xl p-10 text-center">
+            <div className="w-20 h-20 bg-indigo-50 text-indigo-600 mx-auto mb-6 rounded-3xl flex items-center justify-center">
+              <RefreshCw className="animate-spin" size={40} />
+            </div>
+            <h2 className="text-2xl font-black text-slate-900 mb-2 uppercase italic tracking-tighter">Đang xử lý dữ liệu</h2>
+            <p className="text-slate-500 text-sm font-medium mb-8 leading-relaxed px-4">{status}</p>
+            <div className="space-y-3 px-4">
+              <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                <motion.div 
+                  initial={{ width: 0 }}
+                  animate={{ width: `${progress}%` }}
+                  className="h-full bg-indigo-600" 
+                />
               </div>
-              <div className="flex justify-center text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                {Math.round(progress)}%
+              <div className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em]">
+                {Math.round(progress)}% Hoàn thành
               </div>
             </div>
-          )}
-
-          <div className="flex flex-col gap-3">
-            <Link to="/" className="btn-secondary w-full py-4 text-sm">
-              <ArrowLeft size={16} className="shrink-0" />
-              <span>Quay lại Dashboard</span>
-            </Link>
           </div>
-        </div>
+        ) : reportUrl ? (
+          <div className="w-full flex flex-col items-center">
+            <div className="a4-preview bg-white shadow-2xl rounded-sm">
+               <iframe 
+                 src={reportUrl.replace('/view', '/preview')} 
+                 className="w-full h-full border-none"
+                 title="Report Preview"
+               />
+               
+               {/* Overlay for printing if needed, though iframe print is usually separate */}
+               <div className="print-only p-10">
+                 <h1 className="text-3xl font-bold mb-4">Tài liệu đã được tạo</h1>
+                 <p>Vui lòng xem tài liệu tại: {reportUrl}</p>
+               </div>
+            </div>
+            
+            <p className="mt-8 text-slate-400 text-[10px] font-black uppercase tracking-widest no-print">
+               Trang hiển thị ở chế độ xem trước • 210mm x 297mm (A4)
+            </p>
+          </div>
+        ) : (
+          <div className="max-w-md w-full bg-white rounded-[2.5rem] border border-slate-200 shadow-2xl p-10 text-center">
+             <div className="w-20 h-20 bg-rose-50 text-rose-500 mx-auto mb-6 rounded-3xl flex items-center justify-center">
+                <AlertTriangle size={40} />
+             </div>
+             <h2 className="text-2xl font-black text-rose-600 mb-2 uppercase italic tracking-tighter">Lỗi hệ thống</h2>
+             <p className="text-slate-500 text-sm font-medium mb-8 px-4">{status}</p>
+             <Link to="/" className="btn-secondary w-full text-[10px] font-black tracking-widest uppercase">
+                Quay lại bảng điều khiển
+             </Link>
+          </div>
+        )}
       </div>
     </div>
   );
