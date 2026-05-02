@@ -216,11 +216,11 @@ export const AppManagement: React.FC = () => {
                 </div>
                 <div className="flex justify-end gap-3 border-t border-slate-100 pt-6">
                   <button type="button" onClick={testConnection} disabled={testingConnection} className="btn-secondary">
-                    <Zap size={16} className="text-amber-500" />
-                    {testingConnection ? "Đang thử..." : "Test kết nối"}
+                    <Zap size={16} className="text-amber-500 shrink-0" />
+                    <span className="truncate">{testingConnection ? "Đang gửi yêu cầu..." : "Test kết nối"}</span>
                   </button>
-                  <button type="submit" className="btn-primary px-8">
-                    {editingApp ? 'Cập nhật' : 'Thiết lập'}
+                  <button type="submit" className="btn-primary min-w-[120px]">
+                    <span className="truncate">{editingApp ? 'Cập nhật' : 'Thiết lập'}</span>
                   </button>
                 </div>
               </form>

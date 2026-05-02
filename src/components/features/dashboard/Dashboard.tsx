@@ -153,10 +153,10 @@ export const Dashboard: React.FC = () => {
               <Link 
                 key={i} 
                 to={action.to}
-                className={`flex flex-col items-center justify-center p-6 rounded-xl gap-3 transition-all hover:shadow-md border border-slate-200 ${action.bg} ${action.text}`}
+                className={`flex flex-col items-center justify-center p-4 rounded-xl gap-2 transition-all hover:shadow-md border border-slate-200 ${action.bg} ${action.text} overflow-hidden`}
               >
-                <action.icon size={20} />
-                <span className="text-xs font-semibold">{action.label}</span>
+                <action.icon size={20} className="shrink-0" />
+                <span className="text-[10px] font-semibold text-center truncate w-full">{action.label}</span>
               </Link>
             ))}
           </div>
@@ -172,16 +172,16 @@ export const Dashboard: React.FC = () => {
              </div>
              
              <div className="space-y-4">
-                <p className="text-[11px] text-slate-400">Dán công thức này vào mục <b>Behavior {'>>'} External Site</b> trong AppSheet:</p>
-                <div className="bg-white/10 border border-white/10 rounded-lg p-3 text-[10px] font-mono text-slate-300 break-all select-all">
+                <p className="text-[11px] text-slate-400 text-center">Dán công thức này vào mục <b>Behavior {'>>'} External Site</b> trong AppSheet:</p>
+                <div className="bg-white/10 border border-white/10 rounded-lg p-3 text-[10px] font-mono text-slate-300 break-all select-all text-center">
                    {formula}
                 </div>
                 <button 
                   onClick={() => handleCopy(formula)}
-                  className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold text-xs uppercase tracking-tight transition-all flex items-center justify-center gap-2"
+                  className="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold text-xs uppercase tracking-tight transition-all flex items-center justify-center gap-2 overflow-hidden"
                 >
-                   {copied ? <CheckCircle2 size={14} /> : <Copy size={14} />}
-                   {copied ? 'Đã sao chép' : 'Sao chép công thức'}
+                   <span className="shrink-0">{copied ? <CheckCircle2 size={14} /> : <Copy size={14} />}</span>
+                   <span className="truncate">{copied ? 'Đã sao chép' : 'Sao chép công thức'}</span>
                 </button>
              </div>
           </div>

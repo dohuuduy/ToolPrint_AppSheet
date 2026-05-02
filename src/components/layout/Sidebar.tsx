@@ -28,13 +28,13 @@ export const Sidebar: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   return (
     <aside className="w-64 bg-white border-r border-slate-200 flex flex-col h-screen md:sticky top-0 transition-all">
       <div className="p-6 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-indigo-600 rounded-lg flex items-center justify-center text-white shadow-sm">
+        <Link to="/" className="flex items-center gap-3 overflow-hidden">
+          <div className="w-9 h-9 bg-indigo-600 rounded-lg flex items-center justify-center text-white shadow-sm flex-shrink-0">
             <Zap size={20} />
           </div>
-          <div className="flex flex-col">
-            <h1 className="text-lg font-bold text-slate-900 tracking-tight leading-none uppercase">Print<span className="text-indigo-600">Hub</span></h1>
-            <p className="text-[10px] text-slate-400 font-medium uppercase mt-1">Enterprise Solution</p>
+          <div className="flex flex-col min-w-0">
+            <h1 className="text-lg font-bold text-slate-900 tracking-tight leading-none uppercase truncate">Print<span className="text-indigo-600">Hub</span></h1>
+            <p className="text-[10px] text-slate-400 font-medium uppercase mt-1 truncate">Enterprise Solution</p>
           </div>
         </Link>
         

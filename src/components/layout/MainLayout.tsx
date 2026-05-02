@@ -89,16 +89,16 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
                    <div className="h-0.5 bg-slate-500 rounded-full w-full" />
                 </div>
               </button>
-              <h1 className="text-sm md:text-base font-semibold text-slate-800 tracking-tight">
+              <h1 className="text-sm md:text-base font-semibold text-slate-800 tracking-tight truncate max-w-[150px] md:max-w-none">
                 {pageTitles[location.pathname] || 'Trang chủ'}
               </h1>
             </div>
 
             <div className="flex items-center gap-4">
                {/* User Info (Desktop) */}
-               <div className="hidden lg:flex flex-col items-end">
-                  <div className="text-xs font-semibold text-slate-700 leading-none">{user.name}</div>
-                  <div className="text-[10px] text-slate-400 mt-1">{user.email}</div>
+               <div className="hidden lg:flex flex-col items-end min-w-0 max-w-[200px]">
+                  <div className="text-xs font-semibold text-slate-700 leading-none truncate w-full">{user.name}</div>
+                  <div className="text-[10px] text-slate-400 mt-1 truncate w-full">{user.email}</div>
                </div>
                
                <div className="w-8 h-8 md:w-9 md:h-9 rounded-full border border-slate-200 p-0.5 bg-white shadow-sm flex-shrink-0">
