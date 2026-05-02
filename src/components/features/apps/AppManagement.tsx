@@ -165,7 +165,7 @@ export const AppManagement: React.FC = () => {
 
   if (loading) return (
     <div className="flex flex-col items-center justify-center py-20 text-slate-400 gap-4">
-      <RefreshCcw className="animate-spin text-indigo-600" size={32} />
+      <RefreshCw className="animate-spin text-indigo-600" size={32} />
       <p className="text-sm font-medium">Đang tải danh sách ứng dụng...</p>
     </div>
   );
@@ -229,18 +229,18 @@ export const AppManagement: React.FC = () => {
         )}
       </AnimatePresence>
 
-      <div className="bg-white rounded-[2rem] border border-slate-200 overflow-hidden shadow-sm">
-        <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="relative flex-1">
-            <input 
-              type="text" 
-              placeholder="Tìm kiếm ứng dụng..." 
-              className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-xs outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all font-bold"
-              value={searchTerm}
-              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-            />
-            <Search size={18} className="absolute left-4 top-3 text-slate-400" />
-          </div>
+            <div className="bg-white rounded-[2rem] border border-slate-200 overflow-hidden shadow-sm">
+              <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="relative flex-1">
+                  <input 
+                    type="text" 
+                    placeholder="Tìm kiếm ứng dụng..." 
+                    className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-xs outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all font-bold"
+                    value={searchTerm}
+                    onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                  />
+                  <Search size={18} className="absolute left-4 top-3 text-slate-400" />
+                </div>
           <div className="flex items-center gap-3">
             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Bộ lọc:</span>
             <select 
@@ -290,10 +290,10 @@ export const AppManagement: React.FC = () => {
                   </td>
                   <td className="px-8 py-6 text-right">
                     <div className="flex justify-end gap-2 translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all">
-                      <button onClick={() => setEditingApp(app)} className="p-3 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-xl border border-transparent hover:border-slate-100 hover:shadow-xl transition-all" title="Sửa">
+                      <button onClick={() => setEditingApp(app)} className="p-3 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-2xl border border-transparent hover:border-slate-100 hover:shadow-xl transition-all" title="Sửa">
                         <Edit size={18} />
                       </button>
-                      <button onClick={() => handleDelete(app.ma_id, app.ten_ung_dung)} className="p-3 text-slate-400 hover:text-rose-600 hover:bg-white rounded-xl border border-transparent hover:border-slate-100 hover:shadow-xl transition-all" title="Xóa">
+                      <button onClick={() => handleDelete(app.ma_id, app.ten_ung_dung)} className="p-3 text-slate-400 hover:text-rose-600 hover:bg-white rounded-2xl border border-transparent hover:border-slate-100 hover:shadow-xl transition-all" title="Xóa">
                         <Trash2 size={18} />
                       </button>
                     </div>

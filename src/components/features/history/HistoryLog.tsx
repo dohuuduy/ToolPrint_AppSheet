@@ -4,7 +4,7 @@ import {
   FileText, 
   ChevronUp, 
   ChevronDown, 
-  RefreshCcw
+  RefreshCw
 } from 'lucide-react';
 import { useAppStore } from '../../../store/use-app-store';
 import { Pagination } from '../../ui/Pagination';
@@ -54,7 +54,7 @@ export const HistoryLog: React.FC = () => {
 
   if (loading) return (
     <div className="flex flex-col items-center justify-center py-20 text-slate-400 gap-4">
-      <RefreshCcw className="animate-spin text-indigo-600" size={32} />
+      <RefreshCw className="animate-spin text-indigo-600" size={32} />
       <p className="text-sm font-medium">Đang nạp nhật ký...</p>
     </div>
   );

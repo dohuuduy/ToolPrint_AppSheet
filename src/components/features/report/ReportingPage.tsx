@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { Printer, RefreshCcw, AlertTriangle, ArrowLeft } from 'lucide-react';
+import { Printer, RefreshCw, AlertTriangle, ArrowLeft } from 'lucide-react';
 import { api } from '../../../services/api.service';
 import { ReportTemplate, AppSheetConfig } from '../../../types';
 
@@ -78,7 +78,7 @@ export const ReportingPage: React.FC = () => {
       <div className="max-w-md w-full">
         <div className="bg-white rounded-2xl border border-slate-200 shadow-xl p-10 text-center">
           <div className={`w-20 h-20 mx-auto mb-6 rounded-2xl flex items-center justify-center ${isGenerating ? 'bg-indigo-50 text-indigo-600' : 'bg-rose-50 text-rose-500'}`}>
-            {isGenerating ? <RefreshCcw className="animate-spin" size={40} /> : <AlertTriangle size={40} />}
+            {isGenerating ? <RefreshCw className="animate-spin" size={40} /> : <AlertTriangle size={40} />}
           </div>
 
           <h2 className="text-xl font-bold text-slate-900 mb-2">

@@ -160,7 +160,7 @@ export const TemplateManagement: React.FC = () => {
 
   if (loading) return (
     <div className="flex flex-col items-center justify-center py-20 text-slate-400 gap-4">
-      <RefreshCcw className="animate-spin text-indigo-600" size={32} />
+      <RefreshCw className="animate-spin text-indigo-600" size={32} />
       <p className="text-sm font-medium">Đang nạp mẫu biểu báo cáo...</p>
     </div>
   );
@@ -320,16 +320,16 @@ export const TemplateManagement: React.FC = () => {
                         {tpl.loai_file}
                       </span>
                     </td>
-                    <td className="px-8 py-6 text-right">
-                      <div className="flex justify-end gap-2 translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all">
-                        <button onClick={() => setEditingTemplate(tpl)} className="p-3 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-xl border border-transparent hover:border-slate-100 hover:shadow-xl transition-all" title="Sửa">
-                          <Edit size={18} />
-                        </button>
-                        <button onClick={() => handleDelete(tpl.ma_id, tpl.ten_mau)} className="p-3 text-slate-400 hover:text-rose-600 hover:bg-white rounded-xl border border-transparent hover:border-slate-100 hover:shadow-xl transition-all" title="Xóa">
-                          <Trash2 size={18} />
-                        </button>
-                      </div>
-                    </td>
+                  <td className="px-8 py-6 text-right">
+                    <div className="flex justify-end gap-2 translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all">
+                      <button onClick={() => setEditingTemplate(tpl)} className="p-3 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-2xl border border-transparent hover:border-slate-100 hover:shadow-xl transition-all" title="Sửa">
+                        <Edit size={18} />
+                      </button>
+                      <button onClick={() => handleDelete(tpl.ma_id, tpl.ten_mau)} className="p-3 text-slate-400 hover:text-rose-600 hover:bg-white rounded-2xl border border-transparent hover:border-slate-100 hover:shadow-xl transition-all" title="Xóa">
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
+                  </td>
                   </tr>
                 );
               })}

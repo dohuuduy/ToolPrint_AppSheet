@@ -14,7 +14,7 @@ import {
   CheckCircle2,
   Layers,
   Cpu,
-  RefreshCcw
+  RefreshCw
 } from 'lucide-react';
 import { useAppStore } from '../../../store/use-app-store';
 import { format } from 'date-fns';
@@ -57,7 +57,7 @@ export const Dashboard: React.FC = () => {
 
   if (loading && apps.length === 0) return (
     <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
-      <RefreshCcw className="text-indigo-600 animate-spin" size={32} />
+      <RefreshCw className="text-indigo-600 animate-spin" size={32} />
       <p className="text-sm font-medium text-slate-500">Đang tải dữ liệu hệ thống...</p>
     </div>
   );
@@ -100,18 +100,18 @@ export const Dashboard: React.FC = () => {
                   <h3 className="text-sm font-bold text-slate-900 uppercase tracking-tight">Lưu lượng truy xuất</h3>
                   <p className="text-xs text-slate-400 mt-1">7 ngày gần nhất</p>
                 </div>
-                <button 
-                  onClick={() => fetchAll()}
-                  className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
-                  title="Làm mới"
-                >
-                  <RefreshCcw size={18} className={loading ? 'animate-spin' : ''} />
-                </button>
+                  <button 
+                    onClick={() => fetchAll()}
+                    className="p-3 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 rounded-2xl transition-all"
+                    title="Làm mới"
+                  >
+                    <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
+                  </button>
               </div>
               
-              <div className="flex-1 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={chartData}>
+              <div className="flex-1 w-full min-h-0">
+                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
+                  <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                     <defs>
                       <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.1}/>
@@ -123,17 +123,18 @@ export const Dashboard: React.FC = () => {
                       dataKey="name" 
                       axisLine={false} 
                       tickLine={false} 
-                      tick={{ fontSize: 11, fill: '#94a3b8' }}
+                      tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 600 }}
+                      dy={10}
                     />
                     <YAxis hide />
                     <Tooltip 
-                      contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                      contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)', padding: '12px' }}
                     />
                     <Area 
                       type="monotone" 
                       dataKey="count" 
                       stroke="#4f46e5" 
-                      strokeWidth={3}
+                      strokeWidth={4}
                       fill="url(#chartGradient)" 
                       animationDuration={1500}
                     />
@@ -176,15 +177,17 @@ export const Dashboard: React.FC = () => {
                </div>
                
                <div className="space-y-4">
-                  <p className="text-[11px] text-slate-400 text-center leading-relaxed">Dán công thức này vào mục <br/><b>Behavior {'>>'} External Site</b> trong AppSheet:</p>
-                  <div className="bg-white/10 border border-white/10 rounded-xl p-4 text-[10px] font-mono text-slate-300 break-all select-all text-center">
+                  <div className="text-center">
+                    <p className="text-[11px] text-slate-400 leading-relaxed font-medium">Dán công thức này vào mục <b>Behavior {'>>'} External Site</b> trong AppSheet:</p>
+                  </div>
+                  <div className="bg-white/10 border border-white/10 rounded-2xl p-5 text-[10px] font-mono text-slate-300 break-all select-all text-center leading-relaxed backdrop-blur-sm">
                      {formula}
                   </div>
                   <button 
                     onClick={() => handleCopy(formula)}
-                    className="w-full py-4 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-xs uppercase tracking-tight transition-all flex items-center justify-center gap-2 overflow-hidden shadow-lg shadow-indigo-900/40"
+                    className="w-full py-4 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 overflow-hidden shadow-xl shadow-indigo-900/40 active:scale-95 border border-indigo-500"
                   >
-                     <span className="shrink-0">{copied ? <CheckCircle2 size={14} /> : <Copy size={14} />}</span>
+                     <span className="shrink-0">{copied ? <CheckCircle2 size={16} /> : <Copy size={16} />}</span>
                      <span className="truncate">{copied ? 'Đã sao chép công thức' : 'Sao chép công thức'}</span>
                   </button>
                </div>
