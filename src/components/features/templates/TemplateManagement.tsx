@@ -289,17 +289,19 @@ export const TemplateManagement: React.FC = () => {
         )}
       </AnimatePresence>
 
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
+      {/* Templates List */}
+      <div className="bg-white rounded-[2rem] border border-slate-200/60 shadow-xl shadow-slate-200/20 overflow-hidden">
+        {/* Desktop View */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="bg-slate-50/50 border-b border-slate-100">
                 <th 
-                  className="px-6 py-4 text-left cursor-pointer group select-none transition-colors hover:bg-slate-100/50"
+                  className="px-8 py-6 text-left cursor-pointer group select-none transition-colors hover:bg-slate-100/50"
                   onClick={() => handleSort('ten_mau')}
                 >
                    <div className="flex items-center gap-2">
-                    <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider group-hover:text-indigo-600 transition-colors">Mẫu & Ứng dụng</span>
+                    <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest group-hover:text-indigo-600 transition-colors">Mẫu & Ứng dụng</span>
                     {sortConfig.key === 'ten_mau' && (
                       <span className="text-indigo-500">
                         {sortConfig.direction === 'asc' ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
@@ -308,11 +310,11 @@ export const TemplateManagement: React.FC = () => {
                   </div>
                 </th>
                 <th 
-                  className="px-6 py-4 text-left cursor-pointer group select-none transition-colors hover:bg-slate-100/50"
+                  className="px-8 py-6 text-left cursor-pointer group select-none transition-colors hover:bg-slate-100/50"
                   onClick={() => handleSort('ma_mau')}
                 >
                   <div className="flex items-center gap-2">
-                    <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider group-hover:text-indigo-600 transition-colors">Token</span>
+                    <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest group-hover:text-indigo-600 transition-colors">Token</span>
                     {sortConfig.key === 'ma_mau' && (
                       <span className="text-indigo-500">
                         {sortConfig.direction === 'asc' ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
@@ -320,11 +322,11 @@ export const TemplateManagement: React.FC = () => {
                     )}
                   </div>
                 </th>
-                <th className="px-6 py-4 text-left">
-                  <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider">Loại tệp</span>
+                <th className="px-8 py-6 text-left">
+                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Loại tệp</span>
                 </th>
-                <th className="px-6 py-4 text-right">
-                  <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider">Thao tác</span>
+                <th className="px-8 py-6 text-right">
+                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Thao tác</span>
                 </th>
               </tr>
             </thead>
@@ -332,54 +334,103 @@ export const TemplateManagement: React.FC = () => {
               {paginatedTemplates.map((tpl: ReportTemplate, i) => {
                 const app = apps.find(a => a.ma_id === tpl.ma_ung_dung);
                 return (
-                  <tr key={i} className="hover:bg-slate-50 transition-colors group">
-                    <td className="px-6 py-4">
-                      <div className="font-bold text-slate-900 text-sm tracking-tight">{tpl.ten_mau}</div>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <span className="text-[9px] text-indigo-500 font-black uppercase tracking-widest">{app?.ten_ung_dung || 'N/A'}</span>
-                        <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
-                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{tpl.bang_chinh}</span>
+                  <tr key={i} className="hover:bg-slate-50/50 transition-all group">
+                    <td className="px-8 py-6">
+                      <div className="font-bold text-slate-900 text-sm tracking-tight group-hover:text-indigo-600 transition-colors">{tpl.ten_mau}</div>
+                      <div className="flex items-center gap-2 mt-1.5 overflow-hidden">
+                        <span className="text-[9px] text-indigo-500 font-black uppercase tracking-widest truncate max-w-[120px]">{app?.ten_ung_dung || 'N/A'}</span>
+                        <span className="w-1 h-1 bg-slate-200 rounded-full shrink-0"></span>
+                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest truncate">{tpl.bang_chinh}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <code className="text-[10px] font-mono px-1.5 py-0.5 bg-slate-100 text-slate-500 rounded-md border border-slate-200/30 font-bold uppercase">{tpl.ma_mau}</code>
+                    <td className="px-8 py-6">
+                      <code className="text-[10px] font-mono px-2 py-1 bg-slate-100/80 text-slate-500 rounded-lg border border-slate-200/30 font-bold uppercase tracking-tight">{tpl.ma_mau}</code>
                     </td>
-                    <td className="px-6 py-4">
-                      <span className="inline-flex items-center px-2 py-0.5 bg-indigo-50 text-indigo-600 text-[9px] font-black rounded-md uppercase tracking-widest border border-indigo-100/50">
+                    <td className="px-8 py-6">
+                      <span className="inline-flex items-center px-3 py-1 bg-indigo-50 text-indigo-600 text-[9px] font-black rounded-full uppercase tracking-widest border border-indigo-100/50">
                         {tpl.loai_file}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex justify-end gap-1">
+                    <td className="px-8 py-6 text-right">
+                      <div className="flex justify-end gap-2 translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all">
                         <button 
                           onClick={() => setEditingTemplate(tpl)} 
-                          className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                          className="p-3 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-xl border border-transparent hover:border-slate-100 hover:shadow-xl hover:shadow-slate-200/50 transition-all"
                           title="Chỉnh sửa"
                         >
-                          <Edit size={14} />
+                          <Edit size={16} />
                         </button>
                         <button 
                           onClick={() => handleDelete(tpl.ma_id, tpl.ten_mau)} 
-                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all"
+                          className="p-3 text-slate-400 hover:text-rose-600 hover:bg-white rounded-xl border border-transparent hover:border-slate-100 hover:shadow-xl hover:shadow-slate-200/50 transition-all"
                           title="Xóa"
                         >
-                          <Trash2 size={14} />
+                          <Trash2 size={16} />
                         </button>
                       </div>
                     </td>
                   </tr>
                 );
               })}
-              {paginatedTemplates.length === 0 && (
-                <tr>
-                  <td colSpan={4} className="px-6 py-20 text-center text-slate-400 text-xs font-bold uppercase tracking-widest">
-                    Không tìm thấy mẫu báo cáo nào phù hợp
-                  </td>
-                </tr>
-              )}
             </tbody>
           </table>
         </div>
+
+        {/* Mobile View */}
+        <div className="md:hidden divide-y divide-slate-100">
+           {paginatedTemplates.map((tpl: ReportTemplate, i) => {
+             const app = apps.find(a => a.ma_id === tpl.ma_ung_dung);
+             return (
+               <div key={i} className="p-5 hover:bg-slate-50/50 transition-colors space-y-4">
+                  <div className="flex justify-between items-start">
+                     <div className="space-y-1">
+                        <div className="font-bold text-slate-900 text-sm tracking-tight">{tpl.ten_mau}</div>
+                        <div className="flex items-center gap-2">
+                           <span className="text-[9px] text-indigo-500 font-black uppercase tracking-widest">{app?.ten_ung_dung || 'N/A'}</span>
+                           <span className="w-1 h-1 bg-slate-200 rounded-full"></span>
+                           <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{tpl.bang_chinh}</span>
+                        </div>
+                     </div>
+                     <span className="px-2.5 py-1 bg-indigo-50 text-indigo-600 text-[8px] font-black rounded-full uppercase tracking-widest border border-indigo-100/50">
+                        {tpl.loai_file}
+                     </span>
+                  </div>
+                  
+                  <div className="bg-slate-50/50 rounded-xl p-3 border border-slate-200/40">
+                     <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Token Code</p>
+                     <code className="text-[10px] font-mono text-indigo-600 font-bold uppercase tracking-widest">{tpl.ma_mau}</code>
+                  </div>
+
+                  <div className="flex gap-2">
+                     <button 
+                      onClick={() => setEditingTemplate(tpl)}
+                      className="flex-1 py-3.5 bg-white border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-[0.1em] text-slate-600 flex items-center justify-center gap-2 active:scale-95 transition-all shadow-sm"
+                     >
+                       <Edit size={14} /> Chỉnh sửa
+                     </button>
+                     <button 
+                      onClick={() => handleDelete(tpl.ma_id, tpl.ten_mau)}
+                      className="p-3.5 bg-rose-50 border border-rose-100 text-rose-600 rounded-xl shadow-sm"
+                     >
+                       <Trash2 size={16} />
+                     </button>
+                  </div>
+               </div>
+             );
+           })}
+        </div>
+
+        {paginatedTemplates.length === 0 && (
+          <div className="px-6 py-24 text-center">
+            <div className="w-16 h-16 bg-slate-50 rounded-[2rem] flex items-center justify-center mx-auto mb-4 text-slate-200">
+               <Filter size={32} />
+            </div>
+            <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">
+              Hệ thống chưa có mẫu báo cáo nào
+            </p>
+          </div>
+        )}
+
         <Pagination 
           currentPage={currentPage} 
           totalPages={totalPages} 

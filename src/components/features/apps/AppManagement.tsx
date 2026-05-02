@@ -283,17 +283,19 @@ export const AppManagement: React.FC = () => {
         )}
       </AnimatePresence>
 
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
+      {/* Applications List */}
+      <div className="bg-white rounded-[2rem] border border-slate-200/60 shadow-xl shadow-slate-200/20 overflow-hidden">
+        {/* Desktop View */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="bg-slate-50/50 border-b border-slate-100">
                 <th 
-                  className="px-6 py-4 text-left cursor-pointer group select-none transition-colors hover:bg-slate-100/50" 
+                  className="px-8 py-6 text-left cursor-pointer group select-none transition-colors hover:bg-slate-100/50" 
                   onClick={() => handleSort('ten_ung_dung')}
                 >
                   <div className="flex items-center gap-2">
-                    <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider group-hover:text-indigo-600 transition-colors">Ứng dụng</span>
+                    <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest group-hover:text-indigo-600 transition-colors">Ứng dụng & Bảng</span>
                     {sortConfig.key === 'ten_ung_dung' && (
                       <span className="text-indigo-500">
                         {sortConfig.direction === 'asc' ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
@@ -302,11 +304,11 @@ export const AppManagement: React.FC = () => {
                   </div>
                 </th>
                 <th 
-                  className="px-6 py-4 text-left hidden lg:table-cell cursor-pointer group select-none transition-colors hover:bg-slate-100/50"
+                  className="px-8 py-6 text-left hidden lg:table-cell cursor-pointer group select-none transition-colors hover:bg-slate-100/50"
                   onClick={() => handleSort('app_id')}
                 >
                   <div className="flex items-center gap-2">
-                    <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider group-hover:text-indigo-600 transition-colors">Mã App ID</span>
+                    <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest group-hover:text-indigo-600 transition-colors">Mã App ID</span>
                     {sortConfig.key === 'app_id' && (
                       <span className="text-indigo-500">
                         {sortConfig.direction === 'asc' ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
@@ -314,71 +316,124 @@ export const AppManagement: React.FC = () => {
                     )}
                   </div>
                 </th>
-                <th className="px-6 py-4 text-left">
-                  <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider">Trạng thái</span>
+                <th className="px-8 py-6 text-left">
+                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Trạng thái</span>
                 </th>
-                <th className="px-6 py-4 text-right">
-                  <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider">Thao tác</span>
+                <th className="px-8 py-6 text-right">
+                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Thao tác</span>
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {paginatedApps.map((app: any, i) => (
-                <tr key={i} className="hover:bg-slate-50/50 transition-colors group">
-                  <td className="px-6 py-4">
-                    <div className="font-bold text-slate-900 text-sm tracking-tight">{app.ten_ung_dung || app.ten_app}</div>
-                    <div className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">{app.bang_chinh}</div>
+                <tr key={i} className="hover:bg-slate-50/50 transition-all group">
+                  <td className="px-8 py-6">
+                    <div className="font-bold text-slate-900 text-sm tracking-tight group-hover:text-indigo-600 transition-colors">{app.ten_ung_dung || app.ten_app}</div>
+                    <div className="text-[9px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-1.5">{app.bang_chinh}</div>
                   </td>
-                  <td className="px-6 py-4 hidden lg:table-cell">
-                     <code className="text-[10px] font-mono px-1.5 py-0.5 bg-slate-100 text-slate-500 rounded-md border border-slate-200/30">{app.app_id}</code>
+                  <td className="px-8 py-6 hidden lg:table-cell">
+                     <code className="text-[10px] font-mono px-2 py-1 bg-slate-100/80 text-slate-500 rounded-lg border border-slate-200/30 font-bold tracking-tight">{app.app_id}</code>
                   </td>
-                  <td className="px-6 py-4">
-                     <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${
+                  <td className="px-8 py-6">
+                     <span className={`badge-status ${
                        app.trang_thai === 'Hoạt động' 
-                        ? 'bg-emerald-50 text-emerald-600 border-emerald-100/50' 
-                        : 'bg-slate-100 text-slate-500 border-slate-200/50'
+                        ? 'bg-emerald-50 text-emerald-600 border-emerald-100' 
+                        : 'bg-slate-100 text-slate-500 border-slate-200'
                      }`}>
-                      <div className={`w-1 h-1 rounded-full ${app.trang_thai === 'Hoạt động' ? 'bg-emerald-500' : 'bg-slate-400'}`} /> 
+                      <div className={`w-1.5 h-1.5 rounded-full ${app.trang_thai === 'Hoạt động' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} /> 
                       {app.trang_thai || 'Online'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex justify-end gap-1">
+                  <td className="px-8 py-6 text-right">
+                    <div className="flex justify-end gap-2 translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all">
                        <button 
                         onClick={() => setEditingApp(app)} 
-                        className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                        className="p-3 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-xl border border-transparent hover:border-slate-100 hover:shadow-xl hover:shadow-slate-200/50 transition-all"
                         title="Chỉnh sửa"
                        >
-                        <Edit size={14} />
+                        <Edit size={16} />
                        </button>
                        <button 
                         onClick={() => setViewingApp(app)} 
-                        className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all"
+                        className="p-3 text-slate-400 hover:text-slate-900 hover:bg-white rounded-xl border border-transparent hover:border-slate-100 hover:shadow-xl hover:shadow-slate-200/50 transition-all"
                         title="Chi tiết"
                        >
-                        <Eye size={14} />
+                        <Eye size={16} />
                        </button>
                        <button 
                         onClick={() => handleDelete(app.ma_id, app.ten_ung_dung)} 
-                        className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all"
+                        className="p-3 text-slate-400 hover:text-rose-600 hover:bg-white rounded-xl border border-transparent hover:border-slate-100 hover:shadow-xl hover:shadow-slate-200/50 transition-all"
                         title="Xóa"
                        >
-                        <Trash2 size={14} />
+                        <Trash2 size={16} />
                        </button>
                     </div>
                   </td>
                 </tr>
               ))}
-              {paginatedApps.length === 0 && (
-                <tr>
-                  <td colSpan={4} className="px-6 py-20 text-center text-slate-400 text-xs font-bold uppercase tracking-widest">
-                    Không tìm thấy ứng dụng nào phù hợp
-                  </td>
-                </tr>
-              )}
             </tbody>
           </table>
         </div>
+
+        {/* Mobile View */}
+        <div className="md:hidden divide-y divide-slate-100">
+           {paginatedApps.map((app: any, i) => (
+             <div key={i} className="p-5 hover:bg-slate-50/50 transition-colors space-y-4">
+                <div className="flex justify-between items-start">
+                   <div className="space-y-1">
+                      <div className="font-bold text-slate-900 text-sm tracking-tight">{app.ten_ung_dung || app.ten_app}</div>
+                      <div className="text-[9px] font-black uppercase text-slate-400 tracking-widest">{app.bang_chinh}</div>
+                   </div>
+                   <span className={`badge-status ${
+                       app.trang_thai === 'Hoạt động' 
+                        ? 'bg-emerald-50 text-emerald-600 border-emerald-100' 
+                        : 'bg-slate-100 text-slate-500 border-slate-200'
+                    }`}>
+                      <div className={`w-1.5 h-1.5 rounded-full ${app.trang_thai === 'Hoạt động' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} /> 
+                      {app.trang_thai || 'Online'}
+                   </span>
+                </div>
+                
+                <div className="bg-slate-50/50 rounded-xl p-3 border border-slate-200/40">
+                   <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1.5">App ID Key</p>
+                   <code className="text-[10px] font-mono text-indigo-600 font-bold break-all leading-relaxed">{app.app_id}</code>
+                </div>
+
+                <div className="flex gap-2">
+                   <button 
+                    onClick={() => setEditingApp(app)}
+                    className="flex-1 py-3.5 bg-white border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-[0.1em] text-slate-600 flex items-center justify-center gap-2 active:scale-95 transition-all shadow-sm"
+                   >
+                     <Edit size={14} /> Chỉnh sửa
+                   </button>
+                   <button 
+                    onClick={() => setViewingApp(app)}
+                    className="p-3.5 bg-white border border-slate-200 rounded-xl text-slate-600 shadow-sm"
+                   >
+                     <Eye size={16} />
+                   </button>
+                   <button 
+                    onClick={() => handleDelete(app.ma_id, app.ten_ung_dung)}
+                    className="p-3.5 bg-rose-50 border border-rose-100 text-rose-600 rounded-xl shadow-sm"
+                   >
+                     <Trash2 size={16} />
+                   </button>
+                </div>
+             </div>
+           ))}
+        </div>
+
+        {paginatedApps.length === 0 && (
+          <div className="px-6 py-24 text-center">
+            <div className="w-16 h-16 bg-slate-50 rounded-[2rem] flex items-center justify-center mx-auto mb-4 text-slate-200">
+               <Filter size={32} />
+            </div>
+            <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">
+              Hệ thống chưa ghi nhận ứng dụng nào
+            </p>
+          </div>
+        )}
+
         <Pagination 
           currentPage={currentPage} 
           totalPages={totalPages} 
