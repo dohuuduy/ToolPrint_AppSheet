@@ -16,34 +16,30 @@ const pageTitles: Record<string, string> = {
 export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, login } = useAuth();
   const location = useLocation();
-  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
-
-  // Close sidebar on route change for mobile
-  React.useEffect(() => {
-    setIsSidebarOpen(false);
-  }, [location.pathname]);
 
   if (!user) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 p-6 overflow-hidden relative">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,#EEF2FF,transparent)]" />
+      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-900 p-6 overflow-hidden relative">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,#312e81,black)]" />
+        <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
         
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white p-8 md:p-10 text-center max-w-sm w-full rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-200 relative z-10"
+          className="bg-white/10 backdrop-blur-2xl p-12 text-center max-w-md w-full rounded-[3.5rem] shadow-[0_0_80px_rgba(0,0,0,0.5)] border border-white/10 relative z-10"
         >
-          <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-lg shadow-indigo-200">
-            <Terminal size={32} className="text-white" />
+          <div className="w-24 h-24 bg-white rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 shadow-2xl relative group">
+            <div className="absolute inset-0 bg-indigo-600 rounded-[2.5rem] animate-ping opacity-20 group-hover:scale-110 transition-transform" />
+            <Terminal size={48} className="text-slate-900 relative z-10" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 mb-2 uppercase tracking-tight">Print<span className="text-indigo-600">Hub</span></h1>
-          <p className="text-slate-500 mb-10 text-sm leading-relaxed">Hệ thống báo cáo chuyên nghiệp cho AppSheet.</p>
+          <h1 className="text-4xl font-black text-white mb-2 uppercase tracking-tighter italic">Print<span className="text-indigo-400">Hub</span></h1>
+          <p className="text-slate-300 mb-10 font-medium text-sm leading-relaxed tracking-wide">Giải pháp in ấn và báo cáo tự động cho AppSheet.</p>
           <button 
             onClick={login} 
-            className="w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-50 text-slate-700 font-semibold border border-slate-200 py-3.5 px-6 rounded-xl transition-all shadow-sm active:scale-95 text-sm"
+            className="w-full flex items-center justify-center gap-4 bg-white hover:bg-slate-100 text-slate-900 font-black py-5 px-6 rounded-3xl transition-all shadow-xl active:scale-95"
           >
-            <img src="https://www.google.com/favicon.ico" width="18" height="18" alt="google" />
-            Đăng nhập với Google
+            <img src="https://www.google.com/favicon.ico" width="20" height="20" alt="google" />
+            ĐĂNG NHẬP VỚI GOOGLE
           </button>
         </motion.div>
       </div>
@@ -56,74 +52,36 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
   }
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-[#F8FAFC]">
-      {/* Mobile Backdrop */}
-      <AnimatePresence>
-        {isSidebarOpen && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setIsSidebarOpen(false)}
-            className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[45] md:hidden"
-          />
-        )}
-      </AnimatePresence>
-
-      {/* Sidebar Wrapper */}
-      <div className={`fixed inset-y-0 left-0 z-50 md:sticky md:block transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
-        <Sidebar onClose={() => setIsSidebarOpen(false)} />
-      </div>
-
-      <main className="flex-1 min-h-screen relative flex flex-col">
-        {/* Header */}
-        <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-100 h-16 md:h-20 px-6 md:px-10 flex justify-between items-center">
-            <div className="flex items-center gap-4">
-              <button 
-                onClick={() => setIsSidebarOpen(true)}
-                className="p-2 -ml-2 text-slate-500 hover:bg-slate-100 rounded-xl md:hidden transition-colors"
-                title="Mở Menu"
-              >
-                <div className="space-y-1.5 w-5">
-                   <div className="h-0.5 bg-slate-500 rounded-full w-full" />
-                   <div className="h-0.5 bg-slate-500 rounded-full w-full" />
-                </div>
-              </button>
-              {/* Removed redundant text title here to let page content handle it */}
+    <div className="flex flex-col md:flex-row min-h-screen bg-[#fbfcfd]">
+      <Sidebar />
+      <main className="flex-1 md:ml-72 min-h-screen relative">
+        <header className="sticky top-0 z-30 bg-white/40 backdrop-blur-md border-b border-slate-100 h-20 px-8 flex justify-between items-center">
+            <div className="flex items-center gap-3">
+               <div className="w-1 h-6 bg-indigo-600 rounded-full" />
+               <h1 className="text-lg font-black text-slate-900 tracking-tight">
+                 {pageTitles[location.pathname] || 'Trang chủ'}
+               </h1>
             </div>
-
-            <div className="flex items-center gap-5">
-               {/* User info moved to sidebar or simplified here */}
-               <div className="hidden md:flex flex-col items-end">
-                  <div className="text-[10px] font-black text-slate-900 leading-none uppercase tracking-widest">{user.name}</div>
+            <div className="flex items-center gap-6">
+               <div className="hidden lg:flex flex-col items-end">
+                  <div className="text-[11px] font-black text-slate-900 leading-none">{user.email}</div>
                   <div className="flex items-center gap-1.5 mt-1.5">
                     <div className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse" />
-                    <span className="text-[8px] font-black text-slate-400 uppercase tracking-[0.2em] leading-none">System Ready</span>
+                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">Hệ thống sẵn sàng</span>
                   </div>
-               </div>
-               
-               <div className="w-10 h-10 rounded-2xl border border-slate-200 p-0.5 bg-white shadow-sm flex-shrink-0">
-                  {user.picture ? (
-                    <img src={user.picture} alt="Profile" className="w-full h-full object-cover rounded-[14px]" />
-                  ) : (
-                    <div className="w-full h-full bg-indigo-50 text-indigo-600 flex items-center justify-center font-black rounded-[14px] text-xs">
-                      {user.name?.[0]}
-                    </div>
-                  )}
                </div>
             </div>
         </header>
 
-        {/* Content Area */}
-        <div className="relative z-10 flex-1 overflow-x-hidden">
+        <div className="relative z-10">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-              className="p-4 md:p-8"
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -10 }}
+              transition={{ duration: 0.2 }}
+              className="p-8"
             >
               {children}
             </motion.div>

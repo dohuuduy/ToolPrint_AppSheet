@@ -1,24 +1,31 @@
 import React from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { 
   FileText, 
   Printer, 
   Zap, 
+  HelpCircle, 
   Database, 
   ChevronRight,
+  TrendingUp,
   Clock,
+  Activity,
+  PlusCircle,
   Settings,
+  ShieldCheck,
   ExternalLink,
   Copy,
   CheckCircle2,
+  Terminal,
   Layers,
   Cpu,
-  RefreshCw,
-  History
+  Globe,
+  RefreshCcw
 } from 'lucide-react';
 import { useAppStore } from '../../../store/use-app-store';
 import { format } from 'date-fns';
+import { vi } from 'date-fns/locale';
 import { 
   AreaChart, 
   Area, 
@@ -32,9 +39,11 @@ import {
 export const Dashboard: React.FC = () => {
   const { apps, templates, logs, loading, fetchAll } = useAppStore();
   const [copied, setCopied] = React.useState(false);
+  const [isMounted, setIsMounted] = React.useState(false);
 
   React.useEffect(() => {
     fetchAll();
+    setIsMounted(true);
   }, [fetchAll]);
 
   const handleCopy = (text: string) => {
@@ -56,206 +65,330 @@ export const Dashboard: React.FC = () => {
     }));
   }, [logs]);
 
-  if (loading && apps.length === 0) return (
-    <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
-      <RefreshCw className="text-indigo-600 animate-spin" size={32} />
-      <p className="text-sm font-medium text-slate-500">Đang tải dữ liệu hệ thống...</p>
+  if (loading) return (
+    <div className="flex flex-col items-center justify-center min-h-[70vh] space-y-8">
+      <div className="relative">
+        <motion.div 
+          animate={{ rotate: 360 }}
+          transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+          className="w-24 h-24 rounded-[32px] border-2 border-indigo-600/10 border-t-indigo-600 shadow-[0_0_40px_rgba(79,70,229,0.1)]" 
+        />
+        <div className="absolute inset-0 flex items-center justify-center">
+            <Cpu size={32} className="text-indigo-600 animate-pulse" />
+        </div>
+      </div>
+      <div className="text-center space-y-2">
+        <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.5em]">System Initializing</h2>
+        <div className="flex items-center gap-2 justify-center">
+          <div className="w-1.5 h-1.5 bg-indigo-600 rounded-full animate-bounce [animation-delay:-0.3s]" />
+          <div className="w-1.5 h-1.5 bg-indigo-600 rounded-full animate-bounce [animation-delay:-0.15s]" />
+          <div className="w-1.5 h-1.5 bg-indigo-600 rounded-full animate-bounce" />
+        </div>
+      </div>
     </div>
   );
+
+  if (isMounted && !apps.length && !templates.length && !logs.length) {
+    return (
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-2xl mx-auto py-24 text-center space-y-10"
+      >
+        <div className="inline-flex flex-col items-center gap-4">
+          <div className="p-8 bg-white rounded-[48px] border border-slate-100 shadow-2xl relative">
+            <Database size={64} className="text-indigo-100" />
+            <motion.div 
+              animate={{ opacity: [1, 0.4, 1] }} 
+              transition={{ duration: 2, repeat: Infinity }}
+              className="absolute -top-2 -right-2 bg-amber-500 p-2 rounded-full border-4 border-white shadow-lg text-white"
+            >
+              <Zap size={16} />
+            </motion.div>
+          </div>
+        </div>
+        <div className="space-y-4">
+          <h2 className="text-4xl font-black text-slate-900 tracking-tighter">CHỜ CẤU HÌNH NODE</h2>
+          <p className="text-slate-500 font-medium max-w-md mx-auto leading-relaxed">
+            Hệ thống Cloud Engine đã sẵn sàng. Vui lòng kết nối với AppSheet ID và khởi tạo Schema báo cáo để kích hoạt tính năng.
+          </p>
+        </div>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <Link to="/apps" className="w-full sm:w-auto px-10 py-5 bg-slate-900 text-white rounded-3xl font-black text-xs uppercase tracking-widest hover:bg-black transition-all hover:scale-105 shadow-2xl">
+            Kết nối AppSheet
+          </Link>
+          <Link to="/settings" className="w-full sm:w-auto px-10 py-5 bg-white border-2 border-slate-100 text-slate-900 rounded-3xl font-black text-xs uppercase tracking-widest hover:border-indigo-600 transition-all">
+            Cấu hình API
+          </Link>
+        </div>
+      </motion.div>
+    );
+  }
 
   const formula = `CONCATENATE("${window.location.origin}/report?template=ID_MAU&id=", ENCODEURL([MA_ID]))`;
 
   return (
-    <div className="max-w-7xl mx-auto space-y-10">
-      {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div>
-           <h2 className="text-3xl font-black text-slate-900 tracking-tight uppercase italic">Tổng quan <span className="text-indigo-600">Hệ thống</span></h2>
-           <p className="text-slate-500 text-sm font-medium mt-1">Theo dõi tương tác, dữ liệu và hiệu suất kết nối thời gian thực.</p>
+    <div className="space-y-8 pb-24 max-w-[1500px] mx-auto">
+      {/* Top System Navigation Bar */}
+      <section className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+        <div className="space-y-1">
+          <div className="flex items-center gap-3">
+             <div className="w-10 h-10 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-indigo-200">
+                <Terminal size={20} />
+             </div>
+             <div>
+                <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none">BẢNG ĐIỀU KHIỂN</h1>
+                <p className="text-[10px] font-mono text-slate-400 font-bold uppercase tracking-widest">Trạng thái: Máy chủ ổn định</p>
+             </div>
+          </div>
         </div>
-      </div>
-
-      {/* Overview Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-        {[
-          { label: 'Ứng dụng AppSheet', value: apps.length, icon: Layers, color: 'text-indigo-600', bg: 'bg-indigo-50/50', border: 'border-indigo-100', accent: 'bg-indigo-500' },
-          { label: 'Mẫu báo cáo (Word/Excel)', value: templates.length, icon: FileText, color: 'text-violet-600', bg: 'bg-violet-50/50', border: 'border-violet-100', accent: 'bg-violet-500' },
-          { label: 'Sản lượng in ấn PDF', value: logs.length, icon: Printer, color: 'text-emerald-600', bg: 'bg-emerald-50/50', border: 'border-emerald-100', accent: 'bg-emerald-500' },
-        ].map((stat, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className="card-premium p-8 flex items-center gap-7 relative overflow-hidden group"
+        
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="px-5 py-2 bg-white rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+            <div className="flex flex-col">
+              <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">Khu vực mạng</span>
+              <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5 mt-1">
+                <Globe size={12} className="text-indigo-600" />
+                Đám mây toàn cầu
+              </span>
+            </div>
+            <div className="w-px h-8 bg-slate-100" />
+            <div className="flex flex-col">
+              <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">Phiên bản</span>
+              <span className="text-xs font-mono font-bold text-slate-900 mt-1 italic">v1.5.0-PRO</span>
+            </div>
+          </div>
+          <button 
+            onClick={() => fetchAll()}
+            className="p-3 bg-slate-900 text-white rounded-2xl hover:scale-105 active:scale-95 transition-all shadow-xl shadow-slate-200"
           >
-            <div className={`absolute top-0 right-0 w-2 h-full ${stat.accent} opacity-0 group-hover:opacity-100 transition-opacity`} />
-            <div className={`w-16 h-16 ${stat.bg} ${stat.color} rounded-[1.5rem] flex items-center justify-center border ${stat.border} shadow-sm group-hover:scale-110 transition-transform`}>
-              <stat.icon size={28} />
-            </div>
-            <div>
-              <div className="text-3xl font-black text-slate-900 leading-none">{stat.value}</div>
-              <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">{stat.label}</div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
+            <RefreshCcw size={18} className={loading ? 'animate-spin' : ''} />
+          </button>
+        </div>
+      </section>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10">
-        {/* Main Chart */}
-        <div className="lg:col-span-2 space-y-8">
-            <div className="card-premium p-8 md:p-10 h-[450px] flex flex-col rounded-[2.5rem]">
-              <div className="flex items-center justify-between mb-10">
-                <div className="flex items-center gap-3">
-                   <div className="w-1.5 h-6 bg-indigo-600 rounded-full" />
-                   <div>
-                      <h3 className="text-sm font-black text-slate-900 uppercase tracking-tighter leading-none italic">Lưu lượng truy xuất</h3>
-                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Phân tích 7 ngày gần nhất</p>
+      {/* Main Grid: Data & Status */}
+      <div className="grid grid-cols-12 gap-8">
+        
+        {/* Left Column: Analytics */}
+        <div className="col-span-12 xl:col-span-8 space-y-8">
+          
+          {/* Key Intelligence Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { label: 'Cụm ứng dụng', value: apps.length, icon: Layers, color: 'text-indigo-600', meta: 'Đang kết nối' },
+              { label: 'Mẫu báo cáo', value: templates.length, icon: FileText, color: 'text-slate-900', meta: 'Đã sẵn sàng' },
+              { label: 'Tổng lượt in', value: logs.length, icon: Activity, color: 'text-emerald-600', meta: 'Thành công' },
+            ].map((stat, i) => (
+              <motion.div 
+                key={i}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.1 }}
+                className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm group hover:shadow-2xl hover:shadow-slate-200/50 transition-all"
+              >
+                <div className="flex justify-between items-start mb-6">
+                  <div className={`w-12 h-12 bg-slate-50 ${stat.color} rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110`}>
+                    <stat.icon size={24} strokeWidth={2.5} />
+                  </div>
+                  <div className="px-2 py-1 bg-slate-50 rounded-lg text-[9px] font-black text-slate-400 uppercase tracking-widest">{stat.meta}</div>
+                </div>
+                <div className="text-4xl font-mono font-black text-slate-900 tracking-tighter mb-1">{stat.value.toString().padStart(2, '0')}</div>
+                <div className="text-[10px] font-black text-slate-400 tracking-[0.2em] uppercase">{stat.label}</div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Activity Visualizer */}
+          <div className="bg-white rounded-[48px] border border-slate-100 shadow-sm p-10 relative overflow-hidden h-[460px] flex flex-col">
+            <div className="flex items-center justify-between mb-10 shrink-0">
+               <div className="space-y-1">
+                  <h3 className="text-xs font-black text-slate-900 tracking-[0.3em] uppercase">Biểu đồ lượt in</h3>
+                  <p className="text-[10px] font-mono text-slate-400 italic">Thống kê lưu lượng truy xuất mẫu biểu theo ngày</p>
+               </div>
+               <div className="flex gap-2">
+                  <div className="w-2.5 h-2.5 bg-indigo-600 rounded-full animate-pulse" />
+                  <span className="text-[10px] font-mono font-bold text-slate-400">TRỰC TIẾP</span>
+               </div>
+            </div>
+
+            <div className="flex-1 min-h-0 w-full">
+              <ResponsiveContainer width="100%" height="100%" debounce={50}>
+                <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="loadCurve" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.15}/>
+                      <stop offset="95%" stopColor="#4f46e5" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="6 6" vertical={false} stroke="#f1f5f9" />
+                  <XAxis 
+                    dataKey="name" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fontSize: 10, fontFamily: 'monospace', fontWeight: 700, fill: '#cbd5e1' }}
+                    dy={10}
+                  />
+                  <YAxis hide />
+                  <Tooltip 
+                    cursor={{ stroke: '#4f46e5', strokeWidth: 1 }}
+                    contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)', fontSize: '10px', fontWeight: 'bold', fontFamily: 'monospace' }}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="count" 
+                    stroke="#4f46e5" 
+                    strokeWidth={4}
+                    fill="url(#loadCurve)" 
+                    animationDuration={2500}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Infrastructure Quick Access */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+             {[
+               { to: '/report', label: 'TẠO BÁO CÁO', icon: Printer, dark: true },
+               { to: '/apps', label: 'CẤU HÌNH APP', icon: PlusCircle, dark: false },
+               { to: '/templates', label: 'QUẢN LÝ MẪU', icon: FileText, dark: false },
+               { to: '/settings', label: 'HỆ THỐNG', icon: Settings, dark: false }
+             ].map((action, i) => (
+               <Link 
+                key={i} 
+                to={action.to}
+                className={`flex flex-col items-center justify-center p-6 rounded-[32px] gap-4 transition-all hover:scale-105 ${
+                  action.dark 
+                    ? 'bg-slate-900 text-white hover:bg-black shadow-2xl shadow-indigo-100' 
+                    : 'bg-white border border-slate-100 text-slate-700 hover:border-indigo-600 hover:text-indigo-600 shadow-sm'
+                }`}
+               >
+                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${action.dark ? 'bg-white/10' : 'bg-slate-50'}`}>
+                    <action.icon size={20} strokeWidth={2.5} />
+                 </div>
+                 <span className="text-[9px] font-black uppercase tracking-[0.25em]">{action.label}</span>
+               </Link>
+             ))}
+          </div>
+        </div>
+
+        {/* Right Column: Status Logs */}
+        <div className="col-span-12 xl:col-span-4 space-y-8">
+          
+          {/* Integration Formula - Pro Version */}
+          <div className="bg-white rounded-[40px] p-8 border border-slate-100 shadow-sm relative overflow-hidden group">
+             <div className="absolute top-0 left-0 w-2 h-full bg-indigo-600" />
+             <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                   <div className="flex items-center gap-2">
+                      <Zap size={18} className="text-indigo-600 fill-indigo-600" />
+                      <h3 className="text-xs font-black tracking-widest uppercase">Liên kết API</h3>
+                   </div>
+                   <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                </div>
+                
+                <div className="space-y-4">
+                   <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 relative group/box">
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2 italic">Dòng lệnh AppSheet:</p>
+                      <div className="flex flex-col gap-3">
+                         <div className="bg-white p-3 rounded-xl border border-slate-100 text-[10px] font-mono text-slate-600 leading-relaxed break-all select-all">
+                            {formula}
+                         </div>
+                         <button 
+                          onClick={() => handleCopy(formula)}
+                          className="w-full flex items-center justify-center gap-2 py-3 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-100"
+                         >
+                            {copied ? <CheckCircle2 size={14} /> : <Copy size={14} />}
+                            {copied ? 'Đã sao chép' : 'SAO CHÉP CÔNG THỨC'}
+                         </button>
+                      </div>
+                   </div>
+                   
+                   <div className="flex items-start gap-4 p-4 bg-indigo-50 border border-indigo-100 rounded-2xl">
+                      <HelpCircle size={18} className="text-indigo-600 shrink-0 mt-0.5" />
+                      <p className="text-[10px] font-medium text-indigo-900 leading-relaxed italic">
+                        Dán công thức này vào AppSheet mục <span className="font-black">Behavior {'>>'} External Site</span> để kết nối báo cáo.
+                      </p>
                    </div>
                 </div>
-                  <button 
-                    onClick={() => fetchAll()}
-                    className="p-3 text-slate-400 hover:text-indigo-600 hover:bg-slate-50 border border-transparent hover:border-slate-100 rounded-2xl transition-all shadow-sm active:scale-95"
-                    title="Làm mới"
-                  >
-                    <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
-                  </button>
-              </div>
-              
-              <div className="flex-1 w-full min-h-0">
-                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={300}>
-                  <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                    <defs>
-                      <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.15}/>
-                        <stop offset="95%" stopColor="#4f46e5" stopOpacity={0}/>
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                    <XAxis 
-                      dataKey="name" 
-                      axisLine={false} 
-                      tickLine={false} 
-                      tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 900 }}
-                      dy={15}
-                    />
-                    <YAxis hide />
-                    <Tooltip 
-                      contentStyle={{ borderRadius: '24px', border: '1px solid #f1f5f9', boxShadow: '0 25px 50px -12px rgb(0 0 0 / 0.15)', padding: '16px', fontWeight: 900 }}
-                    />
-                    <Area 
-                      type="monotone" 
-                      dataKey="count" 
-                      stroke="#4f46e5" 
-                      strokeWidth={5}
-                      fill="url(#chartGradient)" 
-                      animationDuration={1500}
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {[
-                { to: '/report', label: 'Báo cáo', icon: Printer, bg: 'bg-indigo-600', text: 'text-white', border: 'border-indigo-500' },
-                { to: '/apps', label: 'Kết nối App', icon: Database, bg: 'bg-white', text: 'text-slate-900', border: 'border-slate-100' },
-                { to: '/templates', label: 'Thiết kế mẫu', icon: FileText, bg: 'bg-white', text: 'text-slate-900', border: 'border-slate-100' },
-                { to: '/settings', label: 'Cấu hình', icon: Settings, bg: 'bg-white', text: 'text-slate-900', border: 'border-slate-100' },
-              ].map((action, i) => (
-                <Link 
-                  key={i} 
-                  to={action.to}
-                  className={`flex flex-col items-center justify-center p-6 rounded-[2rem] gap-3 transition-all hover:-translate-y-1 hover:shadow-xl border ${action.border} ${action.bg} ${action.text} overflow-hidden group`}
-                >
-                  <action.icon size={24} className="shrink-0 group-hover:scale-110 transition-transform" />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-center truncate w-full">{action.label}</span>
-                </Link>
-              ))}
-            </div>
-        </div>
-
-        {/* Sidebar Info */}
-        <div className="space-y-8">
-          {/* Formula Tool */}
-          <div className="bg-slate-900 rounded-[2.5rem] p-8 md:p-10 text-white shadow-2xl shadow-indigo-900/20 relative overflow-hidden flex flex-col justify-between min-h-[450px]">
-             <div className="absolute top-0 right-0 p-8 opacity-5 rotate-12 scale-[3] pointer-events-none">
-                <Cpu size={100} />
-             </div>
-             <div className="relative z-10 flex-1 flex flex-col">
-               <div className="flex items-center gap-3 mb-8">
-                  <div className="p-2.5 bg-white/10 rounded-xl">
-                    <Zap size={20} className="text-amber-400 fill-amber-400" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-black italic tracking-tighter uppercase leading-none italic">Cầu nối AppSheet</h3>
-                    <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mt-1">Smart Integration Utility</p>
-                  </div>
-               </div>
-               
-               <div className="space-y-6 flex-1 flex flex-col justify-center">
-                  <div className="text-center">
-                    <p className="text-[10px] text-slate-400 leading-relaxed font-black uppercase tracking-wider">
-                       Dán công thức logic này vào thuộc tính <br />
-                       <span className="text-indigo-400">Behavior {'>>'} External Site</span>
-                    </p>
-                  </div>
-                  <div className="bg-white/5 border border-white/10 rounded-2xl p-6 text-[11px] font-mono text-indigo-300 break-all select-all text-center leading-loose backdrop-blur-md shadow-inner">
-                     {formula}
-                  </div>
-                  <button 
-                    onClick={() => handleCopy(formula)}
-                    className="w-full py-5 px-6 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 overflow-hidden shadow-2xl shadow-indigo-900/60 active:scale-95 border border-indigo-500 group"
-                  >
-                     <span className="shrink-0 group-hover:rotate-12 transition-transform">{copied ? <CheckCircle2 size={18} /> : <Copy size={18} />}</span>
-                     <span className="truncate">{copied ? 'Đã lưu vào Clipboard' : 'Sao chép Công thức'}</span>
-                  </button>
-               </div>
              </div>
           </div>
 
-          {/* Recent Logs List */}
-          <div className="card-premium flex flex-col h-[400px] overflow-hidden rounded-[2.5rem]">
-            <div className="p-7 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-               <div className="flex items-center gap-2">
-                  <Clock size={16} className="text-indigo-600" />
-                  <h3 className="text-[10px] font-black text-slate-900 uppercase tracking-widest">Hoạt động mới nhất</h3>
+          {/* Real-time System Logs */}
+          <div className="bg-white rounded-[48px] border border-slate-100 shadow-sm overflow-hidden flex flex-col h-[520px]">
+            <div className="p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
+               <div>
+                  <h3 className="text-xs font-black text-slate-900 tracking-widest uppercase">Nhật ký in ấn</h3>
+                  <p className="text-[9px] font-mono text-slate-400 mt-1">Sẵn sàng phân tích vết</p>
                </div>
-               <Link to="/logs" className="text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest bg-white px-3 py-1.5 rounded-lg border border-slate-100 shadow-sm transition-all hover:shadow-md">
-                  Tất cả
+               <Link to="/logs" className="w-10 h-10 bg-white border border-slate-100 rounded-xl flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:border-indigo-100 transition-all shadow-sm">
+                  <ChevronRight size={20} />
                </Link>
             </div>
             
-            <div className="flex-1 overflow-y-auto p-6 space-y-4">
+            <div className="flex-1 overflow-y-auto thin-scrollbar p-2">
                {logs.length > 0 ? (
-                 logs.slice(0, 8).map((log, i) => (
-                   <div key={i} className="flex items-start gap-4 p-4 rounded-2xl hover:bg-slate-50 transition-all border border-transparent hover:border-slate-100 group shadow-sm hover:shadow-md">
-                      <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 flex-shrink-0 group-hover:text-indigo-600 transition-colors shadow-sm">
-                         <Printer size={18} />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                         <div className="flex items-center justify-between gap-4">
-                            <span className="text-xs font-black text-slate-800 truncate uppercase italic">{log.ten_mau}</span>
-                            <span className="text-[9px] font-black text-slate-400 shrink-0">{format(new Date(log.ngay_tao), 'HH:mm')}</span>
-                         </div>
-                         <div className="text-[9px] font-bold text-slate-400 mt-1 truncate tracking-wider uppercase flex items-center gap-1.5">
-                            <div className="w-1 h-1 bg-emerald-500 rounded-full" />
-                            Row ID: {log.ma_id}
-                         </div>
-                      </div>
-                   </div>
-                 ))
+                 <div className="space-y-1">
+                   {logs.slice(0, 10).map((log, i) => (
+                     <motion.div 
+                        initial={{ opacity: 0, x: 10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.05 }}
+                        key={i} 
+                        className="flex items-center p-4 hover:bg-slate-50 rounded-3xl transition-all group border border-transparent hover:border-slate-100 cursor-default"
+                     >
+                        <div className="w-10 h-10 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-white group-hover:text-indigo-600 transition-all shrink-0">
+                           <Printer size={16} />
+                        </div>
+                        <div className="ml-4 flex-1 min-w-0">
+                           <div className="flex items-center justify-between gap-2">
+                              <span className="text-[11px] font-black text-slate-900 uppercase truncate">{log.ten_mau}</span>
+                              <span className="text-[9px] font-mono font-bold text-slate-400 shrink-0">{format(new Date(log.ngay_tao), 'HH:mm')}</span>
+                           </div>
+                           <div className="flex items-center gap-2 mt-1">
+                              <span className="px-1.5 py-0.5 bg-slate-100 rounded-md text-[8px] font-mono font-bold text-slate-500">ID# {log.ma_id?.slice(0, 6)}</span>
+                              <div className="w-1 h-1 bg-emerald-500 rounded-full" />
+                              <span className="text-[8px] font-black text-emerald-600 uppercase">Thành công</span>
+                           </div>
+                        </div>
+                     </motion.div>
+                   ))}
+                 </div>
                ) : (
-                 <div className="h-full flex flex-col items-center justify-center text-slate-300">
-                    <div className="w-16 h-16 bg-slate-50 rounded-[1.5rem] flex items-center justify-center mb-4">
-                       <Clock size={28} strokeWidth={1.5} className="opacity-20" />
-                    </div>
-                    <p className="text-[10px] font-black uppercase tracking-widest">Hệ thống đang sẵn sàng</p>
+                 <div className="h-full flex flex-col items-center justify-center text-slate-200 grayscale opacity-40">
+                    <Clock size={48} strokeWidth={1} />
+                    <p className="text-[10px] font-black uppercase tracking-[0.4em] mt-4">Trống dữ liệu</p>
                  </div>
                )}
             </div>
+
+            <div className="p-6 bg-slate-50/50 border-t border-slate-100 text-center">
+               <Link to="/logs" className="text-[9px] font-black text-slate-400 uppercase tracking-widest hover:text-indigo-600 transition-colors flex items-center justify-center gap-2 group">
+                  XEM TOÀN BỘ LỊCH SỬ
+                  <ExternalLink size={12} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+               </Link>
+            </div>
           </div>
+
+          <div className="bg-slate-900 p-6 rounded-[32px] text-white flex items-center justify-between overflow-hidden relative">
+             <div className="absolute -right-4 -bottom-4 opacity-5 animate-pulse">
+                <ShieldCheck size={120} />
+             </div>
+             <div className="relative z-10 flex items-center gap-4">
+                <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center ring-4 ring-white/5">
+                   <ShieldCheck size={20} className="text-emerald-400" />
+                </div>
+                <div>
+                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Bảo vệ máy chủ</p>
+                   <p className="text-xs font-bold font-mono">Mã hóa chuẩn doanh nghiệp</p>
+                </div>
+             </div>
+             <div className="relative z-10 p-2 bg-emerald-500 rounded-lg shadow-lg">
+                <div className="w-2 h-2 bg-white rounded-full animate-ping" />
+             </div>
+          </div>
+
         </div>
       </div>
     </div>
