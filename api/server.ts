@@ -54,15 +54,32 @@ const getOAuthClient = (req: Request) => {
   const clientId = process.env.GOOGLE_CLIENT_ID;
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
   
+  console.log('[AUTH] Client ID exists:', !!clientId);
+  console.log('[AUTH] Client Secret exists:', !!clientSecret);
+  
   if (!clientId || !clientSecret) {
     throw new Error('GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET is missing in environment variables');
   }
 
-  return new google.auth.OAuth2(
-    clientId,
-    clientSecret,
-    `${getBaseUrl(req)}/auth/callback`
-  );
+  try {
+    console.log('[AUTH] Creating OAuth client...');
+    if (!google.auth || !google.auth.OAuth2) {
+      console.error('[AUTH] google.auth.OAuth2 is missing! Check googleapis import.');
+      throw new Error('Google OAuth2 library not loaded correctly');
+    }
+
+    const redirectUri = `${getBaseUrl(req)}/auth/callback`;
+    console.log('[AUTH] Redirect URI:', redirectUri);
+
+    return new google.auth.OAuth2(
+      clientId,
+      clientSecret,
+      redirectUri
+    );
+  } catch (err: any) {
+    console.error('[AUTH] Failed to create OAuth client:', err.message);
+    throw err;
+  }
 };
 
 // --- ENDPOINTS ---
@@ -96,8 +113,12 @@ app.get('/api/auth/url', (req, res) => {
     });
     res.json({ url });
   } catch (err: any) { 
-    console.error('Auth URL Error:', err.message);
-    res.status(500).json({ error: 'OAuth initialization failed', details: err.message }); 
+    console.error('Auth URL Error:', err);
+    res.status(500).json({ 
+      error: 'OAuth initialization failed', 
+      message: err.message,
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    }); 
   }
 });
 
@@ -330,6 +351,15 @@ app.post('/api/report/generate', async (req: any, res) => {
     console.error('[CRITICAL SERVER ERROR]', err);
     res.status(500).json({ success: false, error: err.message }); 
   }
+});
+
+// --- GLOBAL ERROR HANDLER ---
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  console.error('[GLOBAL ERROR]', err);
+  res.status(500).json({
+    error: 'Internal Server Error',
+    message: err.message
+  });
 });
 
 // --- VITE INTEGRATION / SPA FALLBACK ---

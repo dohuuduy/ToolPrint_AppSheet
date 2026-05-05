@@ -49,9 +49,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login = async () => {
-    const res = await fetch('/api/auth/url', { credentials: 'include' });
-    const { url } = await res.json();
-    window.open(url, 'google_oauth', 'width=600,height=700');
+    try {
+      const res = await fetch('/api/auth/url', { credentials: 'include' });
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error('Login URL fetch failed:', res.status, errorText);
+        alert('Không thể khởi tạo đăng nhập. Vui lòng kiểm tra cấu hình Google OAuth.');
+        return;
+      }
+      const data = await res.json();
+      if (data.url) {
+        window.open(data.url, 'google_oauth', 'width=600,height=700');
+      } else {
+        console.error('No URL in response:', data);
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      alert('Lỗi kết nối đến máy chủ.');
+    }
   };
 
   const logout = async () => {
