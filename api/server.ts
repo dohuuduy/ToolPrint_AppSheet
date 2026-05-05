@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import cookieSession from 'cookie-session';
 import dotenv from 'dotenv';
 import { google } from 'googleapis';
+import { createServer as createViteServer } from 'vite';
 
 import { GoogleService } from './services/google.service.js';
 import { AppSheetService } from './services/appsheet.service.js';
@@ -331,16 +332,28 @@ app.post('/api/report/generate', async (req: any, res) => {
   }
 });
 
-// SPA Fallback
-const distPath = path.join(process.cwd(), 'dist');
-app.use(express.static(distPath));
-app.get('*', (req: Request, res: Response, next: NextFunction) => {
-  if (req.path.startsWith('/api/') || req.path.startsWith('/auth/')) return next();
-  res.sendFile(path.join(distPath, 'index.html'));
-});
+// --- VITE INTEGRATION / SPA FALLBACK ---
+async function init() {
+  if (process.env.NODE_ENV !== 'production' && !isVercel) {
+    const vite = await createViteServer({
+      server: { middlewareMode: true },
+      appType: 'spa',
+    });
+    app.use(vite.middlewares);
+  } else {
+    const distPath = path.join(process.cwd(), 'dist');
+    app.use(express.static(distPath));
+    app.get('*', (req: Request, res: Response, next: NextFunction) => {
+      if (req.path.startsWith('/api/') || req.path.startsWith('/auth/')) return next();
+      res.sendFile(path.join(distPath, 'index.html'));
+    });
+  }
 
-if (!isVercel) {
-  app.listen(3000, '0.0.0.0', () => console.log('Server running...'));
+  if (!isVercel) {
+    app.listen(3000, '0.0.0.0', () => console.log('Server running on http://0.0.0.0:3000'));
+  }
 }
+
+init().catch(console.error);
 
 export default app;
